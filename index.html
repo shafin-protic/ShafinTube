@@ -55,7 +55,7 @@
         .header-center { display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; flex-wrap: wrap; }
         .status-badge { font-size: 0.55rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; }
         
-        .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
         .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
         .header-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .header-btn.mode-btn { width: auto; padding: 0 12px; border-radius: 20px; font-size: 0.65rem; gap: 4px; background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -67,10 +67,29 @@
         .header-btn.random-btn:hover { background: var(--accent2); transform: scale(1.05); }
         .header-btn.refresh-btn { font-size: 0.9rem; }
         .header-btn.refresh-btn:hover { transform: rotate(60deg); }
+        .header-btn.translate-btn { font-size: 0.8rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .header-btn.translate-btn.active:hover { background: var(--accent2); }
+        .header-btn.count-btn { width: auto; padding: 0 10px; border-radius: 20px; font-size: 0.6rem; background: var(--bg3); border-color: var(--border); color: var(--text2); cursor: default; }
+        .header-btn.count-btn:hover { background: var(--bg3); transform: none; }
         
-        .header-clock { display: flex; flex-direction: column; align-items: flex-end; margin-left: 4px; flex-shrink: 0; }
-        .header-clock .time { font-size: 0.75rem; font-weight: 600; color: var(--text); letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
-        .header-clock .day { font-size: 0.5rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.3px; }
+        /* Clock Tile */
+        .clock-tile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            background: var(--bg3); 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            padding: 2px 8px; 
+            min-width: 56px; 
+            min-height: 36px;
+            flex-shrink: 0;
+            line-height: 1.2;
+        }
+        .clock-tile .time { font-size: 0.7rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; }
+        .clock-tile .day { font-size: 0.45rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
         
         /* Main Content */
         .main-content { display: flex; flex: 1; overflow: hidden; min-height: 0; }
@@ -101,6 +120,7 @@
         .list-item .video-count { font-size: 0.55rem; color: var(--text2); padding-left: 6px; flex-shrink: 0; margin-left: auto; }
         .list-item .loading-spinner { width: 14px; height: 14px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .list-item .translated-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
         
         /* Player Area */
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
@@ -132,7 +152,6 @@
         .radio-visualizer .equalizer-bar:nth-child(8) { animation-delay: 0.3s; height: 12px; }
         @keyframes equalize { 0%, 100% { height: 6px; } 50% { height: 26px; } }
         
-        /* Paused state for visualizer */
         .radio-visualizer.paused .equalizer-bar { animation-play-state: paused !important; }
         .radio-visualizer.paused .radio-icon { animation-play-state: paused !important; }
         
@@ -146,6 +165,14 @@
         .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
         .control-btn.random-btn:hover { background: var(--bg4); }
         .control-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+        
+        /* TV/Radio Toggle Switch */
+        .mode-switch { display: flex; align-items: center; gap: 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 2px; flex-shrink: 0; }
+        .mode-switch .mode-option { padding: 4px 12px; border-radius: 18px; font-size: 0.6rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
+        .mode-switch .mode-option:hover { color: var(--text); }
+        .mode-switch .mode-option.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+        .mode-switch .mode-option.active:hover { background: var(--accent2); }
+        
         .player-info-text { font-size: 0.65rem; color: var(--text2); flex: 1; min-width: 60px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .player-timer { font-size: 0.6rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right; flex-shrink: 0; }
         
@@ -184,12 +211,14 @@
             .logo-text { font-size: 0.85rem; }
             .logo-img { width: 26px; height: 26px; }
             .header-btn { width: 26px; height: 26px; font-size: 0.7rem; }
-            .header-btn.mode-btn { font-size: 0.6rem; padding: 0 10px; height: 26px; }
-            .header-clock .time { font-size: 0.65rem; }
-            .header-clock .day { font-size: 0.45rem; }
+            .header-btn.count-btn { font-size: 0.55rem; padding: 0 8px; height: 26px; }
+            .clock-tile { min-width: 48px; min-height: 32px; padding: 2px 6px; }
+            .clock-tile .time { font-size: 0.6rem; }
+            .clock-tile .day { font-size: 0.4rem; }
             .list-item .thumb { width: 36px; height: 20px; }
             .list-item .title { font-size: 0.7rem; }
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
+            .mode-switch .mode-option { font-size: 0.55rem; padding: 3px 10px; }
             .player-info-text { font-size: 0.55rem; min-width: 40px; }
             .player-timer { font-size: 0.5rem; min-width: 50px; }
             .history-panel { width: 340px; right: -340px; }
@@ -206,14 +235,16 @@
             .list-item .thumb { width: 30px; height: 17px; }
             .controls { gap: 5px; padding: 4px 8px; }
             .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
+            .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
             .player-info-text { font-size: 0.5rem; min-width: 30px; }
             .player-timer { font-size: 0.45rem; min-width: 40px; }
             .header { gap: 4px; padding: 4px 8px; min-height: 36px; }
             .status-badge { font-size: 0.45rem; padding: 1px 6px; }
             .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
-            .header-btn.mode-btn { font-size: 0.55rem; padding: 0 8px; height: 24px; }
-            .header-clock .time { font-size: 0.55rem; }
-            .header-clock .day { font-size: 0.4rem; }
+            .header-btn.count-btn { font-size: 0.5rem; padding: 0 6px; height: 24px; }
+            .clock-tile { min-width: 40px; min-height: 28px; padding: 1px 4px; }
+            .clock-tile .time { font-size: 0.5rem; }
+            .clock-tile .day { font-size: 0.35rem; }
             .history-panel { width: 290px; right: -290px; }
             .radio-visualizer .radio-icon { font-size: 2.5rem; }
             .radio-visualizer .radio-title { font-size: 0.8rem; }
@@ -238,13 +269,14 @@
             <span class="status-badge" id="statusBadge">📡 Loading...</span>
         </div>
         <div class="header-right">
-            <button class="header-btn mode-btn" id="modeToggleBtn" title="Toggle TV/Radio Mode">📺 TV</button>
+            <button class="header-btn count-btn" id="countBtn" title="Total Playlists & Videos">📋 0 / 0</button>
             <button class="header-btn refresh-btn" id="refreshBtn" title="Refresh Metadata">⟳</button>
             <button class="header-btn random-btn" id="randomBtn" title="Random Video">🎲</button>
+            <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles to English">🌐</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
             <a class="header-btn" id="editBtn" href="https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing" target="_blank" title="Edit Google Sheet">✎</a>
             <button class="header-btn" id="themeToggle" title="Toggle Theme">🌙</button>
-            <div class="header-clock" id="clockDisplay">
+            <div class="clock-tile" id="clockDisplay">
                 <span class="time" id="timeDisplay">--:--:--</span>
                 <span class="day" id="dayDisplay">---</span>
             </div>
@@ -294,6 +326,10 @@
                 <button class="control-btn" id="nextBtn" title="Next Video (N)">⏭</button>
                 <button class="control-btn shuffle-btn" id="shuffleBtn" title="Toggle Shuffle (S)">🔀</button>
                 <button class="control-btn random-btn" id="randomVideoBtn" title="Random Video & Position (R)">🎲</button>
+                <div class="mode-switch" id="modeSwitch">
+                    <button class="mode-option active" data-mode="tv" id="tvModeOption">📺 TV</button>
+                    <button class="mode-option" data-mode="radio" id="radioModeOption">🎵 Radio</button>
+                </div>
                 <span class="player-info-text" id="playerInfo">No video playing</span>
                 <span class="player-timer" id="playerTimer">--:-- / --:--</span>
             </div>
@@ -325,6 +361,7 @@
     const CACHE_KEY = 'shafin_tube_cache';
     const HISTORY_KEY = 'shafin_tube_history';
     const STATE_KEY = 'shafin_tube_state';
+    const TRANSLATE_CACHE_KEY = 'shafin_tube_translate_cache';
 
     // ============================================================
     // STATE
@@ -337,6 +374,8 @@
     let isPlaylistView = true;
     let toastTimeout = null;
     let metadataCache = {};
+    let translateCache = {};
+    let translateEnabled = false;
     let isLoadingMetadata = false;
     let currentMode = 'tv';
     let history = [];
@@ -353,7 +392,7 @@
     const editBtn = document.getElementById('editBtn');
     const backBtn = document.getElementById('backBtn');
     const refreshBtn = document.getElementById('refreshBtn');
-    const modeToggleBtn = document.getElementById('modeToggleBtn');
+    const translateBtn = document.getElementById('translateBtn');
     const historyBtn = document.getElementById('historyBtn');
     const historyCloseBtn = document.getElementById('historyCloseBtn');
     const historyOverlay = document.getElementById('historyOverlay');
@@ -369,6 +408,9 @@
     const shuffleBtn = document.getElementById('shuffleBtn');
     const randomBtn = document.getElementById('randomBtn');
     const randomVideoBtn = document.getElementById('randomVideoBtn');
+    const tvModeOption = document.getElementById('tvModeOption');
+    const radioModeOption = document.getElementById('radioModeOption');
+    const countBtn = document.getElementById('countBtn');
     const radioVisualizer = document.getElementById('radioVisualizer');
     const radioTitle = document.getElementById('radioTitle');
     const radioSub = document.getElementById('radioSub');
@@ -434,7 +476,6 @@
             if (duration && duration > 0) {
                 playerTimer.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
                 currentPosition = current;
-                // Update history position if playing
                 if (isPlaying && currentPlaylist && currentVideoIndex >= 0) {
                     updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], currentPosition);
                 }
@@ -480,6 +521,21 @@
             }
             return false;
         } catch (e) { return false; }
+    }
+
+    function loadTranslateCache() {
+        try {
+            const raw = localStorage.getItem(TRANSLATE_CACHE_KEY);
+            if (!raw) return;
+            translateCache = JSON.parse(raw);
+            if (typeof translateCache !== 'object') translateCache = {};
+        } catch (e) { translateCache = {}; }
+    }
+
+    function saveTranslateCache() {
+        try {
+            localStorage.setItem(TRANSLATE_CACHE_KEY, JSON.stringify(translateCache));
+        } catch (e) { console.warn('Translate cache save failed:', e); }
     }
 
     function saveHistory() {
@@ -595,11 +651,89 @@
     }
 
     // ============================================================
+    // TRANSLATION
+    // ============================================================
+    async function translateText(text, targetLang = 'en') {
+        if (!text || text.length < 2) return text;
+        
+        // Check cache
+        const cacheKey = text.substring(0, 100);
+        if (translateCache[cacheKey]) {
+            return translateCache[cacheKey];
+        }
+        
+        try {
+            // Use Google Translate API via free proxy
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Translation failed');
+            const data = await response.json();
+            if (data && data[0] && data[0][0] && data[0][0][0]) {
+                const translated = data[0][0][0];
+                // Cache the result
+                translateCache[cacheKey] = translated;
+                saveTranslateCache();
+                return translated;
+            }
+            return text;
+        } catch (error) {
+            console.warn('Translation error:', error);
+            return text;
+        }
+    }
+
+    async function translateVideoTitles(playlist) {
+        if (!playlist || !translateEnabled) return;
+        
+        const cacheKey = playlist.name;
+        const cache = metadataCache[cacheKey] || {};
+        
+        let translatedCount = 0;
+        for (const videoId of playlist.videoIds) {
+            if (cache[videoId] && cache[videoId].title) {
+                const originalTitle = cache[videoId].title;
+                // Check if already translated in cache
+                const titleKey = `trans_${videoId}`;
+                if (!cache[videoId].translatedTitle) {
+                    const translated = await translateText(originalTitle);
+                    if (translated && translated !== originalTitle) {
+                        cache[videoId].translatedTitle = translated;
+                        translatedCount++;
+                        // Update metadata cache
+                        metadataCache[cacheKey] = cache;
+                        saveCache();
+                    }
+                }
+            }
+        }
+        
+        if (translatedCount > 0) {
+            showToast(`Translated ${translatedCount} titles for ${playlist.name}`);
+            if (currentPlaylist === playlist && !isPlaylistView) {
+                renderVideos(playlist);
+            }
+        }
+    }
+
+    function toggleTranslation() {
+        translateEnabled = !translateEnabled;
+        translateBtn.classList.toggle('active', translateEnabled);
+        showToast(translateEnabled ? '🌐 Translation ON' : '🌐 Translation OFF');
+        
+        if (translateEnabled && currentPlaylist) {
+            translateVideoTitles(currentPlaylist);
+        }
+        if (!isPlaylistView && currentPlaylist) {
+            renderVideos(currentPlaylist);
+        }
+    }
+
+    // ============================================================
     // SAVE / RESTORE STATE
     // ============================================================
     function saveState(playlistName, videoIndex) {
         try {
-            const state = { playlistName, videoIndex, shuffleMode, currentMode };
+            const state = { playlistName, videoIndex, shuffleMode, currentMode, translateEnabled };
             localStorage.setItem(STATE_KEY, JSON.stringify(state));
         } catch (e) {}
     }
@@ -670,6 +804,11 @@
         statusBadge.textContent = `✅ ${playlist.videoIds.length} videos`;
         showToast(`Loaded metadata for ${playlist.videoIds.length} videos`);
         saveCache();
+        
+        // Translate if enabled
+        if (translateEnabled) {
+            await translateVideoTitles(playlist);
+        }
         
         if (currentPlaylist === playlist && !isPlaylistView) {
             renderVideos(playlist);
@@ -748,7 +887,6 @@
                         isPlaying = false;
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
-                        // Save position on pause
                         if (currentPlaylist && currentVideoIndex >= 0) {
                             const pos = ytPlayer.getCurrentTime();
                             updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], pos);
@@ -807,16 +945,26 @@
             }
             if (parsed.length === 0) throw new Error('No valid playlists found');
             playlists = parsed;
+            
+            // Update count
+            const totalVideos = playlists.reduce((s, p) => s + p.videoIds.length, 0);
+            countBtn.textContent = `📋 ${playlists.length} / ${totalVideos}`;
+            
             statusBadge.textContent = `✅ ${playlists.length} playlists`;
-            showToast(`Loaded ${playlists.length} playlists (${playlists.reduce((s,p) => s + p.videoIds.length, 0)} videos)`);
+            showToast(`Loaded ${playlists.length} playlists (${totalVideos} videos)`);
             
             loadCache();
+            loadTranslateCache();
             renderPlaylists();
             
             const state = restoreState();
             if (state) {
                 shuffleMode = state.shuffleMode !== undefined ? state.shuffleMode : true;
                 currentMode = state.currentMode || 'tv';
+                translateEnabled = state.translateEnabled || false;
+                if (translateEnabled) {
+                    translateBtn.classList.add('active');
+                }
                 updateModeUI();
                 const pl = playlists.find(p => p.name === state.playlistName);
                 if (pl && state.videoIndex >= 0 && state.videoIndex < pl.videoIds.length) {
@@ -828,7 +976,6 @@
                     }
                     setTimeout(() => {
                         renderVideos(pl);
-                        // Check history for saved position
                         const videoId = pl.videoIds[state.videoIndex];
                         const historyEntry = history.find(h => h.videoId === videoId && h.playlistName === pl.name);
                         const startPos = historyEntry ? historyEntry.position : 0;
@@ -915,7 +1062,10 @@
         if (search) {
             videos = videos.filter(v => {
                 const meta = cache[v.id];
-                if (meta) return meta.title.toLowerCase().includes(search);
+                if (meta) {
+                    const title = translateEnabled && meta.translatedTitle ? meta.translatedTitle : meta.title;
+                    return title.toLowerCase().includes(search);
+                }
                 return false;
             });
         }
@@ -929,15 +1079,21 @@
         videos.forEach((v) => {
             const isActive = currentVideoIndex === v.index;
             const meta = cache[v.id];
-            const title = meta ? meta.title : `Video ${v.index + 1}`;
+            let title = meta ? meta.title : `Video ${v.index + 1}`;
+            let translated = false;
+            if (translateEnabled && meta && meta.translatedTitle) {
+                title = meta.translatedTitle;
+                translated = true;
+            }
             const thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
             const author = meta ? meta.author : '';
+            const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
 
             html += `
                 <div class="list-item ${isActive ? 'active' : ''}" data-video-index="${v.index}" data-type="video">
                     <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
                     <div class="info">
-                        <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
+                        <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)} ${translatedBadge}</div>
                         <div class="sub">${escapeHtml(author)} • ${v.index + 1}/${playlist.videoIds.length}</div>
                     </div>
                     <span class="badge">${v.index + 1}</span>
@@ -966,8 +1122,8 @@
     // ============================================================
     function updateModeUI() {
         if (currentMode === 'tv') {
-            modeToggleBtn.textContent = '📺 TV';
-            modeToggleBtn.classList.remove('radio-mode', 'active');
+            tvModeOption.classList.add('active');
+            radioModeOption.classList.remove('active');
             radioVisualizer.classList.remove('active');
             if (ytPlayer) {
                 const container = document.getElementById('yt-player-container');
@@ -975,8 +1131,8 @@
             }
             placeholder.style.display = 'none';
         } else {
-            modeToggleBtn.textContent = '🎵 Radio';
-            modeToggleBtn.classList.add('radio-mode', 'active');
+            radioModeOption.classList.add('active');
+            tvModeOption.classList.remove('active');
             radioVisualizer.classList.add('active');
             if (isPlaying) {
                 radioVisualizer.classList.remove('paused');
@@ -992,7 +1148,11 @@
                 const cache = metadataCache[cacheKey] || {};
                 const videoId = currentPlaylist.videoIds[currentVideoIndex];
                 const meta = cache[videoId];
-                radioTitle.textContent = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
+                let title = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
+                if (translateEnabled && meta && meta.translatedTitle) {
+                    title = meta.translatedTitle;
+                }
+                radioTitle.textContent = title;
                 radioSub.textContent = `${currentPlaylist.name} • Radio Mode`;
             } else {
                 radioTitle.textContent = 'Select a video';
@@ -1012,10 +1172,12 @@
         const cacheKey = playlist.name;
         const cache = metadataCache[cacheKey] || {};
         const meta = cache[videoId];
-        const title = meta ? meta.title : `Video ${videoIndex + 1}`;
+        let title = meta ? meta.title : `Video ${videoIndex + 1}`;
+        if (translateEnabled && meta && meta.translatedTitle) {
+            title = meta.translatedTitle;
+        }
         const thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
 
-        // Check history for saved position if not explicitly provided
         if (!startPosition) {
             const historyEntry = history.find(h => h.videoId === videoId && h.playlistName === playlist.name);
             if (historyEntry && historyEntry.position > 0) {
@@ -1131,7 +1293,10 @@
         const cacheKey = currentPlaylist.name;
         const cache = metadataCache[cacheKey] || {};
         const meta = cache[videoId];
-        const title = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
+        let title = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
+        if (translateEnabled && meta && meta.translatedTitle) {
+            title = meta.translatedTitle;
+        }
         playerInfo.textContent = `${currentPlaylist.name} • ${title}`;
         renderVideos(currentPlaylist);
         startTimer();
@@ -1144,7 +1309,6 @@
             const newTime = Math.max(0, Math.min(duration || 0, currentTime + seconds));
             ytPlayer.seekTo(newTime, true);
             showToast(`${seconds > 0 ? '⏩' : '⏪'} ${Math.abs(seconds)}s`);
-            // Update position in history
             if (currentPlaylist && currentVideoIndex >= 0) {
                 updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], newTime);
             }
@@ -1188,7 +1352,6 @@
                 isPlaying = false;
                 playBtn.textContent = '▶';
                 radioVisualizer.classList.add('paused');
-                // Save position on pause
                 if (currentPlaylist && currentVideoIndex >= 0) {
                     const pos = ytPlayer.getCurrentTime();
                     updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], pos);
@@ -1238,8 +1401,9 @@
         }
     }
 
-    function toggleMode() {
-        currentMode = (currentMode === 'tv') ? 'radio' : 'tv';
+    function setMode(mode) {
+        if (mode === currentMode) return;
+        currentMode = mode;
         updateModeUI();
         showToast(currentMode === 'tv' ? '📺 TV Mode' : '🎵 Radio Mode');
         if (currentPlaylist && currentVideoIndex >= 0) {
@@ -1258,7 +1422,11 @@
                     const cacheKey = currentPlaylist.name;
                     const cache = metadataCache[cacheKey] || {};
                     const meta = cache[videoId];
-                    radioTitle.textContent = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
+                    let title = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
+                    if (translateEnabled && meta && meta.translatedTitle) {
+                        title = meta.translatedTitle;
+                    }
+                    radioTitle.textContent = title;
                     radioSub.textContent = `${currentPlaylist.name} • Radio Mode`;
                     if (isPlaying) {
                         radioVisualizer.classList.remove('paused');
@@ -1290,7 +1458,6 @@
                     const seekTime = duration * randomPos;
                     ytPlayer.seekTo(seekTime, true);
                     showToast(`🎲 Random video at ${Math.round(randomPos * 100)}% position`);
-                    // Save position in history
                     if (currentPlaylist && currentVideoIndex >= 0) {
                         updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], seekTime);
                     }
@@ -1331,7 +1498,7 @@
 
     backBtn.addEventListener('click', goBackToPlaylists);
     refreshBtn.addEventListener('click', refreshMetadata);
-    modeToggleBtn.addEventListener('click', toggleMode);
+    translateBtn.addEventListener('click', toggleTranslation);
     historyBtn.addEventListener('click', openHistory);
     historyCloseBtn.addEventListener('click', closeHistory);
     historyOverlay.addEventListener('click', closeHistory);
@@ -1342,6 +1509,9 @@
     nextBtn.addEventListener('click', nextVideo);
     playBtn.addEventListener('click', togglePlayPause);
     shuffleBtn.addEventListener('click', toggleShuffle);
+
+    tvModeOption.addEventListener('click', () => setMode('tv'));
+    radioModeOption.addEventListener('click', () => setMode('radio'));
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -1367,13 +1537,15 @@
         } else if (e.key === 'r' || e.key === 'R') {
             randomVideo();
         } else if (e.key === 'm' || e.key === 'M') {
-            toggleMode();
+            setMode(currentMode === 'tv' ? 'radio' : 'tv');
         } else if (e.key === 'h' || e.key === 'H') {
             openHistory();
         } else if (e.key === 'n' || e.key === 'N') {
             nextVideo();
         } else if (e.key === 'p' || e.key === 'P') {
             prevVideo();
+        } else if (e.key === 't' || e.key === 'T') {
+            toggleTranslation();
         }
     });
 
@@ -1386,7 +1558,7 @@
 
     console.log('🟢 Shafin Tube IPTV-style loaded with all features.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
-    console.log('📺 Controls: ← → seek, Space play/pause, M mode, R random, S shuffle, H history');
+    console.log('📺 Controls: ← → seek, Space play/pause, M mode, R random, S shuffle, H history, T translate');
 </script>
 </body>
 </html>
