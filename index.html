@@ -49,7 +49,13 @@
         .logo-img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
         .logo-text { font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
         .logo-text span { color: var(--accent); }
-        .header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        
+        .header-center { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; flex-wrap: wrap; }
+        .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .header-clock { display: flex; flex-direction: column; align-items: flex-end; margin-right: 6px; }
+        .header-clock .time { font-size: 0.75rem; font-weight: 600; color: var(--text); letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
+        .header-clock .day { font-size: 0.5rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.3px; }
+        
         .status-badge { font-size: 0.55rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; }
         .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
         .header-btn:hover { background: var(--bg4); }
@@ -87,7 +93,6 @@
         .list-item .video-count { font-size: 0.55rem; color: var(--text2); margin-left: auto; padding-left: 6px; flex-shrink: 0; }
         .list-item .loading-spinner { width: 14px; height: 14px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .list-item .history-time { font-size: 0.5rem; color: var(--text2); flex-shrink: 0; }
         
         /* Player Area */
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
@@ -133,7 +138,7 @@
         .toast.hidden { display: none; }
         
         /* History Panel */
-        .history-panel { position: fixed; top: 0; right: -400px; width: 380px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
+        .history-panel { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
         .history-panel.open { right: 0; }
         .history-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .history-header h3 { font-size: 0.9rem; font-weight: 600; }
@@ -141,13 +146,15 @@
         .history-header .close-btn:hover { background: var(--bg4); }
         .history-list { flex: 1; overflow-y: auto; padding: 8px; }
         .history-list .empty { text-align: center; padding: 40px 20px; color: var(--text2); font-size: 0.75rem; }
-        .history-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+        .history-date-group { margin-bottom: 12px; }
+        .history-date-group .date-label { font-size: 0.7rem; font-weight: 600; color: var(--text2); padding: 4px 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+        .history-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
         .history-item:hover { background: var(--hover); }
-        .history-item .thumb { width: 48px; height: 27px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .history-item .thumb { width: 42px; height: 24px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .history-item .info { flex: 1; min-width: 0; }
-        .history-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .history-item .sub { font-size: 0.6rem; color: var(--text2); }
-        .history-item .time { font-size: 0.5rem; color: var(--text2); flex-shrink: 0; }
+        .history-item .title { font-size: 0.72rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-item .sub { font-size: 0.55rem; color: var(--text2); }
+        .history-item .count-badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
         
         /* Overlay for history */
         .history-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2999; display: none; }
@@ -160,11 +167,13 @@
             .logo-img { width: 26px; height: 26px; }
             .header-btn { width: 26px; height: 26px; font-size: 0.7rem; }
             .header-btn.mode-btn { font-size: 0.6rem; padding: 0 10px; height: 26px; }
+            .header-clock .time { font-size: 0.65rem; }
+            .header-clock .day { font-size: 0.45rem; }
             .list-item .thumb { width: 36px; height: 20px; }
             .list-item .title { font-size: 0.7rem; }
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .player-info-text { font-size: 0.55rem; min-width: 40px; }
-            .history-panel { width: 320px; right: -320px; }
+            .history-panel { width: 340px; right: -340px; }
             .radio-visualizer .radio-icon { font-size: 3rem; }
             .radio-visualizer .radio-title { font-size: 0.9rem; }
         }
@@ -183,7 +192,9 @@
             .status-badge { font-size: 0.45rem; padding: 1px 6px; }
             .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
             .header-btn.mode-btn { font-size: 0.55rem; padding: 0 8px; height: 24px; }
-            .history-panel { width: 280px; right: -280px; }
+            .header-clock .time { font-size: 0.55rem; }
+            .header-clock .day { font-size: 0.4rem; }
+            .history-panel { width: 290px; right: -290px; }
             .radio-visualizer .radio-icon { font-size: 2.5rem; }
             .radio-visualizer .radio-title { font-size: 0.8rem; }
             .radio-visualizer .equalizer { height: 28px; gap: 2px; }
@@ -203,13 +214,19 @@
             <img class="logo-img" src="https://i.postimg.cc/yYbyhL4w/Rounded-Profile.png" alt="Shafin Tube" onerror="this.style.display='none'">
             <div class="logo-text">Shafin<span>Tube</span></div>
         </div>
-        <div class="header-actions">
+        <div class="header-center">
             <span class="status-badge" id="statusBadge">📡 Loading...</span>
             <button class="header-btn mode-btn" id="modeToggleBtn" title="Toggle TV/Radio Mode">📺 TV</button>
             <button class="header-btn" id="refreshBtn" title="Refresh Metadata">⟳</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
             <a class="header-btn" id="editBtn" href="https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing" target="_blank" title="Edit Google Sheet">✎</a>
             <button class="header-btn" id="themeToggle" title="Toggle Theme">🌙</button>
+        </div>
+        <div class="header-right">
+            <div class="header-clock" id="clockDisplay">
+                <span class="time" id="timeDisplay">--:--:--</span>
+                <span class="day" id="dayDisplay">---</span>
+            </div>
         </div>
     </header>
 
@@ -251,9 +268,9 @@
                 <iframe id="playerIframe" src="" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="display:none;"></iframe>
             </div>
             <div class="controls">
-                <button class="control-btn" id="prevBtn" title="Previous">⏮</button>
-                <button class="control-btn" id="playBtn" title="Play/Pause">⏸</button>
-                <button class="control-btn" id="nextBtn" title="Next">⏭</button>
+                <button class="control-btn" id="prevBtn" title="Previous (←)">⏮</button>
+                <button class="control-btn" id="playBtn" title="Play/Pause (Space)">⏸</button>
+                <button class="control-btn" id="nextBtn" title="Next (→)">⏭</button>
                 <button class="control-btn shuffle-btn" id="shuffleBtn" title="Toggle Shuffle">🎲</button>
                 <span class="player-info-text" id="playerInfo">No video playing</span>
             </div>
@@ -265,7 +282,7 @@
 <div class="history-overlay" id="historyOverlay"></div>
 <div class="history-panel" id="historyPanel">
     <div class="history-header">
-        <h3>📜 Play History (Last 20)</h3>
+        <h3>📜 Play History (Last 7 Days)</h3>
         <button class="close-btn" id="historyCloseBtn">✕</button>
     </div>
     <div class="history-list" id="historyList">
@@ -299,9 +316,9 @@
     let metadataCache = {};
     let isLoadingMetadata = false;
     let currentMode = 'tv';
-    let videoEndTimer = null;
-    let isEnded = false;
     let history = [];
+    let ytPlayer = null;
+    let ytReady = false;
 
     // DOM refs
     const listContainer = document.getElementById('listContainer');
@@ -328,6 +345,25 @@
     const radioTitle = document.getElementById('radioTitle');
     const radioSub = document.getElementById('radioSub');
     const toast = document.getElementById('toast');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const dayDisplay = document.getElementById('dayDisplay');
+
+    // ============================================================
+    // CLOCK
+    // ============================================================
+    function updateClock() {
+        const now = new Date();
+        let hours = now.getHours();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        timeDisplay.textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        dayDisplay.textContent = days[now.getDay()];
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
 
     // ============================================================
     // THEME
@@ -378,7 +414,10 @@
 
     function saveHistory() {
         try {
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 20)));
+            // Keep only last 7 days
+            const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+            const filtered = history.filter(h => h.timestamp > sevenDaysAgo);
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(filtered));
         } catch (e) { console.warn('History save failed:', e); }
     }
 
@@ -388,6 +427,9 @@
             if (!raw) return;
             history = JSON.parse(raw);
             if (!Array.isArray(history)) history = [];
+            // Filter old entries
+            const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+            history = history.filter(h => h.timestamp > sevenDaysAgo);
         } catch (e) { history = []; }
     }
 
@@ -397,50 +439,67 @@
             videoId,
             title: title || `Video`,
             thumbnail: thumbnail || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-            timestamp: Date.now(),
-            timeStr: new Date().toLocaleTimeString()
+            timestamp: Date.now()
         };
-        // Remove duplicate if exists
+        // Remove duplicate if exists (keep latest)
         history = history.filter(h => !(h.videoId === videoId && h.playlistName === playlistName));
         history.unshift(entry);
-        if (history.length > 20) history = history.slice(0, 20);
+        // Keep only last 7 days
+        const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+        history = history.filter(h => h.timestamp > sevenDaysAgo);
         saveHistory();
         renderHistory();
     }
 
     function renderHistory() {
         if (history.length === 0) {
-            historyList.innerHTML = '<div class="empty">No history yet</div>';
+            historyList.innerHTML = '<div class="empty">No history in the last 7 days</div>';
             return;
         }
+        
+        // Group by date
+        const groups = {};
+        history.forEach(h => {
+            const date = new Date(h.timestamp);
+            const dateKey = date.toDateString();
+            if (!groups[dateKey]) groups[dateKey] = [];
+            groups[dateKey].push(h);
+        });
+
         let html = '';
-        history.forEach((h, idx) => {
-            html += `
-                <div class="history-item" data-idx="${idx}">
-                    <img class="thumb" src="${h.thumbnail}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${h.videoId}/mqdefault.jpg'">
-                    <div class="info">
-                        <div class="title">${escapeHtml(h.title)}</div>
-                        <div class="sub">${escapeHtml(h.playlistName)}</div>
+        const sortedDates = Object.keys(groups).sort((a, b) => new Date(b) - new Date(a));
+        sortedDates.forEach(dateKey => {
+            const items = groups[dateKey];
+            const dateObj = new Date(dateKey);
+            const dateLabel = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+            html += `<div class="history-date-group"><div class="date-label">${dateLabel}</div>`;
+            items.forEach((h, idx) => {
+                html += `
+                    <div class="history-item" data-idx="${idx}" data-vid="${h.videoId}" data-playlist="${escapeHtml(h.playlistName)}">
+                        <img class="thumb" src="${h.thumbnail}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${h.videoId}/mqdefault.jpg'">
+                        <div class="info">
+                            <div class="title">${escapeHtml(h.title)}</div>
+                            <div class="sub">${escapeHtml(h.playlistName)}</div>
+                        </div>
+                        <span class="count-badge">${new Date(h.timestamp).toLocaleTimeString()}</span>
                     </div>
-                    <span class="time">${h.timeStr || ''}</span>
-                </div>
-            `;
+                `;
+            });
+            html += `</div>`;
         });
         historyList.innerHTML = html;
+
         historyList.querySelectorAll('.history-item').forEach(el => {
             el.addEventListener('click', () => {
-                const idx = parseInt(el.dataset.idx);
-                const entry = history[idx];
-                if (entry) {
-                    // Find and play the video
-                    const playlist = playlists.find(p => p.name === entry.playlistName);
-                    if (playlist) {
-                        const vidIdx = playlist.videoIds.indexOf(entry.videoId);
-                        if (vidIdx >= 0) {
-                            closeHistory();
-                            currentPlaylist = playlist;
-                            playVideo(playlist, vidIdx);
-                        }
+                const videoId = el.dataset.vid;
+                const playlistName = el.dataset.playlist;
+                const playlist = playlists.find(p => p.name === playlistName);
+                if (playlist) {
+                    const vidIdx = playlist.videoIds.indexOf(videoId);
+                    if (vidIdx >= 0) {
+                        closeHistory();
+                        currentPlaylist = playlist;
+                        playVideo(playlist, vidIdx);
                     }
                 }
             });
@@ -541,6 +600,98 @@
     }
 
     // ============================================================
+    // YOUTUBE PLAYER API
+    // ============================================================
+    function loadYouTubeAPI() {
+        // Load the YouTube IFrame API
+        if (typeof YT === 'undefined') {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(tag);
+        }
+    }
+
+    // This will be called by the YouTube API when ready
+    let onYouTubeIframeAPIReady = function() {
+        // We'll create player when needed
+    };
+
+    function createYouTubePlayer(videoId, autoplay = true) {
+        if (typeof YT === 'undefined' || !YT.Player) {
+            // API not ready, retry after a moment
+            setTimeout(() => createYouTubePlayer(videoId, autoplay), 500);
+            return;
+        }
+        
+        // Destroy existing player if any
+        if (ytPlayer && typeof ytPlayer.destroy === 'function') {
+            ytPlayer.destroy();
+            ytPlayer = null;
+        }
+
+        const container = document.getElementById('videoContainer');
+        const playerDiv = document.createElement('div');
+        playerDiv.id = 'yt-player-container';
+        playerDiv.style.width = '100%';
+        playerDiv.style.height = '100%';
+        playerDiv.style.position = 'relative';
+        
+        // Remove old container
+        const old = document.getElementById('yt-player-container');
+        if (old) old.remove();
+        
+        // Hide iframe, show player container
+        iframe.style.display = 'none';
+        placeholder.style.display = 'none';
+        container.appendChild(playerDiv);
+
+        ytPlayer = new YT.Player('yt-player-container', {
+            height: '100%',
+            width: '100%',
+            videoId: videoId,
+            playerVars: {
+                autoplay: autoplay ? 1 : 0,
+                rel: 0,
+                modestbranding: 1,
+                controls: 1,
+                fs: 1,
+                iv_load_policy: 3
+            },
+            events: {
+                onReady: (event) => {
+                    ytReady = true;
+                    isPlaying = true;
+                    playBtn.textContent = '⏸';
+                    if (autoplay) {
+                        event.target.playVideo();
+                    }
+                },
+                onStateChange: (event) => {
+                    const state = event.data;
+                    if (state === YT.PlayerState.PLAYING) {
+                        isPlaying = true;
+                        playBtn.textContent = '⏸';
+                    } else if (state === YT.PlayerState.PAUSED) {
+                        isPlaying = false;
+                        playBtn.textContent = '▶';
+                    } else if (state === YT.PlayerState.ENDED) {
+                        isPlaying = false;
+                        playBtn.textContent = '▶';
+                        // Auto-play next video
+                        if (currentPlaylist) {
+                            setTimeout(() => nextVideo(), 1000);
+                        }
+                    }
+                },
+                onError: (event) => {
+                    console.warn('YouTube player error:', event.data);
+                    showToast('Error playing video', true);
+                }
+            }
+        });
+    }
+
+    // ============================================================
     // LOAD FROM GOOGLE SHEET
     // ============================================================
     async function loadFromSheet() {
@@ -579,9 +730,7 @@
             statusBadge.textContent = `✅ ${playlists.length} playlists`;
             showToast(`Loaded ${playlists.length} playlists (${playlists.reduce((s,p) => s + p.videoIds.length, 0)} videos)`);
             
-            // Load cache
             loadCache();
-            
             renderPlaylists();
             
             // Restore state
@@ -594,18 +743,19 @@
                 if (pl && state.videoIndex >= 0 && state.videoIndex < pl.videoIds.length) {
                     currentPlaylist = pl;
                     currentVideoIndex = state.videoIndex;
-                    // Load metadata if needed
                     const cacheKey = pl.name;
                     if (!metadataCache[cacheKey] || Object.keys(metadataCache[cacheKey]).length < pl.videoIds.length) {
                         fetchPlaylistMetadata(pl);
                     }
-                    // Auto-play
                     setTimeout(() => {
                         renderVideos(pl);
                         playVideo(pl, state.videoIndex, true);
                     }, 500);
                 }
             }
+            
+            // Load YouTube API
+            loadYouTubeAPI();
         } catch (err) {
             statusBadge.textContent = '❌ Failed';
             showToast('Error: ' + err.message, 4000);
@@ -737,20 +887,20 @@
             modeToggleBtn.textContent = '📺 TV';
             modeToggleBtn.classList.remove('radio-mode', 'active');
             radioVisualizer.classList.remove('active');
-            iframe.style.display = 'block';
-            placeholder.style.display = 'none';
-            if (currentPlaylist && currentVideoIndex >= 0) {
-                const videoId = currentPlaylist.videoIds[currentVideoIndex];
-                if (videoId) {
-                    iframe.src = iframe.src;
-                }
+            if (ytPlayer) {
+                // Show player
+                const container = document.getElementById('yt-player-container');
+                if (container) container.style.display = 'block';
             }
+            placeholder.style.display = 'none';
         } else {
             modeToggleBtn.textContent = '🎵 Radio';
             modeToggleBtn.classList.add('radio-mode', 'active');
             radioVisualizer.classList.add('active');
-            iframe.style.display = 'none';
-            placeholder.style.display = 'none';
+            if (ytPlayer) {
+                const container = document.getElementById('yt-player-container');
+                if (container) container.style.display = 'none';
+            }
             if (currentPlaylist && currentVideoIndex >= 0) {
                 const cacheKey = currentPlaylist.name;
                 const cache = metadataCache[cacheKey] || {};
@@ -782,12 +932,86 @@
         // Add to history
         addToHistory(playlist.name, videoId, title, thumb);
 
-        // Update iframe
-        iframe.style.display = (currentMode === 'tv') ? 'block' : 'none';
+        // Hide placeholder
         placeholder.style.display = 'none';
-        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
-        
-        // Update radio visualizer
+
+        // Use YouTube Player API
+        if (typeof YT !== 'undefined' && YT.Player) {
+            // Remove existing player if any
+            if (ytPlayer && typeof ytPlayer.destroy === 'function') {
+                ytPlayer.destroy();
+                ytPlayer = null;
+            }
+            // Remove old container
+            const old = document.getElementById('yt-player-container');
+            if (old) old.remove();
+            
+            // Show iframe (will be replaced by player)
+            iframe.style.display = 'none';
+            
+            // Create new player
+            const container = document.getElementById('videoContainer');
+            const playerDiv = document.createElement('div');
+            playerDiv.id = 'yt-player-container';
+            playerDiv.style.width = '100%';
+            playerDiv.style.height = '100%';
+            playerDiv.style.position = 'relative';
+            container.appendChild(playerDiv);
+
+            ytPlayer = new YT.Player('yt-player-container', {
+                height: '100%',
+                width: '100%',
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    rel: 0,
+                    modestbranding: 1,
+                    controls: 1,
+                    fs: 1,
+                    iv_load_policy: 3
+                },
+                events: {
+                    onReady: (event) => {
+                        ytReady = true;
+                        isPlaying = true;
+                        playBtn.textContent = '⏸';
+                        event.target.playVideo();
+                        playerInfo.textContent = `${playlist.name} • ${title}`;
+                        if (!restore) showToast(`▶ ${title}`);
+                        saveState(playlist.name, videoIndex);
+                        renderVideos(playlist);
+                    },
+                    onStateChange: (event) => {
+                        const state = event.data;
+                        if (state === YT.PlayerState.PLAYING) {
+                            isPlaying = true;
+                            playBtn.textContent = '⏸';
+                        } else if (state === YT.PlayerState.PAUSED) {
+                            isPlaying = false;
+                            playBtn.textContent = '▶';
+                        } else if (state === YT.PlayerState.ENDED) {
+                            isPlaying = false;
+                            playBtn.textContent = '▶';
+                            // Auto-play next video
+                            if (currentPlaylist) {
+                                setTimeout(() => nextVideo(), 1000);
+                            }
+                        }
+                    },
+                    onError: (event) => {
+                        console.warn('YouTube player error:', event.data);
+                        showToast('Error playing video', true);
+                        // Fallback to iframe
+                        fallbackToIframe(videoId);
+                    }
+                }
+            });
+        } else {
+            // Fallback to iframe if API not loaded
+            fallbackToIframe(videoId);
+        }
+
+        // Update UI
         if (currentMode === 'radio') {
             radioVisualizer.classList.add('active');
             radioTitle.textContent = title;
@@ -795,72 +1019,33 @@
         } else {
             radioVisualizer.classList.remove('active');
         }
-
-        isPlaying = true;
-        playBtn.textContent = '⏸';
-        playerInfo.textContent = `${playlist.name} • ${title}`;
-        if (!restore) showToast(`▶ ${title}`);
         
         saveState(playlist.name, videoIndex);
-        renderVideos(playlist);
-        
-        // Reset ended flag and setup auto-next
-        isEnded = false;
-        if (videoEndTimer) clearTimeout(videoEndTimer);
-        startVideoEndCheck(videoId);
     }
 
-    function startVideoEndCheck(videoId) {
-        if (videoEndTimer) clearTimeout(videoEndTimer);
-        // Check every 3 seconds if video has ended
-        // We check by looking at the iframe's current time via YouTube API
-        // Since we can't directly access, we use a heuristic: 
-        // if the video is playing and we haven't detected ended state yet
-        let lastCheck = Date.now();
-        videoEndTimer = setInterval(() => {
-            if (!currentPlaylist || currentVideoIndex < 0) {
-                clearInterval(videoEndTimer);
-                return;
-            }
-            // If video is playing and it's been more than 30 seconds since start,
-            // and the video ID hasn't changed, we might have ended
-            // Better approach: listen for onStateChange via YouTube API
-            // We'll use a fallback: when video ends, user can click next
-            // But we'll try to detect via iframe src changes
-        }, 3000);
+    function fallbackToIframe(videoId) {
+        iframe.style.display = (currentMode === 'tv') ? 'block' : 'none';
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
+        isPlaying = true;
+        playBtn.textContent = '⏸';
+        const cacheKey = currentPlaylist.name;
+        const cache = metadataCache[cacheKey] || {};
+        const meta = cache[videoId];
+        const title = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
+        playerInfo.textContent = `${currentPlaylist.name} • ${title}`;
+        renderVideos(currentPlaylist);
     }
 
-    // Listen for iframe load events to inject YouTube API
-    iframe.addEventListener('load', function() {
-        // Inject YouTube API into iframe
-        try {
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            if (iframeDoc) {
-                const script = iframeDoc.createElement('script');
-                script.src = 'https://www.youtube.com/iframe_api';
-                iframeDoc.head.appendChild(script);
-            }
-        } catch (e) {
-            // Cross-origin, can't inject
+    function seekVideo(seconds) {
+        if (ytPlayer && typeof ytPlayer.seekTo === 'function') {
+            const currentTime = ytPlayer.getCurrentTime();
+            const newTime = Math.max(0, currentTime + seconds);
+            ytPlayer.seekTo(newTime, true);
+            showToast(`${seconds > 0 ? '⏩' : '⏪'} ${Math.abs(seconds)}s`);
+        } else if (iframe) {
+            // Try to seek via iframe (limited)
+            showToast('Seek not available in iframe mode', 1000);
         }
-    });
-
-    // YouTube API ready callback (global)
-    let ytPlayer = null;
-    window.onYouTubeIframeAPIReady = function() {
-        // This won't work cross-origin, but we keep for future
-    };
-
-    // Alternative: Use MutationObserver on iframe src changes
-    // and check if video ended by reloading
-
-    function checkVideoEnded() {
-        // Simple approach: if video is playing and we've been playing for a while
-        // we rely on user to click next, but we also have a fallback timer
-        if (!currentPlaylist || currentVideoIndex < 0) return;
-        // We'll use a timer-based approach: after 5 minutes of playing, 
-        // assume video might be ended and offer next
-        // But better: we'll handle via user interaction or a "next" button
     }
 
     function nextVideo() {
@@ -879,6 +1064,7 @@
 
     function prevVideo() {
         if (!currentPlaylist) return;
+        // Go to previous video (not seek)
         if (shuffleMode) {
             let idx;
             do {
@@ -892,15 +1078,28 @@
     }
 
     function togglePlayPause() {
-        if (!currentPlaylist) return;
-        if (isPlaying) {
-            iframe.src = iframe.src.replace('autoplay=1', 'autoplay=0');
-            playBtn.textContent = '▶';
-            isPlaying = false;
-        } else {
-            iframe.src = iframe.src.replace('autoplay=0', 'autoplay=1');
-            playBtn.textContent = '⏸';
-            isPlaying = true;
+        if (ytPlayer && typeof ytPlayer.playVideo === 'function' && typeof ytPlayer.pauseVideo === 'function') {
+            if (isPlaying) {
+                ytPlayer.pauseVideo();
+                isPlaying = false;
+                playBtn.textContent = '▶';
+            } else {
+                ytPlayer.playVideo();
+                isPlaying = true;
+                playBtn.textContent = '⏸';
+            }
+        } else if (iframe) {
+            // Fallback: reload iframe with autoplay parameter
+            const src = iframe.src;
+            if (isPlaying) {
+                iframe.src = src.replace('autoplay=1', 'autoplay=0');
+                isPlaying = false;
+                playBtn.textContent = '▶';
+            } else {
+                iframe.src = src.replace('autoplay=0', 'autoplay=1');
+                isPlaying = true;
+                playBtn.textContent = '⏸';
+            }
         }
     }
 
@@ -933,10 +1132,15 @@
             const videoId = currentPlaylist.videoIds[currentVideoIndex];
             if (videoId) {
                 if (currentMode === 'tv') {
-                    iframe.style.display = 'block';
-                    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
+                    if (ytPlayer) {
+                        const container = document.getElementById('yt-player-container');
+                        if (container) container.style.display = 'block';
+                    }
                 } else {
-                    iframe.style.display = 'none';
+                    if (ytPlayer) {
+                        const container = document.getElementById('yt-player-container');
+                        if (container) container.style.display = 'none';
+                    }
                     const cacheKey = currentPlaylist.name;
                     const cache = metadataCache[cacheKey] || {};
                     const meta = cache[videoId];
@@ -989,15 +1193,54 @@
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT') return;
-        if (e.key === 'ArrowRight') { e.preventDefault(); nextVideo(); }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); prevVideo(); }
-        if (e.key === ' ') { e.preventDefault(); togglePlayPause(); }
-        if (e.key === 'Escape' && !isPlaylistView) { goBackToPlaylists(); }
-        if (e.key === 'Escape' && historyPanel.classList.contains('open')) { closeHistory(); }
-        if (e.key === 's' || e.key === 'S') { shuffleBtn.click(); }
-        if (e.key === 'r' || e.key === 'R') { refreshBtn.click(); }
-        if (e.key === 'm' || e.key === 'M') { toggleMode(); }
-        if (e.key === 'h' || e.key === 'H') { openHistory(); }
+        
+        // Arrow Left: Seek backward 10s
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            seekVideo(-10);
+        }
+        // Arrow Right: Seek forward 10s
+        else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            seekVideo(10);
+        }
+        // Space: Play/Pause
+        else if (e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            togglePlayPause();
+        }
+        // Escape: Go back or close history
+        else if (e.key === 'Escape') {
+            if (historyPanel.classList.contains('open')) {
+                closeHistory();
+            } else if (!isPlaylistView) {
+                goBackToPlaylists();
+            }
+        }
+        // S: Toggle Shuffle
+        else if (e.key === 's' || e.key === 'S') {
+            shuffleBtn.click();
+        }
+        // R: Refresh Metadata
+        else if (e.key === 'r' || e.key === 'R') {
+            refreshBtn.click();
+        }
+        // M: Toggle TV/Radio Mode
+        else if (e.key === 'm' || e.key === 'M') {
+            toggleMode();
+        }
+        // H: Open History
+        else if (e.key === 'h' || e.key === 'H') {
+            openHistory();
+        }
+        // N: Next Video
+        else if (e.key === 'n' || e.key === 'N') {
+            nextVideo();
+        }
+        // P: Previous Video
+        else if (e.key === 'p' || e.key === 'P') {
+            prevVideo();
+        }
     });
 
     // ============================================================
@@ -1009,7 +1252,7 @@
 
     console.log('🟢 Shafin Tube IPTV-style loaded with all features.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
-    console.log('📺 "M" to toggle TV/Radio mode | "H" for history');
+    console.log('📺 Controls: ← → seek, Space play/pause, M toggle mode, H history');
 </script>
 </body>
 </html>
