@@ -67,7 +67,7 @@
         .header-btn.refresh-btn { font-size: 0.9rem; }
         .header-btn.refresh-btn:hover { transform: rotate(60deg); }
         
-        /* Clock Tile - fixed width to prevent layout shift */
+        /* Clock Tile - wider, two lines */
         .clock-tile { 
             display: flex; 
             flex-direction: column; 
@@ -76,9 +76,9 @@
             background: var(--bg3); 
             border: 1px solid var(--border); 
             border-radius: 6px; 
-            padding: 2px 6px; 
-            min-width: 65px; 
-            width: 65px;
+            padding: 2px 10px; 
+            min-width: 78px; 
+            width: 78px;
             min-height: 36px;
             flex-shrink: 0;
             line-height: 1.2;
@@ -170,15 +170,55 @@
         .mode-switch .mode-option.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .mode-switch .mode-option.active:hover { background: var(--accent2); }
         
-        /* Sleep Timer Dropdown */
+        /* Sleep Timer - Wide Rounded Rectangle */
         .sleep-timer-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
-        .sleep-timer-btn { width: 32px; height: 32px; border-radius: 50%; font-size: 0.8rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); }
-        .sleep-timer-btn:hover { background: var(--bg4); transform: scale(1.05); }
+        .sleep-timer-btn { 
+            padding: 4px 14px; 
+            height: 32px; 
+            border-radius: 20px; 
+            font-size: 0.6rem; 
+            font-weight: 500;
+            background: var(--bg3); 
+            border: 1px solid var(--border); 
+            color: var(--text2); 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 4px;
+            cursor: pointer; 
+            transition: all var(--transition); 
+            white-space: nowrap;
+            min-width: 60px;
+        }
+        .sleep-timer-btn:hover { background: var(--bg4); color: var(--text); }
         .sleep-timer-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .sleep-timer-btn.active:hover { background: var(--accent2); }
-        .sleep-timer-dropdown { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 6px 0; min-width: 100px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 100; }
+        .sleep-timer-dropdown { 
+            position: absolute; 
+            bottom: 40px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: var(--bg3); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            padding: 6px 0; 
+            min-width: 100px; 
+            display: none; 
+            flex-direction: column; 
+            box-shadow: 0 8px 30px var(--shadow); 
+            z-index: 100; 
+        }
         .sleep-timer-dropdown.open { display: flex; }
-        .sleep-timer-dropdown .sleep-option { padding: 6px 16px; font-size: 0.65rem; color: var(--text2); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: center; }
+        .sleep-timer-dropdown .sleep-option { 
+            padding: 6px 16px; 
+            font-size: 0.65rem; 
+            color: var(--text2); 
+            cursor: pointer; 
+            transition: all var(--transition); 
+            border: none; 
+            background: transparent; 
+            text-align: center; 
+        }
         .sleep-timer-dropdown .sleep-option:hover { background: var(--bg4); color: var(--text); }
         .sleep-timer-dropdown .sleep-option.active { color: var(--accent); }
         .sleep-timer-dropdown .sleep-option.off { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 8px; color: var(--text2); }
@@ -222,14 +262,14 @@
             .logo-text { font-size: 0.85rem; }
             .logo-img { width: 26px; height: 26px; }
             .header-btn { width: 26px; height: 26px; font-size: 0.7rem; }
-            .clock-tile { min-width: 55px; width: 55px; min-height: 32px; padding: 2px 4px; }
+            .clock-tile { min-width: 68px; width: 68px; min-height: 32px; padding: 2px 6px; }
             .clock-tile .time { font-size: 0.6rem; }
             .clock-tile .day { font-size: 0.4rem; }
+            .sleep-timer-btn { font-size: 0.55rem; padding: 3px 10px; height: 28px; min-width: 50px; }
             .list-item .thumb { width: 36px; height: 20px; }
             .list-item .title { font-size: 0.7rem; }
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .mode-switch .mode-option { font-size: 0.55rem; padding: 3px 10px; }
-            .sleep-timer-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .player-info-text { font-size: 0.55rem; min-width: 40px; }
             .player-timer { font-size: 0.5rem; min-width: 50px; }
             .history-panel { width: 340px; right: -340px; }
@@ -247,13 +287,13 @@
             .controls { gap: 5px; padding: 4px 8px; }
             .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
             .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
-            .sleep-timer-btn { width: 26px; height: 26px; font-size: 0.65rem; }
+            .sleep-timer-btn { font-size: 0.5rem; padding: 2px 8px; height: 26px; min-width: 44px; }
             .player-info-text { font-size: 0.5rem; min-width: 30px; }
             .player-timer { font-size: 0.45rem; min-width: 40px; }
             .header { gap: 4px; padding: 4px 8px; min-height: 36px; }
             .status-badge { font-size: 0.45rem; padding: 1px 6px; }
             .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
-            .clock-tile { min-width: 48px; width: 48px; min-height: 28px; padding: 1px 3px; }
+            .clock-tile { min-width: 58px; width: 58px; min-height: 28px; padding: 1px 4px; }
             .clock-tile .time { font-size: 0.5rem; }
             .clock-tile .day { font-size: 0.35rem; }
             .history-panel { width: 290px; right: -290px; }
@@ -265,9 +305,10 @@
         @media (max-width: 380px) {
             .sidebar { width: 200px; }
             .history-panel { width: 260px; right: -260px; }
-            .clock-tile { min-width: 42px; width: 42px; min-height: 24px; }
+            .clock-tile { min-width: 50px; width: 50px; min-height: 24px; }
             .clock-tile .time { font-size: 0.45rem; }
             .clock-tile .day { font-size: 0.3rem; }
+            .sleep-timer-btn { font-size: 0.45rem; padding: 2px 6px; min-width: 36px; height: 24px; }
         }
     </style>
 </head>
@@ -338,14 +379,14 @@
                 <button class="control-btn" id="playBtn" title="Play/Pause (Space)">⏸</button>
                 <button class="control-btn" id="nextBtn" title="Next Video (N)">⏭</button>
                 <button class="control-btn shuffle-btn" id="shuffleBtn" title="Toggle Shuffle (S)">🔀</button>
-                <button class="control-btn stop-btn" id="stopBtn" title="Stop Playback">⏹</button>
+                <button class="control-btn stop-btn" id="stopBtn" title="Stop Playback (X)">⏹</button>
                 <button class="control-btn random-btn" id="randomVideoBtn" title="Random Video & Position (R)">🎲</button>
                 <div class="mode-switch" id="modeSwitch">
                     <button class="mode-option active" data-mode="tv" id="tvModeOption">📺 TV</button>
                     <button class="mode-option" data-mode="radio" id="radioModeOption">🎵 Radio</button>
                 </div>
                 <div class="sleep-timer-wrap">
-                    <button class="sleep-timer-btn" id="sleepTimerBtn" title="Sleep Timer">⏰</button>
+                    <button class="sleep-timer-btn" id="sleepTimerBtn" title="Sleep Timer">⏰ Off</button>
                     <div class="sleep-timer-dropdown" id="sleepTimerDropdown">
                         <button class="sleep-option" data-minutes="5">5 min</button>
                         <button class="sleep-option" data-minutes="10">10 min</button>
@@ -535,7 +576,6 @@
     // SLEEP TIMER
     // ============================================================
     function setSleepTimer(minutes) {
-        // Clear existing timer
         if (sleepTimerTimeout) {
             clearTimeout(sleepTimerTimeout);
             sleepTimerTimeout = null;
@@ -545,25 +585,23 @@
         
         if (minutes > 0) {
             sleepTimerBtn.classList.add('active');
-            sleepTimerBtn.textContent = `⏰${minutes}m`;
+            sleepTimerBtn.textContent = `⏰ ${minutes}m`;
             showToast(`💤 Sleep timer set for ${minutes} minutes`);
             
             sleepTimerTimeout = setTimeout(() => {
                 stopPlayback();
                 showToast(`💤 Sleep timer: Playback stopped after ${minutes} minutes`);
                 sleepTimerBtn.classList.remove('active');
-                sleepTimerBtn.textContent = '⏰';
+                sleepTimerBtn.textContent = '⏰ Off';
                 sleepTimerMinutes = 0;
-                // Close dropdown
                 sleepTimerDropdown.classList.remove('open');
             }, minutes * 60 * 1000);
         } else {
             sleepTimerBtn.classList.remove('active');
-            sleepTimerBtn.textContent = '⏰';
+            sleepTimerBtn.textContent = '⏰ Off';
             showToast('💤 Sleep timer turned off');
         }
         
-        // Update dropdown options
         document.querySelectorAll('.sleep-option').forEach(opt => {
             opt.classList.toggle('active', parseInt(opt.dataset.minutes) === minutes);
         });
@@ -1312,6 +1350,10 @@
                         saveState(playlist.name, videoIndex);
                         renderVideos(playlist);
                         startTimer();
+                        // Reset sleep timer on new video
+                        if (sleepTimerMinutes > 0) {
+                            setSleepTimer(sleepTimerMinutes);
+                        }
                     },
                     onStateChange: (event) => {
                         const state = event.data;
@@ -1398,7 +1440,6 @@
 
     function nextVideo() {
         if (!currentPlaylist) return;
-        // Reset sleep timer on manual navigation
         if (sleepTimerMinutes > 0) {
             setSleepTimer(sleepTimerMinutes);
         }
@@ -1416,7 +1457,6 @@
 
     function prevVideo() {
         if (!currentPlaylist) return;
-        // Reset sleep timer on manual navigation
         if (sleepTimerMinutes > 0) {
             setSleepTimer(sleepTimerMinutes);
         }
@@ -1449,7 +1489,6 @@
                 playBtn.textContent = '⏸';
                 radioVisualizer.classList.remove('paused');
                 startTimer();
-                // Reset sleep timer on resume
                 if (sleepTimerMinutes > 0) {
                     setSleepTimer(sleepTimerMinutes);
                 }
