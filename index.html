@@ -22,6 +22,7 @@
             --hover: #1e1e1e;
             --accent: #ff0000;
             --accent2: #cc0000;
+            --accent-glow: rgba(255,0,0,0.15);
             --radius: 8px;
             --transition: 0.2s ease;
         }
@@ -38,6 +39,7 @@
             --hover: #e0e0e0;
             --accent: #e60000;
             --accent2: #b30000;
+            --accent-glow: rgba(230,0,0,0.1);
         }
         html, body { height: 100%; overflow: hidden; }
         body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: background var(--transition), color var(--transition); }
@@ -55,14 +57,16 @@
         
         .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
         .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
-        .header-btn:hover { background: var(--bg4); }
+        .header-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .header-btn.mode-btn { width: auto; padding: 0 12px; border-radius: 20px; font-size: 0.65rem; gap: 4px; background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.mode-btn.radio-mode { background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.mode-btn.radio-mode:hover { background: var(--bg4); }
         .header-btn.mode-btn.radio-mode.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.history-btn { font-size: 0.9rem; }
         .header-btn.random-btn { font-size: 0.9rem; background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.random-btn:hover { background: var(--accent2); }
+        .header-btn.random-btn:hover { background: var(--accent2); transform: scale(1.05); }
+        .header-btn.refresh-btn { font-size: 0.9rem; }
+        .header-btn.refresh-btn:hover { transform: rotate(60deg); }
         
         .header-clock { display: flex; flex-direction: column; align-items: flex-end; margin-left: 4px; flex-shrink: 0; }
         .header-clock .time { font-size: 0.75rem; font-weight: 600; color: var(--text); letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
@@ -75,7 +79,7 @@
         .sidebar { width: 380px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
         .sidebar-header { padding: 6px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
         .sidebar-search { flex: 1; min-width: 100px; padding: 5px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.7rem; outline: none; }
-        .sidebar-search:focus { border-color: var(--accent); }
+        .sidebar-search:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
         .sidebar-search::placeholder { color: var(--text2); }
         .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 3px 10px; border-radius: 20px; cursor: pointer; font-size: 0.65rem; display: none; align-items: center; gap: 4px; flex-shrink: 0; }
         .back-btn:hover { background: var(--bg4); }
@@ -85,15 +89,16 @@
         .list-container::-webkit-scrollbar { width: 4px; }
         .list-container::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 4px; }
         
-        .list-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin: 1px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; }
+        .list-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin: 1px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; position: relative; }
         .list-item:hover { background: var(--hover); }
         .list-item.active { background: var(--bg3); border-left-color: var(--accent); }
         .list-item .thumb { width: 42px; height: 24px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .list-item .info { flex: 1; min-width: 0; }
-        .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+        .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
+        .list-item .title[title] { cursor: help; }
         .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
-        .list-item .badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 6px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
-        .list-item .video-count { font-size: 0.55rem; color: var(--text2); margin-left: auto; padding-left: 6px; flex-shrink: 0; }
+        .list-item .badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
+        .list-item .video-count { font-size: 0.55rem; color: var(--text2); padding-left: 6px; flex-shrink: 0; margin-left: auto; }
         .list-item .loading-spinner { width: 14px; height: 14px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
@@ -127,16 +132,22 @@
         .radio-visualizer .equalizer-bar:nth-child(8) { animation-delay: 0.3s; height: 12px; }
         @keyframes equalize { 0%, 100% { height: 6px; } 50% { height: 26px; } }
         
+        /* Paused state for visualizer */
+        .radio-visualizer.paused .equalizer-bar { animation-play-state: paused !important; }
+        .radio-visualizer.paused .radio-icon { animation-play-state: paused !important; }
+        
         .controls { background: var(--bg2); padding: 6px 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
         .control-btn { width: 32px; height: 32px; border-radius: 50%; font-size: 0.8rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
-        .control-btn:hover { background: var(--bg4); }
+        .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .control-btn:active { transform: scale(0.94); }
         .control-btn.shuffle-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
-        .control-btn.shuffle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .control-btn.shuffle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .control-btn.shuffle-btn.active:hover { background: var(--accent2); }
-        .control-btn.random-btn { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .control-btn.random-btn:hover { background: var(--accent2); }
+        .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .control-btn.random-btn:hover { background: var(--bg4); }
+        .control-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .player-info-text { font-size: 0.65rem; color: var(--text2); flex: 1; min-width: 60px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-timer { font-size: 0.6rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right; flex-shrink: 0; }
         
         /* Toast */
         .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 5px 14px; border-radius: 25px; font-size: 0.65rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
@@ -161,6 +172,7 @@
         .history-item .title { font-size: 0.72rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .history-item .sub { font-size: 0.55rem; color: var(--text2); }
         .history-item .count-badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
+        .history-item .position-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
         
         /* Overlay for history */
         .history-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2999; display: none; }
@@ -179,6 +191,7 @@
             .list-item .title { font-size: 0.7rem; }
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .player-info-text { font-size: 0.55rem; min-width: 40px; }
+            .player-timer { font-size: 0.5rem; min-width: 50px; }
             .history-panel { width: 340px; right: -340px; }
             .radio-visualizer .radio-icon { font-size: 3rem; }
             .radio-visualizer .radio-title { font-size: 0.9rem; }
@@ -194,6 +207,7 @@
             .controls { gap: 5px; padding: 4px 8px; }
             .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
             .player-info-text { font-size: 0.5rem; min-width: 30px; }
+            .player-timer { font-size: 0.45rem; min-width: 40px; }
             .header { gap: 4px; padding: 4px 8px; min-height: 36px; }
             .status-badge { font-size: 0.45rem; padding: 1px 6px; }
             .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
@@ -225,7 +239,7 @@
         </div>
         <div class="header-right">
             <button class="header-btn mode-btn" id="modeToggleBtn" title="Toggle TV/Radio Mode">📺 TV</button>
-            <button class="header-btn" id="refreshBtn" title="Refresh Metadata">⟳</button>
+            <button class="header-btn refresh-btn" id="refreshBtn" title="Refresh Metadata">⟳</button>
             <button class="header-btn random-btn" id="randomBtn" title="Random Video">🎲</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
             <a class="header-btn" id="editBtn" href="https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing" target="_blank" title="Edit Google Sheet">✎</a>
@@ -281,6 +295,7 @@
                 <button class="control-btn shuffle-btn" id="shuffleBtn" title="Toggle Shuffle (S)">🔀</button>
                 <button class="control-btn random-btn" id="randomVideoBtn" title="Random Video & Position (R)">🎲</button>
                 <span class="player-info-text" id="playerInfo">No video playing</span>
+                <span class="player-timer" id="playerTimer">--:-- / --:--</span>
             </div>
         </div>
     </div>
@@ -327,6 +342,8 @@
     let history = [];
     let ytPlayer = null;
     let ytReady = false;
+    let timerInterval = null;
+    let currentPosition = 0;
 
     // DOM refs
     const listContainer = document.getElementById('listContainer');
@@ -345,6 +362,7 @@
     const iframe = document.getElementById('playerIframe');
     const placeholder = document.getElementById('placeholder');
     const playerInfo = document.getElementById('playerInfo');
+    const playerTimer = document.getElementById('playerTimer');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const playBtn = document.getElementById('playBtn');
@@ -400,6 +418,48 @@
     }
 
     // ============================================================
+    // TIMER
+    // ============================================================
+    function formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return '--:--';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function updateTimer() {
+        if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && typeof ytPlayer.getDuration === 'function') {
+            const current = ytPlayer.getCurrentTime();
+            const duration = ytPlayer.getDuration();
+            if (duration && duration > 0) {
+                playerTimer.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+                currentPosition = current;
+                // Update history position if playing
+                if (isPlaying && currentPlaylist && currentVideoIndex >= 0) {
+                    updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], currentPosition);
+                }
+            } else {
+                playerTimer.textContent = '--:-- / --:--';
+            }
+        } else {
+            playerTimer.textContent = '--:-- / --:--';
+        }
+    }
+
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(updateTimer, 1000);
+        updateTimer();
+    }
+
+    function stopTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+    }
+
+    // ============================================================
     // CACHE & HISTORY
     // ============================================================
     function saveCache() {
@@ -441,13 +501,22 @@
         } catch (e) { history = []; }
     }
 
-    function addToHistory(playlistName, videoId, title, thumbnail) {
+    function updateHistoryPosition(playlistName, videoId, position) {
+        const entry = history.find(h => h.videoId === videoId && h.playlistName === playlistName);
+        if (entry) {
+            entry.position = Math.round(position);
+            saveHistory();
+        }
+    }
+
+    function addToHistory(playlistName, videoId, title, thumbnail, position = 0) {
         const entry = {
             playlistName,
             videoId,
             title: title || `Video`,
             thumbnail: thumbnail || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            position: Math.round(position)
         };
         history = history.filter(h => !(h.videoId === videoId && h.playlistName === playlistName));
         history.unshift(entry);
@@ -479,13 +548,15 @@
             const dateLabel = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
             html += `<div class="history-date-group"><div class="date-label">${dateLabel}</div>`;
             items.forEach((h, idx) => {
+                const positionStr = h.position && h.position > 0 ? `${formatTime(h.position)}` : '';
                 html += `
-                    <div class="history-item" data-idx="${idx}" data-vid="${h.videoId}" data-playlist="${escapeHtml(h.playlistName)}">
+                    <div class="history-item" data-idx="${idx}" data-vid="${h.videoId}" data-playlist="${escapeHtml(h.playlistName)}" data-position="${h.position || 0}">
                         <img class="thumb" src="${h.thumbnail}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${h.videoId}/mqdefault.jpg'">
                         <div class="info">
                             <div class="title">${escapeHtml(h.title)}</div>
                             <div class="sub">${escapeHtml(h.playlistName)}</div>
                         </div>
+                        ${positionStr ? `<span class="position-badge">⏱ ${positionStr}</span>` : ''}
                         <span class="count-badge">${new Date(h.timestamp).toLocaleTimeString()}</span>
                     </div>
                 `;
@@ -498,13 +569,14 @@
             el.addEventListener('click', () => {
                 const videoId = el.dataset.vid;
                 const playlistName = el.dataset.playlist;
+                const position = parseInt(el.dataset.position) || 0;
                 const playlist = playlists.find(p => p.name === playlistName);
                 if (playlist) {
                     const vidIdx = playlist.videoIds.indexOf(videoId);
                     if (vidIdx >= 0) {
                         closeHistory();
                         currentPlaylist = playlist;
-                        playVideo(playlist, vidIdx);
+                        playVideo(playlist, vidIdx, false, position);
                     }
                 }
             });
@@ -615,9 +687,9 @@
         }
     }
 
-    function createYouTubePlayer(videoId, autoplay = true) {
+    function createYouTubePlayer(videoId, autoplay = true, startPosition = 0) {
         if (typeof YT === 'undefined' || !YT.Player) {
-            setTimeout(() => createYouTubePlayer(videoId, autoplay), 500);
+            setTimeout(() => createYouTubePlayer(videoId, autoplay, startPosition), 500);
             return;
         }
         
@@ -640,18 +712,21 @@
         placeholder.style.display = 'none';
         container.appendChild(playerDiv);
 
+        const playerVars = {
+            rel: 0,
+            modestbranding: 1,
+            controls: 1,
+            fs: 1,
+            iv_load_policy: 3
+        };
+        if (autoplay) playerVars.autoplay = 1;
+        if (startPosition > 0) playerVars.start = Math.floor(startPosition);
+
         ytPlayer = new YT.Player('yt-player-container', {
             height: '100%',
             width: '100%',
             videoId: videoId,
-            playerVars: {
-                autoplay: autoplay ? 1 : 0,
-                rel: 0,
-                modestbranding: 1,
-                controls: 1,
-                fs: 1,
-                iv_load_policy: 3
-            },
+            playerVars: playerVars,
             events: {
                 onReady: (event) => {
                     ytReady = true;
@@ -660,18 +735,28 @@
                     if (autoplay) {
                         event.target.playVideo();
                     }
+                    startTimer();
                 },
                 onStateChange: (event) => {
                     const state = event.data;
                     if (state === YT.PlayerState.PLAYING) {
                         isPlaying = true;
                         playBtn.textContent = '⏸';
+                        radioVisualizer.classList.remove('paused');
+                        startTimer();
                     } else if (state === YT.PlayerState.PAUSED) {
                         isPlaying = false;
                         playBtn.textContent = '▶';
+                        radioVisualizer.classList.add('paused');
+                        // Save position on pause
+                        if (currentPlaylist && currentVideoIndex >= 0) {
+                            const pos = ytPlayer.getCurrentTime();
+                            updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], pos);
+                        }
                     } else if (state === YT.PlayerState.ENDED) {
                         isPlaying = false;
                         playBtn.textContent = '▶';
+                        radioVisualizer.classList.add('paused');
                         if (currentPlaylist) {
                             setTimeout(() => nextVideo(), 1000);
                         }
@@ -680,6 +765,7 @@
                 onError: (event) => {
                     console.warn('YouTube player error:', event.data);
                     showToast('Error playing video', true);
+                    fallbackToIframe(videoId);
                 }
             }
         });
@@ -742,7 +828,11 @@
                     }
                     setTimeout(() => {
                         renderVideos(pl);
-                        playVideo(pl, state.videoIndex, true);
+                        // Check history for saved position
+                        const videoId = pl.videoIds[state.videoIndex];
+                        const historyEntry = history.find(h => h.videoId === videoId && h.playlistName === pl.name);
+                        const startPos = historyEntry ? historyEntry.position : 0;
+                        playVideo(pl, state.videoIndex, true, startPos);
                     }, 500);
                 }
             }
@@ -847,7 +937,7 @@
                 <div class="list-item ${isActive ? 'active' : ''}" data-video-index="${v.index}" data-type="video">
                     <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
                     <div class="info">
-                        <div class="title">${escapeHtml(title)}</div>
+                        <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
                         <div class="sub">${escapeHtml(author)} • ${v.index + 1}/${playlist.videoIds.length}</div>
                     </div>
                     <span class="badge">${v.index + 1}</span>
@@ -888,6 +978,11 @@
             modeToggleBtn.textContent = '🎵 Radio';
             modeToggleBtn.classList.add('radio-mode', 'active');
             radioVisualizer.classList.add('active');
+            if (isPlaying) {
+                radioVisualizer.classList.remove('paused');
+            } else {
+                radioVisualizer.classList.add('paused');
+            }
             if (ytPlayer) {
                 const container = document.getElementById('yt-player-container');
                 if (container) container.style.display = 'none';
@@ -907,7 +1002,7 @@
         saveState(currentPlaylist?.name, currentVideoIndex);
     }
 
-    function playVideo(playlist, videoIndex, restore = false) {
+    function playVideo(playlist, videoIndex, restore = false, startPosition = 0) {
         if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) return;
         currentPlaylist = playlist;
         currentVideoIndex = videoIndex;
@@ -920,7 +1015,15 @@
         const title = meta ? meta.title : `Video ${videoIndex + 1}`;
         const thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
 
-        addToHistory(playlist.name, videoId, title, thumb);
+        // Check history for saved position if not explicitly provided
+        if (!startPosition) {
+            const historyEntry = history.find(h => h.videoId === videoId && h.playlistName === playlist.name);
+            if (historyEntry && historyEntry.position > 0) {
+                startPosition = historyEntry.position;
+            }
+        }
+
+        addToHistory(playlist.name, videoId, title, thumb, startPosition);
         placeholder.style.display = 'none';
 
         if (typeof YT !== 'undefined' && YT.Player) {
@@ -941,40 +1044,53 @@
             playerDiv.style.position = 'relative';
             container.appendChild(playerDiv);
 
+            const playerVars = {
+                rel: 0,
+                modestbranding: 1,
+                controls: 1,
+                fs: 1,
+                iv_load_policy: 3,
+                autoplay: 1
+            };
+            if (startPosition > 0) playerVars.start = Math.floor(startPosition);
+
             ytPlayer = new YT.Player('yt-player-container', {
                 height: '100%',
                 width: '100%',
                 videoId: videoId,
-                playerVars: {
-                    autoplay: 1,
-                    rel: 0,
-                    modestbranding: 1,
-                    controls: 1,
-                    fs: 1,
-                    iv_load_policy: 3
-                },
+                playerVars: playerVars,
                 events: {
                     onReady: (event) => {
                         ytReady = true;
                         isPlaying = true;
                         playBtn.textContent = '⏸';
+                        radioVisualizer.classList.remove('paused');
                         event.target.playVideo();
                         playerInfo.textContent = `${playlist.name} • ${title}`;
                         if (!restore) showToast(`▶ ${title}`);
                         saveState(playlist.name, videoIndex);
                         renderVideos(playlist);
+                        startTimer();
                     },
                     onStateChange: (event) => {
                         const state = event.data;
                         if (state === YT.PlayerState.PLAYING) {
                             isPlaying = true;
                             playBtn.textContent = '⏸';
+                            radioVisualizer.classList.remove('paused');
+                            startTimer();
                         } else if (state === YT.PlayerState.PAUSED) {
                             isPlaying = false;
                             playBtn.textContent = '▶';
+                            radioVisualizer.classList.add('paused');
+                            if (currentPlaylist && currentVideoIndex >= 0) {
+                                const pos = ytPlayer.getCurrentTime();
+                                updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], pos);
+                            }
                         } else if (state === YT.PlayerState.ENDED) {
                             isPlaying = false;
                             playBtn.textContent = '▶';
+                            radioVisualizer.classList.add('paused');
                             if (currentPlaylist) {
                                 setTimeout(() => nextVideo(), 1000);
                             }
@@ -993,6 +1109,11 @@
 
         if (currentMode === 'radio') {
             radioVisualizer.classList.add('active');
+            if (isPlaying) {
+                radioVisualizer.classList.remove('paused');
+            } else {
+                radioVisualizer.classList.add('paused');
+            }
             radioTitle.textContent = title;
             radioSub.textContent = `${playlist.name} • Radio Mode`;
         } else {
@@ -1013,6 +1134,7 @@
         const title = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
         playerInfo.textContent = `${currentPlaylist.name} • ${title}`;
         renderVideos(currentPlaylist);
+        startTimer();
     }
 
     function seekVideo(seconds) {
@@ -1022,6 +1144,10 @@
             const newTime = Math.max(0, Math.min(duration || 0, currentTime + seconds));
             ytPlayer.seekTo(newTime, true);
             showToast(`${seconds > 0 ? '⏩' : '⏪'} ${Math.abs(seconds)}s`);
+            // Update position in history
+            if (currentPlaylist && currentVideoIndex >= 0) {
+                updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], newTime);
+            }
         } else if (iframe) {
             showToast('Seek not available in iframe mode', 1000);
         }
@@ -1061,10 +1187,18 @@
                 ytPlayer.pauseVideo();
                 isPlaying = false;
                 playBtn.textContent = '▶';
+                radioVisualizer.classList.add('paused');
+                // Save position on pause
+                if (currentPlaylist && currentVideoIndex >= 0) {
+                    const pos = ytPlayer.getCurrentTime();
+                    updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], pos);
+                }
             } else {
                 ytPlayer.playVideo();
                 isPlaying = true;
                 playBtn.textContent = '⏸';
+                radioVisualizer.classList.remove('paused');
+                startTimer();
             }
         } else if (iframe) {
             const src = iframe.src;
@@ -1072,10 +1206,13 @@
                 iframe.src = src.replace('autoplay=1', 'autoplay=0');
                 isPlaying = false;
                 playBtn.textContent = '▶';
+                radioVisualizer.classList.add('paused');
             } else {
                 iframe.src = src.replace('autoplay=0', 'autoplay=1');
                 isPlaying = true;
                 playBtn.textContent = '⏸';
+                radioVisualizer.classList.remove('paused');
+                startTimer();
             }
         }
     }
@@ -1123,6 +1260,11 @@
                     const meta = cache[videoId];
                     radioTitle.textContent = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
                     radioSub.textContent = `${currentPlaylist.name} • Radio Mode`;
+                    if (isPlaying) {
+                        radioVisualizer.classList.remove('paused');
+                    } else {
+                        radioVisualizer.classList.add('paused');
+                    }
                 }
             }
         }
@@ -1135,29 +1277,30 @@
             return;
         }
         
-        // Pick a random video
         const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
         const videoId = currentPlaylist.videoIds[randomIndex];
         
-        // Play the video
         playVideo(currentPlaylist, randomIndex);
         
-        // After video loads, seek to a random position (10% to 90% of duration)
         setTimeout(() => {
             if (ytPlayer && typeof ytPlayer.getDuration === 'function') {
                 const duration = ytPlayer.getDuration();
                 if (duration && duration > 10) {
-                    const randomPos = 0.1 + Math.random() * 0.8; // 10% to 90%
+                    const randomPos = 0.1 + Math.random() * 0.8;
                     const seekTime = duration * randomPos;
                     ytPlayer.seekTo(seekTime, true);
                     showToast(`🎲 Random video at ${Math.round(randomPos * 100)}% position`);
+                    // Save position in history
+                    if (currentPlaylist && currentVideoIndex >= 0) {
+                        updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], seekTime);
+                    }
                 } else {
                     showToast('🎲 Random video selected');
                 }
             } else {
                 showToast('🎲 Random video selected');
             }
-        }, 1000);
+        }, 1500);
     }
 
     function toggleShuffle() {
