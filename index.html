@@ -55,25 +55,19 @@
         .header-center { display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; flex-wrap: wrap; }
         .status-badge { font-size: 0.55rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; }
         
-        .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+        .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: nowrap; }
         .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
         .header-btn:hover { background: var(--bg4); transform: scale(1.05); }
-        .header-btn.mode-btn { width: auto; padding: 0 12px; border-radius: 20px; font-size: 0.65rem; gap: 4px; background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.mode-btn.radio-mode { background: var(--bg3); border-color: var(--border); color: var(--text); }
-        .header-btn.mode-btn.radio-mode:hover { background: var(--bg4); }
-        .header-btn.mode-btn.radio-mode.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.history-btn { font-size: 0.9rem; }
         .header-btn.random-btn { font-size: 0.9rem; background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.random-btn:hover { background: var(--accent2); transform: scale(1.05); }
-        .header-btn.refresh-btn { font-size: 0.9rem; }
-        .header-btn.refresh-btn:hover { transform: rotate(60deg); }
+        .header-btn.history-btn { font-size: 0.9rem; }
         .header-btn.translate-btn { font-size: 0.8rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.translate-btn.active:hover { background: var(--accent2); }
-        .header-btn.count-btn { width: auto; padding: 0 10px; border-radius: 20px; font-size: 0.6rem; background: var(--bg3); border-color: var(--border); color: var(--text2); cursor: default; }
-        .header-btn.count-btn:hover { background: var(--bg3); transform: none; }
+        .header-btn.refresh-btn { font-size: 0.9rem; }
+        .header-btn.refresh-btn:hover { transform: rotate(60deg); }
         
-        /* Clock Tile */
+        /* Clock Tile - fixed width to prevent layout shift */
         .clock-tile { 
             display: flex; 
             flex-direction: column; 
@@ -82,11 +76,13 @@
             background: var(--bg3); 
             border: 1px solid var(--border); 
             border-radius: 6px; 
-            padding: 2px 8px; 
-            min-width: 56px; 
+            padding: 2px 6px; 
+            min-width: 65px; 
+            width: 65px;
             min-height: 36px;
             flex-shrink: 0;
             line-height: 1.2;
+            text-align: center;
         }
         .clock-tile .time { font-size: 0.7rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; }
         .clock-tile .day { font-size: 0.45rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
@@ -164,7 +160,8 @@
         .control-btn.shuffle-btn.active:hover { background: var(--accent2); }
         .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
         .control-btn.random-btn:hover { background: var(--bg4); }
-        .control-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+        .control-btn.stop-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.7rem; }
+        .control-btn.stop-btn:hover { background: var(--bg4); }
         
         /* TV/Radio Toggle Switch */
         .mode-switch { display: flex; align-items: center; gap: 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 2px; flex-shrink: 0; }
@@ -172,6 +169,20 @@
         .mode-switch .mode-option:hover { color: var(--text); }
         .mode-switch .mode-option.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .mode-switch .mode-option.active:hover { background: var(--accent2); }
+        
+        /* Sleep Timer Dropdown */
+        .sleep-timer-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
+        .sleep-timer-btn { width: 32px; height: 32px; border-radius: 50%; font-size: 0.8rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); }
+        .sleep-timer-btn:hover { background: var(--bg4); transform: scale(1.05); }
+        .sleep-timer-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+        .sleep-timer-btn.active:hover { background: var(--accent2); }
+        .sleep-timer-dropdown { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 6px 0; min-width: 100px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 100; }
+        .sleep-timer-dropdown.open { display: flex; }
+        .sleep-timer-dropdown .sleep-option { padding: 6px 16px; font-size: 0.65rem; color: var(--text2); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: center; }
+        .sleep-timer-dropdown .sleep-option:hover { background: var(--bg4); color: var(--text); }
+        .sleep-timer-dropdown .sleep-option.active { color: var(--accent); }
+        .sleep-timer-dropdown .sleep-option.off { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 8px; color: var(--text2); }
+        .sleep-timer-dropdown .sleep-option.off:hover { color: var(--text); }
         
         .player-info-text { font-size: 0.65rem; color: var(--text2); flex: 1; min-width: 60px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .player-timer { font-size: 0.6rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right; flex-shrink: 0; }
@@ -211,14 +222,14 @@
             .logo-text { font-size: 0.85rem; }
             .logo-img { width: 26px; height: 26px; }
             .header-btn { width: 26px; height: 26px; font-size: 0.7rem; }
-            .header-btn.count-btn { font-size: 0.55rem; padding: 0 8px; height: 26px; }
-            .clock-tile { min-width: 48px; min-height: 32px; padding: 2px 6px; }
+            .clock-tile { min-width: 55px; width: 55px; min-height: 32px; padding: 2px 4px; }
             .clock-tile .time { font-size: 0.6rem; }
             .clock-tile .day { font-size: 0.4rem; }
             .list-item .thumb { width: 36px; height: 20px; }
             .list-item .title { font-size: 0.7rem; }
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .mode-switch .mode-option { font-size: 0.55rem; padding: 3px 10px; }
+            .sleep-timer-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .player-info-text { font-size: 0.55rem; min-width: 40px; }
             .player-timer { font-size: 0.5rem; min-width: 50px; }
             .history-panel { width: 340px; right: -340px; }
@@ -236,13 +247,13 @@
             .controls { gap: 5px; padding: 4px 8px; }
             .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
             .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
+            .sleep-timer-btn { width: 26px; height: 26px; font-size: 0.65rem; }
             .player-info-text { font-size: 0.5rem; min-width: 30px; }
             .player-timer { font-size: 0.45rem; min-width: 40px; }
             .header { gap: 4px; padding: 4px 8px; min-height: 36px; }
             .status-badge { font-size: 0.45rem; padding: 1px 6px; }
             .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
-            .header-btn.count-btn { font-size: 0.5rem; padding: 0 6px; height: 24px; }
-            .clock-tile { min-width: 40px; min-height: 28px; padding: 1px 4px; }
+            .clock-tile { min-width: 48px; width: 48px; min-height: 28px; padding: 1px 3px; }
             .clock-tile .time { font-size: 0.5rem; }
             .clock-tile .day { font-size: 0.35rem; }
             .history-panel { width: 290px; right: -290px; }
@@ -254,6 +265,9 @@
         @media (max-width: 380px) {
             .sidebar { width: 200px; }
             .history-panel { width: 260px; right: -260px; }
+            .clock-tile { min-width: 42px; width: 42px; min-height: 24px; }
+            .clock-tile .time { font-size: 0.45rem; }
+            .clock-tile .day { font-size: 0.3rem; }
         }
     </style>
 </head>
@@ -269,11 +283,10 @@
             <span class="status-badge" id="statusBadge">📡 Loading...</span>
         </div>
         <div class="header-right">
-            <button class="header-btn count-btn" id="countBtn" title="Total Playlists & Videos">📋 0 / 0</button>
-            <button class="header-btn refresh-btn" id="refreshBtn" title="Refresh Metadata">⟳</button>
             <button class="header-btn random-btn" id="randomBtn" title="Random Video">🎲</button>
-            <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles to English">🌐</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
+            <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles to English">🌐</button>
+            <button class="header-btn refresh-btn" id="refreshBtn" title="Refresh Metadata">⟳</button>
             <a class="header-btn" id="editBtn" href="https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing" target="_blank" title="Edit Google Sheet">✎</a>
             <button class="header-btn" id="themeToggle" title="Toggle Theme">🌙</button>
             <div class="clock-tile" id="clockDisplay">
@@ -321,14 +334,28 @@
                 <iframe id="playerIframe" src="" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="display:none;"></iframe>
             </div>
             <div class="controls">
-                <button class="control-btn" id="prevBtn" title="Previous Video (P)">⏮</button>
+                <button class="control-btn" id="prevBtn" title="Previous Video (B)">⏮</button>
                 <button class="control-btn" id="playBtn" title="Play/Pause (Space)">⏸</button>
                 <button class="control-btn" id="nextBtn" title="Next Video (N)">⏭</button>
                 <button class="control-btn shuffle-btn" id="shuffleBtn" title="Toggle Shuffle (S)">🔀</button>
+                <button class="control-btn stop-btn" id="stopBtn" title="Stop Playback">⏹</button>
                 <button class="control-btn random-btn" id="randomVideoBtn" title="Random Video & Position (R)">🎲</button>
                 <div class="mode-switch" id="modeSwitch">
                     <button class="mode-option active" data-mode="tv" id="tvModeOption">📺 TV</button>
                     <button class="mode-option" data-mode="radio" id="radioModeOption">🎵 Radio</button>
+                </div>
+                <div class="sleep-timer-wrap">
+                    <button class="sleep-timer-btn" id="sleepTimerBtn" title="Sleep Timer">⏰</button>
+                    <div class="sleep-timer-dropdown" id="sleepTimerDropdown">
+                        <button class="sleep-option" data-minutes="5">5 min</button>
+                        <button class="sleep-option" data-minutes="10">10 min</button>
+                        <button class="sleep-option" data-minutes="15">15 min</button>
+                        <button class="sleep-option" data-minutes="20">20 min</button>
+                        <button class="sleep-option" data-minutes="30">30 min</button>
+                        <button class="sleep-option" data-minutes="45">45 min</button>
+                        <button class="sleep-option" data-minutes="60">1 hour</button>
+                        <button class="sleep-option off" data-minutes="0">Off</button>
+                    </div>
                 </div>
                 <span class="player-info-text" id="playerInfo">No video playing</span>
                 <span class="player-timer" id="playerTimer">--:-- / --:--</span>
@@ -383,6 +410,8 @@
     let ytReady = false;
     let timerInterval = null;
     let currentPosition = 0;
+    let sleepTimerTimeout = null;
+    let sleepTimerMinutes = 0;
 
     // DOM refs
     const listContainer = document.getElementById('listContainer');
@@ -405,12 +434,14 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const playBtn = document.getElementById('playBtn');
+    const stopBtn = document.getElementById('stopBtn');
     const shuffleBtn = document.getElementById('shuffleBtn');
     const randomBtn = document.getElementById('randomBtn');
     const randomVideoBtn = document.getElementById('randomVideoBtn');
     const tvModeOption = document.getElementById('tvModeOption');
     const radioModeOption = document.getElementById('radioModeOption');
-    const countBtn = document.getElementById('countBtn');
+    const sleepTimerBtn = document.getElementById('sleepTimerBtn');
+    const sleepTimerDropdown = document.getElementById('sleepTimerDropdown');
     const radioVisualizer = document.getElementById('radioVisualizer');
     const radioTitle = document.getElementById('radioTitle');
     const radioSub = document.getElementById('radioSub');
@@ -497,6 +528,64 @@
         if (timerInterval) {
             clearInterval(timerInterval);
             timerInterval = null;
+        }
+    }
+
+    // ============================================================
+    // SLEEP TIMER
+    // ============================================================
+    function setSleepTimer(minutes) {
+        // Clear existing timer
+        if (sleepTimerTimeout) {
+            clearTimeout(sleepTimerTimeout);
+            sleepTimerTimeout = null;
+        }
+        
+        sleepTimerMinutes = minutes;
+        
+        if (minutes > 0) {
+            sleepTimerBtn.classList.add('active');
+            sleepTimerBtn.textContent = `⏰${minutes}m`;
+            showToast(`💤 Sleep timer set for ${minutes} minutes`);
+            
+            sleepTimerTimeout = setTimeout(() => {
+                stopPlayback();
+                showToast(`💤 Sleep timer: Playback stopped after ${minutes} minutes`);
+                sleepTimerBtn.classList.remove('active');
+                sleepTimerBtn.textContent = '⏰';
+                sleepTimerMinutes = 0;
+                // Close dropdown
+                sleepTimerDropdown.classList.remove('open');
+            }, minutes * 60 * 1000);
+        } else {
+            sleepTimerBtn.classList.remove('active');
+            sleepTimerBtn.textContent = '⏰';
+            showToast('💤 Sleep timer turned off');
+        }
+        
+        // Update dropdown options
+        document.querySelectorAll('.sleep-option').forEach(opt => {
+            opt.classList.toggle('active', parseInt(opt.dataset.minutes) === minutes);
+        });
+    }
+
+    function stopPlayback() {
+        if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+            ytPlayer.pauseVideo();
+            isPlaying = false;
+            playBtn.textContent = '▶';
+            radioVisualizer.classList.add('paused');
+            if (currentPlaylist && currentVideoIndex >= 0) {
+                const pos = ytPlayer.getCurrentTime();
+                updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], pos);
+            }
+            showToast('⏹ Playback stopped');
+        } else if (iframe) {
+            iframe.src = iframe.src.replace('autoplay=1', 'autoplay=0');
+            isPlaying = false;
+            playBtn.textContent = '▶';
+            radioVisualizer.classList.add('paused');
+            showToast('⏹ Playback stopped');
         }
     }
 
@@ -656,21 +745,18 @@
     async function translateText(text, targetLang = 'en') {
         if (!text || text.length < 2) return text;
         
-        // Check cache
         const cacheKey = text.substring(0, 100);
         if (translateCache[cacheKey]) {
             return translateCache[cacheKey];
         }
         
         try {
-            // Use Google Translate API via free proxy
             const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error('Translation failed');
             const data = await response.json();
             if (data && data[0] && data[0][0] && data[0][0][0]) {
                 const translated = data[0][0][0];
-                // Cache the result
                 translateCache[cacheKey] = translated;
                 saveTranslateCache();
                 return translated;
@@ -692,14 +778,11 @@
         for (const videoId of playlist.videoIds) {
             if (cache[videoId] && cache[videoId].title) {
                 const originalTitle = cache[videoId].title;
-                // Check if already translated in cache
-                const titleKey = `trans_${videoId}`;
                 if (!cache[videoId].translatedTitle) {
                     const translated = await translateText(originalTitle);
                     if (translated && translated !== originalTitle) {
                         cache[videoId].translatedTitle = translated;
                         translatedCount++;
-                        // Update metadata cache
                         metadataCache[cacheKey] = cache;
                         saveCache();
                     }
@@ -726,6 +809,7 @@
         if (!isPlaylistView && currentPlaylist) {
             renderVideos(currentPlaylist);
         }
+        saveState(currentPlaylist?.name, currentVideoIndex);
     }
 
     // ============================================================
@@ -805,7 +889,6 @@
         showToast(`Loaded metadata for ${playlist.videoIds.length} videos`);
         saveCache();
         
-        // Translate if enabled
         if (translateEnabled) {
             await translateVideoTitles(playlist);
         }
@@ -946,12 +1029,8 @@
             if (parsed.length === 0) throw new Error('No valid playlists found');
             playlists = parsed;
             
-            // Update count
-            const totalVideos = playlists.reduce((s, p) => s + p.videoIds.length, 0);
-            countBtn.textContent = `📋 ${playlists.length} / ${totalVideos}`;
-            
             statusBadge.textContent = `✅ ${playlists.length} playlists`;
-            showToast(`Loaded ${playlists.length} playlists (${totalVideos} videos)`);
+            showToast(`Loaded ${playlists.length} playlists`);
             
             loadCache();
             loadTranslateCache();
@@ -1319,6 +1398,10 @@
 
     function nextVideo() {
         if (!currentPlaylist) return;
+        // Reset sleep timer on manual navigation
+        if (sleepTimerMinutes > 0) {
+            setSleepTimer(sleepTimerMinutes);
+        }
         if (shuffleMode) {
             let idx;
             do {
@@ -1333,6 +1416,10 @@
 
     function prevVideo() {
         if (!currentPlaylist) return;
+        // Reset sleep timer on manual navigation
+        if (sleepTimerMinutes > 0) {
+            setSleepTimer(sleepTimerMinutes);
+        }
         if (shuffleMode) {
             let idx;
             do {
@@ -1362,6 +1449,10 @@
                 playBtn.textContent = '⏸';
                 radioVisualizer.classList.remove('paused');
                 startTimer();
+                // Reset sleep timer on resume
+                if (sleepTimerMinutes > 0) {
+                    setSleepTimer(sleepTimerMinutes);
+                }
             }
         } else if (iframe) {
             const src = iframe.src;
@@ -1376,6 +1467,9 @@
                 playBtn.textContent = '⏸';
                 radioVisualizer.classList.remove('paused');
                 startTimer();
+                if (sleepTimerMinutes > 0) {
+                    setSleepTimer(sleepTimerMinutes);
+                }
             }
         }
     }
@@ -1504,6 +1598,7 @@
     historyOverlay.addEventListener('click', closeHistory);
     randomBtn.addEventListener('click', randomVideo);
     randomVideoBtn.addEventListener('click', randomVideo);
+    stopBtn.addEventListener('click', stopPlayback);
 
     prevBtn.addEventListener('click', prevVideo);
     nextBtn.addEventListener('click', nextVideo);
@@ -1512,6 +1607,25 @@
 
     tvModeOption.addEventListener('click', () => setMode('tv'));
     radioModeOption.addEventListener('click', () => setMode('radio'));
+
+    // Sleep Timer
+    sleepTimerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sleepTimerDropdown.classList.toggle('open');
+    });
+
+    document.querySelectorAll('.sleep-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const minutes = parseInt(opt.dataset.minutes);
+            setSleepTimer(minutes);
+            sleepTimerDropdown.classList.remove('open');
+        });
+    });
+
+    document.addEventListener('click', () => {
+        sleepTimerDropdown.classList.remove('open');
+    });
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -1541,11 +1655,15 @@
         } else if (e.key === 'h' || e.key === 'H') {
             openHistory();
         } else if (e.key === 'n' || e.key === 'N') {
+            e.preventDefault();
             nextVideo();
-        } else if (e.key === 'p' || e.key === 'P') {
+        } else if (e.key === 'b' || e.key === 'B') {
+            e.preventDefault();
             prevVideo();
         } else if (e.key === 't' || e.key === 'T') {
             toggleTranslation();
+        } else if (e.key === 'x' || e.key === 'X') {
+            stopPlayback();
         }
     });
 
@@ -1558,7 +1676,7 @@
 
     console.log('🟢 Shafin Tube IPTV-style loaded with all features.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
-    console.log('📺 Controls: ← → seek, Space play/pause, M mode, R random, S shuffle, H history, T translate');
+    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mode, R random, S shuffle, H history, T translate, X stop');
 </script>
 </body>
 </html>
