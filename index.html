@@ -45,29 +45,36 @@
         body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: background var(--transition), color var(--transition); }
         .app { display: flex; flex-direction: column; height: 100vh; max-width: 100vw; overflow: hidden; }
         
-        /* Header */
-        .header { background: var(--bg2); padding: 6px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 48px; gap: 8px; flex-wrap: wrap; }
-        .logo-area { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        .logo-img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
-        .logo-text { font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+        /* Header - Compact */
+        .header { background: var(--bg2); padding: 4px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 40px; gap: 4px; flex-wrap: wrap; }
+        .logo-area { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .logo-img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
+        .logo-text { font-size: 0.85rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
         .logo-text span { color: var(--accent); }
         
-        .header-center { display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; flex-wrap: wrap; }
-        .status-badge { font-size: 0.55rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; }
+        .header-center { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; flex-wrap: wrap; }
+        .status-badge { font-size: 0.5rem; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; }
         
-        .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: nowrap; }
-        .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
+        .header-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; flex-wrap: nowrap; }
+        .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
         .header-btn:hover { background: var(--bg4); transform: scale(1.05); }
-        .header-btn.random-btn { font-size: 0.9rem; background: var(--accent); border-color: var(--accent); color: #fff; }
+        .header-btn.random-btn { font-size: 0.8rem; background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.random-btn:hover { background: var(--accent2); transform: scale(1.05); }
-        .header-btn.history-btn { font-size: 0.9rem; }
-        .header-btn.translate-btn { font-size: 0.8rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .header-btn.history-btn { font-size: 0.8rem; }
+        .header-btn.translate-btn { font-size: 0.7rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.translate-btn.active:hover { background: var(--accent2); }
-        .header-btn.refresh-btn { font-size: 0.9rem; }
+        .header-btn.refresh-btn { font-size: 0.8rem; }
         .header-btn.refresh-btn:hover { transform: rotate(60deg); }
         
-        /* Clock Tile - wider, two lines */
+        /* Manual Input Tile */
+        .manual-input-wrap { display: flex; align-items: center; gap: 2px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 1px 4px 1px 8px; flex-shrink: 0; max-width: 180px; }
+        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.55rem; outline: none; padding: 3px 0; width: 100px; min-width: 60px; }
+        .manual-input-wrap input::placeholder { color: var(--text2); }
+        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 2px 8px; border-radius: 16px; cursor: pointer; font-size: 0.5rem; font-weight: 600; white-space: nowrap; }
+        .manual-input-wrap .play-btn:hover { background: var(--accent2); }
+        
+        /* Clock Tile - Wider, two lines */
         .clock-tile { 
             display: flex; 
             flex-direction: column; 
@@ -75,11 +82,11 @@
             justify-content: center; 
             background: var(--bg3); 
             border: 1px solid var(--border); 
-            border-radius: 6px; 
-            padding: 2px 10px; 
-            min-width: 78px; 
-            width: 78px;
-            min-height: 36px;
+            border-radius: 4px; 
+            padding: 1px 10px; 
+            min-width: 90px; 
+            width: 90px;
+            min-height: 32px;
             flex-shrink: 0;
             line-height: 1.2;
             text-align: center;
@@ -92,11 +99,11 @@
         
         /* Sidebar */
         .sidebar { width: 380px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
-        .sidebar-header { padding: 6px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
-        .sidebar-search { flex: 1; min-width: 100px; padding: 5px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.7rem; outline: none; }
+        .sidebar-header { padding: 4px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+        .sidebar-search { flex: 1; min-width: 80px; padding: 4px 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.65rem; outline: none; }
         .sidebar-search:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
         .sidebar-search::placeholder { color: var(--text2); }
-        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 3px 10px; border-radius: 20px; cursor: pointer; font-size: 0.65rem; display: none; align-items: center; gap: 4px; flex-shrink: 0; }
+        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 2px 8px; border-radius: 20px; cursor: pointer; font-size: 0.6rem; display: none; align-items: center; gap: 3px; flex-shrink: 0; }
         .back-btn:hover { background: var(--bg4); }
         .back-btn.show { display: flex; }
         
@@ -104,19 +111,19 @@
         .list-container::-webkit-scrollbar { width: 4px; }
         .list-container::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 4px; }
         
-        .list-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin: 1px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; position: relative; }
+        .list-item { display: flex; align-items: center; gap: 6px; padding: 5px 6px; margin: 1px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; position: relative; }
         .list-item:hover { background: var(--hover); }
         .list-item.active { background: var(--bg3); border-left-color: var(--accent); }
-        .list-item .thumb { width: 42px; height: 24px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .list-item .thumb { width: 36px; height: 20px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .list-item .info { flex: 1; min-width: 0; }
-        .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
+        .list-item .title { font-size: 0.7rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
         .list-item .title[title] { cursor: help; }
-        .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
-        .list-item .badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
-        .list-item .video-count { font-size: 0.55rem; color: var(--text2); padding-left: 6px; flex-shrink: 0; margin-left: auto; }
-        .list-item .loading-spinner { width: 14px; height: 14px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+        .list-item .sub { font-size: 0.5rem; color: var(--text2); margin-top: 1px; }
+        .list-item .badge { font-size: 0.45rem; background: var(--bg4); padding: 1px 6px; border-radius: 12px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
+        .list-item .video-count { font-size: 0.5rem; color: var(--text2); padding-left: 4px; flex-shrink: 0; margin-left: auto; }
+        .list-item .loading-spinner { width: 12px; height: 12px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .list-item .translated-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
+        .list-item .translated-badge { font-size: 0.45rem; background: var(--accent-glow); color: var(--accent); padding: 1px 4px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
         
         /* Player Area */
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
@@ -124,6 +131,8 @@
         .video-container iframe { width: 100%; height: 100%; border: none; transition: opacity 0.3s ease; }
         .video-container .placeholder { color: var(--text2); font-size: 0.85rem; text-align: center; padding: 20px; }
         .video-container .placeholder .big-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+        .video-container .blank { display: none; width: 100%; height: 100%; background: #000; }
+        .video-container .blank.show { display: block; }
         
         .radio-visualizer { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
@@ -151,8 +160,8 @@
         .radio-visualizer.paused .equalizer-bar { animation-play-state: paused !important; }
         .radio-visualizer.paused .radio-icon { animation-play-state: paused !important; }
         
-        .controls { background: var(--bg2); padding: 6px 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
-        .control-btn { width: 32px; height: 32px; border-radius: 50%; font-size: 0.8rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
+        .controls { background: var(--bg2); padding: 4px 10px; display: flex; align-items: center; justify-content: center; gap: 6px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+        .control-btn { width: 28px; height: 28px; border-radius: 50%; font-size: 0.7rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .control-btn:active { transform: scale(0.94); }
         .control-btn.shuffle-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
@@ -160,23 +169,23 @@
         .control-btn.shuffle-btn.active:hover { background: var(--accent2); }
         .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
         .control-btn.random-btn:hover { background: var(--bg4); }
-        .control-btn.stop-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.7rem; }
+        .control-btn.stop-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.65rem; }
         .control-btn.stop-btn:hover { background: var(--bg4); }
         
         /* TV/Radio Toggle Switch */
-        .mode-switch { display: flex; align-items: center; gap: 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 2px; flex-shrink: 0; }
-        .mode-switch .mode-option { padding: 4px 12px; border-radius: 18px; font-size: 0.6rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
+        .mode-switch { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 18px; padding: 2px; flex-shrink: 0; }
+        .mode-switch .mode-option { padding: 3px 10px; border-radius: 16px; font-size: 0.55rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
         .mode-switch .mode-option:hover { color: var(--text); }
         .mode-switch .mode-option.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .mode-switch .mode-option.active:hover { background: var(--accent2); }
         
-        /* Sleep Timer - Wide Rounded Rectangle */
+        /* Sleep Timer */
         .sleep-timer-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
         .sleep-timer-btn { 
-            padding: 4px 14px; 
-            height: 32px; 
-            border-radius: 20px; 
-            font-size: 0.6rem; 
+            padding: 3px 10px; 
+            height: 28px; 
+            border-radius: 18px; 
+            font-size: 0.55rem; 
             font-weight: 500;
             background: var(--bg3); 
             border: 1px solid var(--border); 
@@ -184,25 +193,25 @@
             display: inline-flex; 
             align-items: center; 
             justify-content: center; 
-            gap: 4px;
+            gap: 3px;
             cursor: pointer; 
             transition: all var(--transition); 
             white-space: nowrap;
-            min-width: 60px;
+            min-width: 50px;
         }
         .sleep-timer-btn:hover { background: var(--bg4); color: var(--text); }
         .sleep-timer-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .sleep-timer-btn.active:hover { background: var(--accent2); }
         .sleep-timer-dropdown { 
             position: absolute; 
-            bottom: 40px; 
+            bottom: 34px; 
             left: 50%; 
             transform: translateX(-50%); 
             background: var(--bg3); 
             border: 1px solid var(--border); 
-            border-radius: 12px; 
-            padding: 6px 0; 
-            min-width: 100px; 
+            border-radius: 10px; 
+            padding: 4px 0; 
+            min-width: 90px; 
             display: none; 
             flex-direction: column; 
             box-shadow: 0 8px 30px var(--shadow); 
@@ -210,8 +219,8 @@
         }
         .sleep-timer-dropdown.open { display: flex; }
         .sleep-timer-dropdown .sleep-option { 
-            padding: 6px 16px; 
-            font-size: 0.65rem; 
+            padding: 5px 14px; 
+            font-size: 0.6rem; 
             color: var(--text2); 
             cursor: pointer; 
             transition: all var(--transition); 
@@ -221,36 +230,36 @@
         }
         .sleep-timer-dropdown .sleep-option:hover { background: var(--bg4); color: var(--text); }
         .sleep-timer-dropdown .sleep-option.active { color: var(--accent); }
-        .sleep-timer-dropdown .sleep-option.off { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 8px; color: var(--text2); }
+        .sleep-timer-dropdown .sleep-option.off { border-top: 1px solid var(--border); margin-top: 3px; padding-top: 6px; color: var(--text2); }
         .sleep-timer-dropdown .sleep-option.off:hover { color: var(--text); }
         
-        .player-info-text { font-size: 0.65rem; color: var(--text2); flex: 1; min-width: 60px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-timer { font-size: 0.6rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right; flex-shrink: 0; }
+        .player-info-text { font-size: 0.6rem; color: var(--text2); flex: 1; min-width: 50px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-timer { font-size: 0.55rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 60px; text-align: right; flex-shrink: 0; }
         
         /* Toast */
-        .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 5px 14px; border-radius: 25px; font-size: 0.65rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
+        .toast { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 4px 12px; border-radius: 25px; font-size: 0.6rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
         @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
         .toast.hidden { display: none; }
         
         /* History Panel */
         .history-panel { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
         .history-panel.open { right: 0; }
-        .history-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-        .history-header h3 { font-size: 0.9rem; font-weight: 600; }
-        .history-header .close-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; }
+        .history-header { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .history-header h3 { font-size: 0.85rem; font-weight: 600; }
+        .history-header .close-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
         .history-header .close-btn:hover { background: var(--bg4); }
-        .history-list { flex: 1; overflow-y: auto; padding: 8px; }
-        .history-list .empty { text-align: center; padding: 40px 20px; color: var(--text2); font-size: 0.75rem; }
-        .history-date-group { margin-bottom: 12px; }
-        .history-date-group .date-label { font-size: 0.7rem; font-weight: 600; color: var(--text2); padding: 4px 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
-        .history-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+        .history-list { flex: 1; overflow-y: auto; padding: 6px; }
+        .history-list .empty { text-align: center; padding: 30px 16px; color: var(--text2); font-size: 0.7rem; }
+        .history-date-group { margin-bottom: 10px; }
+        .history-date-group .date-label { font-size: 0.65rem; font-weight: 600; color: var(--text2); padding: 3px 6px; border-bottom: 1px solid var(--border); margin-bottom: 3px; }
+        .history-item { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
         .history-item:hover { background: var(--hover); }
-        .history-item .thumb { width: 42px; height: 24px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .history-item .thumb { width: 36px; height: 20px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .history-item .info { flex: 1; min-width: 0; }
-        .history-item .title { font-size: 0.72rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .history-item .sub { font-size: 0.55rem; color: var(--text2); }
-        .history-item .count-badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
-        .history-item .position-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
+        .history-item .title { font-size: 0.68rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-item .sub { font-size: 0.5rem; color: var(--text2); }
+        .history-item .count-badge { font-size: 0.45rem; background: var(--bg4); padding: 1px 6px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
+        .history-item .position-badge { font-size: 0.45rem; background: var(--accent-glow); color: var(--accent); padding: 1px 4px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
         
         /* Overlay for history */
         .history-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2999; display: none; }
@@ -258,63 +267,70 @@
         
         @media (max-width: 768px) {
             .sidebar { width: 300px; }
-            .header { padding: 4px 10px; min-height: 40px; }
-            .logo-text { font-size: 0.85rem; }
-            .logo-img { width: 26px; height: 26px; }
-            .header-btn { width: 26px; height: 26px; font-size: 0.7rem; }
-            .clock-tile { min-width: 68px; width: 68px; min-height: 32px; padding: 2px 6px; }
+            .header { padding: 3px 8px; min-height: 36px; }
+            .logo-text { font-size: 0.75rem; }
+            .logo-img { width: 22px; height: 22px; }
+            .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
+            .clock-tile { min-width: 78px; width: 78px; min-height: 28px; padding: 1px 6px; }
             .clock-tile .time { font-size: 0.6rem; }
             .clock-tile .day { font-size: 0.4rem; }
-            .sleep-timer-btn { font-size: 0.55rem; padding: 3px 10px; height: 28px; min-width: 50px; }
-            .list-item .thumb { width: 36px; height: 20px; }
-            .list-item .title { font-size: 0.7rem; }
-            .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
-            .mode-switch .mode-option { font-size: 0.55rem; padding: 3px 10px; }
-            .player-info-text { font-size: 0.55rem; min-width: 40px; }
-            .player-timer { font-size: 0.5rem; min-width: 50px; }
-            .history-panel { width: 340px; right: -340px; }
-            .radio-visualizer .radio-icon { font-size: 3rem; }
-            .radio-visualizer .radio-title { font-size: 0.9rem; }
-        }
-        @media (max-width: 480px) {
-            .sidebar { width: 240px; }
-            .sidebar-header { padding: 4px 6px; }
-            .sidebar-search { font-size: 0.6rem; padding: 3px 8px; min-width: 60px; }
-            .list-item { padding: 4px 6px; gap: 5px; }
+            .manual-input-wrap { max-width: 140px; }
+            .manual-input-wrap input { width: 70px; font-size: 0.5rem; }
+            .manual-input-wrap .play-btn { font-size: 0.45rem; padding: 1px 6px; }
+            .sleep-timer-btn { font-size: 0.5rem; padding: 2px 8px; height: 24px; min-width: 44px; }
+            .list-item .thumb { width: 32px; height: 18px; }
             .list-item .title { font-size: 0.65rem; }
-            .list-item .sub { font-size: 0.5rem; }
-            .list-item .thumb { width: 30px; height: 17px; }
-            .controls { gap: 5px; padding: 4px 8px; }
             .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
             .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
-            .sleep-timer-btn { font-size: 0.5rem; padding: 2px 8px; height: 26px; min-width: 44px; }
-            .player-info-text { font-size: 0.5rem; min-width: 30px; }
-            .player-timer { font-size: 0.45rem; min-width: 40px; }
-            .header { gap: 4px; padding: 4px 8px; min-height: 36px; }
-            .status-badge { font-size: 0.45rem; padding: 1px 6px; }
-            .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
-            .clock-tile { min-width: 58px; width: 58px; min-height: 28px; padding: 1px 4px; }
+            .player-info-text { font-size: 0.5rem; min-width: 35px; }
+            .player-timer { font-size: 0.45rem; min-width: 50px; }
+            .history-panel { width: 320px; right: -320px; }
+            .radio-visualizer .radio-icon { font-size: 2.8rem; }
+            .radio-visualizer .radio-title { font-size: 0.85rem; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 220px; }
+            .sidebar-header { padding: 3px 4px; }
+            .sidebar-search { font-size: 0.55rem; padding: 2px 6px; min-width: 50px; }
+            .list-item { padding: 3px 4px; gap: 4px; }
+            .list-item .title { font-size: 0.6rem; }
+            .list-item .sub { font-size: 0.45rem; }
+            .list-item .thumb { width: 28px; height: 16px; }
+            .controls { gap: 4px; padding: 3px 6px; }
+            .control-btn { width: 24px; height: 24px; font-size: 0.6rem; }
+            .mode-switch .mode-option { font-size: 0.45rem; padding: 2px 6px; }
+            .sleep-timer-btn { font-size: 0.45rem; padding: 2px 6px; height: 22px; min-width: 38px; }
+            .player-info-text { font-size: 0.45rem; min-width: 25px; }
+            .player-timer { font-size: 0.4rem; min-width: 35px; }
+            .header { gap: 3px; padding: 2px 6px; min-height: 32px; }
+            .status-badge { font-size: 0.4rem; padding: 1px 4px; }
+            .header-btn { width: 22px; height: 22px; font-size: 0.6rem; }
+            .manual-input-wrap { max-width: 110px; padding: 1px 3px 1px 6px; }
+            .manual-input-wrap input { width: 50px; font-size: 0.45rem; }
+            .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 4px; }
+            .clock-tile { min-width: 62px; width: 62px; min-height: 24px; padding: 1px 4px; }
             .clock-tile .time { font-size: 0.5rem; }
             .clock-tile .day { font-size: 0.35rem; }
-            .history-panel { width: 290px; right: -290px; }
-            .radio-visualizer .radio-icon { font-size: 2.5rem; }
-            .radio-visualizer .radio-title { font-size: 0.8rem; }
-            .radio-visualizer .equalizer { height: 28px; gap: 2px; }
+            .history-panel { width: 270px; right: -270px; }
+            .radio-visualizer .radio-icon { font-size: 2.2rem; }
+            .radio-visualizer .radio-title { font-size: 0.75rem; }
+            .radio-visualizer .equalizer { height: 24px; gap: 2px; }
             .radio-visualizer .equalizer-bar { width: 2px; }
         }
         @media (max-width: 380px) {
-            .sidebar { width: 200px; }
-            .history-panel { width: 260px; right: -260px; }
-            .clock-tile { min-width: 50px; width: 50px; min-height: 24px; }
+            .sidebar { width: 180px; }
+            .history-panel { width: 240px; right: -240px; }
+            .clock-tile { min-width: 54px; width: 54px; min-height: 22px; }
             .clock-tile .time { font-size: 0.45rem; }
             .clock-tile .day { font-size: 0.3rem; }
-            .sleep-timer-btn { font-size: 0.45rem; padding: 2px 6px; min-width: 36px; height: 24px; }
+            .manual-input-wrap { max-width: 90px; }
+            .manual-input-wrap input { width: 40px; font-size: 0.4rem; }
         }
     </style>
 </head>
 <body>
 <div class="app">
-    <!-- Header -->
+    <!-- Header - Compact -->
     <header class="header">
         <div class="logo-area">
             <img class="logo-img" src="https://i.postimg.cc/yYbyhL4w/Rounded-Profile.png" alt="Shafin Tube" onerror="this.style.display='none'">
@@ -322,11 +338,15 @@
         </div>
         <div class="header-center">
             <span class="status-badge" id="statusBadge">📡 Loading...</span>
+            <div class="manual-input-wrap">
+                <input type="text" id="manualInput" placeholder="YouTube/MP3/MP4..." />
+                <button class="play-btn" id="manualPlayBtn">▶</button>
+            </div>
         </div>
         <div class="header-right">
             <button class="header-btn random-btn" id="randomBtn" title="Random Video">🎲</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
-            <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles to English">🌐</button>
+            <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles">🌐</button>
             <button class="header-btn refresh-btn" id="refreshBtn" title="Refresh Metadata">⟳</button>
             <a class="header-btn" id="editBtn" href="https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing" target="_blank" title="Edit Google Sheet">✎</a>
             <button class="header-btn" id="themeToggle" title="Toggle Theme">🌙</button>
@@ -346,15 +366,16 @@
                 <button class="back-btn" id="backBtn">‹ Back</button>
             </div>
             <div class="list-container" id="listContainer">
-                <div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">Loading playlists...</div>
+                <div style="text-align:center; padding:30px 16px; font-size:0.7rem; color:var(--text2);">Loading playlists...</div>
             </div>
         </div>
 
         <!-- Player Area -->
         <div class="player-area">
             <div class="video-container" id="videoContainer">
+                <div class="blank" id="blankScreen"></div>
                 <div class="radio-visualizer" id="radioVisualizer">
-                    <div class="radio-icon">🎵</div>
+                    <div class="radio-icon">🎧</div>
                     <div class="radio-title" id="radioTitle">Select a video</div>
                     <div class="radio-sub" id="radioSub">Radio Mode</div>
                     <div class="equalizer">
@@ -375,15 +396,15 @@
                 <iframe id="playerIframe" src="" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="display:none;"></iframe>
             </div>
             <div class="controls">
-                <button class="control-btn" id="prevBtn" title="Previous Video (B)">⏮</button>
+                <button class="control-btn" id="prevBtn" title="Previous (B)">⏮</button>
                 <button class="control-btn" id="playBtn" title="Play/Pause (Space)">⏸</button>
-                <button class="control-btn" id="nextBtn" title="Next Video (N)">⏭</button>
-                <button class="control-btn shuffle-btn" id="shuffleBtn" title="Toggle Shuffle (S)">🔀</button>
-                <button class="control-btn stop-btn" id="stopBtn" title="Stop Playback (X)">⏹</button>
-                <button class="control-btn random-btn" id="randomVideoBtn" title="Random Video & Position (R)">🎲</button>
+                <button class="control-btn" id="nextBtn" title="Next (N)">⏭</button>
+                <button class="control-btn shuffle-btn" id="shuffleBtn" title="Shuffle (S)">🔀</button>
+                <button class="control-btn stop-btn" id="stopBtn" title="Stop (X)">⏹</button>
+                <button class="control-btn random-btn" id="randomVideoBtn" title="Random (R)">🎲</button>
                 <div class="mode-switch" id="modeSwitch">
                     <button class="mode-option active" data-mode="tv" id="tvModeOption">📺 TV</button>
-                    <button class="mode-option" data-mode="radio" id="radioModeOption">🎵 Radio</button>
+                    <button class="mode-option" data-mode="radio" id="radioModeOption">🎧 Radio</button>
                 </div>
                 <div class="sleep-timer-wrap">
                     <button class="sleep-timer-btn" id="sleepTimerBtn" title="Sleep Timer">⏰ Off</button>
@@ -470,6 +491,7 @@
     const historyList = document.getElementById('historyList');
     const iframe = document.getElementById('playerIframe');
     const placeholder = document.getElementById('placeholder');
+    const blankScreen = document.getElementById('blankScreen');
     const playerInfo = document.getElementById('playerInfo');
     const playerTimer = document.getElementById('playerTimer');
     const prevBtn = document.getElementById('prevBtn');
@@ -483,6 +505,8 @@
     const radioModeOption = document.getElementById('radioModeOption');
     const sleepTimerBtn = document.getElementById('sleepTimerBtn');
     const sleepTimerDropdown = document.getElementById('sleepTimerDropdown');
+    const manualInput = document.getElementById('manualInput');
+    const manualPlayBtn = document.getElementById('manualPlayBtn');
     const radioVisualizer = document.getElementById('radioVisualizer');
     const radioTitle = document.getElementById('radioTitle');
     const radioSub = document.getElementById('radioSub');
@@ -617,14 +641,26 @@
                 const pos = ytPlayer.getCurrentTime();
                 updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], pos);
             }
-            showToast('⏹ Playback stopped');
         } else if (iframe) {
             iframe.src = iframe.src.replace('autoplay=1', 'autoplay=0');
             isPlaying = false;
             playBtn.textContent = '▶';
             radioVisualizer.classList.add('paused');
-            showToast('⏹ Playback stopped');
         }
+        
+        // Clear video display - show blank screen
+        if (ytPlayer) {
+            const container = document.getElementById('yt-player-container');
+            if (container) container.style.display = 'none';
+        }
+        iframe.style.display = 'none';
+        placeholder.style.display = 'none';
+        radioVisualizer.classList.remove('active');
+        blankScreen.classList.add('show');
+        playerInfo.textContent = 'Stopped';
+        playerTimer.textContent = '--:-- / --:--';
+        stopTimer();
+        showToast('⏹ Playback stopped');
     }
 
     // ============================================================
@@ -958,6 +994,7 @@
             ytPlayer = null;
         }
 
+        blankScreen.classList.remove('show');
         const container = document.getElementById('videoContainer');
         const playerDiv = document.createElement('div');
         playerDiv.id = 'yt-player-container';
@@ -1106,7 +1143,7 @@
             statusBadge.textContent = '❌ Failed';
             showToast('Error: ' + err.message, 4000);
             console.error(err);
-            listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">❌ ${err.message}</div>`;
+            listContainer.innerHTML = `<div style="text-align:center; padding:30px 16px; font-size:0.7rem; color:var(--text2);">❌ ${err.message}</div>`;
         }
     }
 
@@ -1122,7 +1159,7 @@
         if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
 
         if (filtered.length === 0) {
-            listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">No playlists found</div>`;
+            listContainer.innerHTML = `<div style="text-align:center; padding:30px 16px; font-size:0.7rem; color:var(--text2);">No playlists found</div>`;
             return;
         }
 
@@ -1170,9 +1207,9 @@
         const cacheKey = playlist.name;
         const cache = metadataCache[cacheKey] || {};
 
-        let html = `<div style="padding:4px 8px; font-size:0.7rem; color:var(--text2); border-bottom:1px solid var(--border); margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
+        let html = `<div style="padding:3px 6px; font-size:0.65rem; color:var(--text2); border-bottom:1px solid var(--border); margin-bottom:3px; display:flex; justify-content:space-between; align-items:center;">
             <span>${escapeHtml(playlist.name)} (${playlist.videoIds.length})</span>
-            <span style="font-size:0.6rem;">${Object.keys(cache).length}/${playlist.videoIds.length} loaded</span>
+            <span style="font-size:0.55rem;">${Object.keys(cache).length}/${playlist.videoIds.length} loaded</span>
         </div>`;
 
         let videos = playlist.videoIds.map((id, idx) => ({ id, index: idx }));
@@ -1188,7 +1225,7 @@
         }
 
         if (videos.length === 0 && search) {
-            html += `<div style="text-align:center; padding:20px; font-size:0.7rem; color:var(--text2);">No matching videos</div>`;
+            html += `<div style="text-align:center; padding:16px; font-size:0.65rem; color:var(--text2);">No matching videos</div>`;
             listContainer.innerHTML = html;
             return;
         }
@@ -1219,8 +1256,8 @@
         });
 
         if (isLoadingMetadata && Object.keys(cache).length < playlist.videoIds.length) {
-            html += `<div style="text-align:center; padding:12px; font-size:0.65rem; color:var(--text2);">
-                <span class="loading-spinner" style="display:inline-block; margin-right:8px;"></span> Loading metadata...
+            html += `<div style="text-align:center; padding:10px; font-size:0.6rem; color:var(--text2);">
+                <span class="loading-spinner" style="display:inline-block; margin-right:6px;"></span> Loading metadata...
             </div>`;
         }
 
@@ -1247,6 +1284,7 @@
                 if (container) container.style.display = 'block';
             }
             placeholder.style.display = 'none';
+            blankScreen.classList.remove('show');
         } else {
             radioModeOption.classList.add('active');
             tvModeOption.classList.remove('active');
@@ -1285,6 +1323,8 @@
         currentVideoIndex = videoIndex;
         const videoId = playlist.videoIds[videoIndex];
         if (!videoId) return;
+
+        blankScreen.classList.remove('show');
 
         const cacheKey = playlist.name;
         const cache = metadataCache[cacheKey] || {};
@@ -1350,7 +1390,6 @@
                         saveState(playlist.name, videoIndex);
                         renderVideos(playlist);
                         startTimer();
-                        // Reset sleep timer on new video
                         if (sleepTimerMinutes > 0) {
                             setSleepTimer(sleepTimerMinutes);
                         }
@@ -1407,6 +1446,7 @@
     }
 
     function fallbackToIframe(videoId) {
+        blankScreen.classList.remove('show');
         iframe.style.display = (currentMode === 'tv') ? 'block' : 'none';
         iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
         isPlaying = true;
@@ -1538,7 +1578,7 @@
         if (mode === currentMode) return;
         currentMode = mode;
         updateModeUI();
-        showToast(currentMode === 'tv' ? '📺 TV Mode' : '🎵 Radio Mode');
+        showToast(currentMode === 'tv' ? '📺 TV Mode' : '🎧 Radio Mode');
         if (currentPlaylist && currentVideoIndex >= 0) {
             const videoId = currentPlaylist.videoIds[currentVideoIndex];
             if (videoId) {
@@ -1611,6 +1651,71 @@
     }
 
     // ============================================================
+    // MANUAL INPUT
+    // ============================================================
+    function playManualInput() {
+        const url = manualInput.value.trim();
+        if (!url) {
+            showToast('Please enter a URL', true);
+            return;
+        }
+        
+        // Check if it's a YouTube URL
+        if (url.includes('youtube.com/watch') || url.includes('youtu.be/') || url.includes('youtube.com/live')) {
+            // Extract video ID
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const match = url.match(regex);
+            if (match) {
+                const videoId = match[1];
+                // Create a temporary playlist
+                const tempPlaylist = {
+                    name: 'Custom Video',
+                    videoIds: [videoId]
+                };
+                // Add to playlists temporarily
+                if (!playlists.find(p => p.name === 'Custom Video')) {
+                    playlists.push(tempPlaylist);
+                }
+                currentPlaylist = tempPlaylist;
+                currentVideoIndex = 0;
+                renderPlaylists();
+                // Fetch metadata
+                fetchPlaylistMetadata(tempPlaylist);
+                // Play the video
+                setTimeout(() => {
+                    playVideo(tempPlaylist, 0);
+                }, 500);
+                showToast(`▶ Playing: ${url}`);
+                return;
+            }
+        }
+        
+        // For non-YouTube URLs (MP3, MP4, etc.)
+        // Create a custom stream
+        const tempPlaylist = {
+            name: 'Custom Stream',
+            videoIds: [url]
+        };
+        if (!playlists.find(p => p.name === 'Custom Stream')) {
+            playlists.push(tempPlaylist);
+        }
+        currentPlaylist = tempPlaylist;
+        currentVideoIndex = 0;
+        renderPlaylists();
+        
+        // Use iframe for direct media
+        blankScreen.classList.remove('show');
+        iframe.style.display = 'block';
+        iframe.src = url;
+        placeholder.style.display = 'none';
+        isPlaying = true;
+        playBtn.textContent = '⏸';
+        playerInfo.textContent = `Custom Stream: ${url}`;
+        showToast(`▶ Playing custom stream`);
+        saveState(currentPlaylist?.name, currentVideoIndex);
+    }
+
+    // ============================================================
     // UTILITY
     // ============================================================
     function escapeHtml(str) {
@@ -1666,6 +1771,12 @@
         sleepTimerDropdown.classList.remove('open');
     });
 
+    // Manual Input
+    manualPlayBtn.addEventListener('click', playManualInput);
+    manualInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') playManualInput();
+    });
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT') return;
@@ -1713,7 +1824,7 @@
     updateModeUI();
     loadFromSheet();
 
-    console.log('🟢 Shafin Tube IPTV-style loaded with all features.');
+    console.log('🟢 Shafin Tube loaded with all features.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
     console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mode, R random, S shuffle, H history, T translate, X stop');
 </script>
