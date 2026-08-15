@@ -58,11 +58,14 @@
         .main-content { display: flex; flex: 1; overflow: hidden; min-height: 0; }
         
         /* Sidebar */
-        .sidebar { width: 320px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
-        .sidebar-header { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-        .sidebar-search { width: 100%; padding: 6px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.75rem; outline: none; }
+        .sidebar { width: 380px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
+        .sidebar-header { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .sidebar-search { flex: 1; min-width: 120px; padding: 6px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.75rem; outline: none; }
         .sidebar-search:focus { border-color: var(--accent); }
         .sidebar-search::placeholder { color: var(--text2); }
+        .refresh-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); flex-shrink: 0; }
+        .refresh-btn:hover { background: var(--bg4); }
+        .refresh-btn:active { transform: rotate(180deg); transition: transform 0.4s; }
         
         /* Playlist / Video list container */
         .list-container { flex: 1; overflow-y: auto; padding: 6px 8px; -webkit-overflow-scrolling: touch; }
@@ -70,36 +73,66 @@
         .list-container::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 4px; }
         
         /* List items */
-        .list-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin: 2px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; }
+        .list-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; margin: 2px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; }
         .list-item:hover { background: var(--hover); }
         .list-item.active { background: var(--bg3); border-left-color: var(--accent); }
-        .list-item .icon { font-size: 1.2rem; flex-shrink: 0; width: 28px; text-align: center; }
+        .list-item .thumb { width: 48px; height: 27px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .list-item .info { flex: 1; min-width: 0; }
-        .list-item .title { font-size: 0.8rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
-        .list-item .sub { font-size: 0.65rem; color: var(--text2); margin-top: 1px; }
+        .list-item .title { font-size: 0.78rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+        .list-item .sub { font-size: 0.6rem; color: var(--text2); margin-top: 1px; }
         .list-item .badge { font-size: 0.55rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
         .list-item .video-count { font-size: 0.6rem; color: var(--text2); margin-left: auto; padding-left: 8px; flex-shrink: 0; }
+        .list-item .loading-spinner { width: 16px; height: 16px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
         /* Back button when viewing videos */
-        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; margin-bottom: 6px; display: none; align-items: center; gap: 4px; width: fit-content; }
+        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; display: none; align-items: center; gap: 4px; width: fit-content; flex-shrink: 0; }
         .back-btn:hover { background: var(--bg4); }
         .back-btn.show { display: flex; }
         
         /* Player Area */
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
         .video-container { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden; }
-        .video-container iframe { width: 100%; height: 100%; border: none; }
+        .video-container iframe { width: 100%; height: 100%; border: none; transition: opacity 0.3s ease; }
         .video-container .placeholder { color: var(--text2); font-size: 0.9rem; text-align: center; padding: 20px; }
         .video-container .placeholder .big-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
         
+        /* Radio Visualizer */
+        .radio-visualizer { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%);
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+            gap: 20px; padding: 20px; z-index: 5;
+        }
+        .radio-visualizer.active { display: flex; }
+        .radio-visualizer .radio-icon { font-size: 4rem; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+        .radio-visualizer .radio-title { font-size: 1.1rem; font-weight: 500; color: var(--text); text-align: center; max-width: 80%; }
+        .radio-visualizer .radio-sub { font-size: 0.7rem; color: var(--text2); text-align: center; }
+        .radio-visualizer .equalizer { display: flex; gap: 4px; align-items: center; justify-content: center; height: 40px; }
+        .radio-visualizer .equalizer-bar { width: 4px; background: var(--accent); border-radius: 2px; animation: equalize 1.2s infinite ease-in-out; }
+        .radio-visualizer .equalizer-bar:nth-child(1) { animation-delay: 0s; height: 12px; }
+        .radio-visualizer .equalizer-bar:nth-child(2) { animation-delay: 0.2s; height: 24px; }
+        .radio-visualizer .equalizer-bar:nth-child(3) { animation-delay: 0.4s; height: 8px; }
+        .radio-visualizer .equalizer-bar:nth-child(4) { animation-delay: 0.6s; height: 30px; }
+        .radio-visualizer .equalizer-bar:nth-child(5) { animation-delay: 0.8s; height: 16px; }
+        .radio-visualizer .equalizer-bar:nth-child(6) { animation-delay: 1.0s; height: 10px; }
+        .radio-visualizer .equalizer-bar:nth-child(7) { animation-delay: 1.2s; height: 22px; }
+        .radio-visualizer .equalizer-bar:nth-child(8) { animation-delay: 0.3s; height: 14px; }
+        @keyframes equalize { 0%, 100% { height: 8px; } 50% { height: 30px; } }
+        
         /* Controls */
-        .controls { background: var(--bg2); padding: 8px 16px; display: flex; align-items: center; justify-content: center; gap: 12px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
-        .control-btn { width: 36px; height: 36px; border-radius: 50%; font-size: 0.9rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); }
+        .controls { background: var(--bg2); padding: 8px 16px; display: flex; align-items: center; justify-content: center; gap: 10px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+        .control-btn { width: 36px; height: 36px; border-radius: 50%; font-size: 0.9rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); }
         .control-btn:active { transform: scale(0.94); }
         .control-btn.shuffle-btn { background: var(--accent); border-color: var(--accent); color: #fff; }
         .control-btn.shuffle-btn:hover { background: var(--accent2); }
-        .player-info-text { font-size: 0.7rem; color: var(--text2); flex: 1; min-width: 100px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .control-btn.mode-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.7rem; width: auto; padding: 0 14px; border-radius: 20px; gap: 4px; }
+        .control-btn.mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .control-btn.mode-btn:hover { background: var(--bg4); }
+        .control-btn.mode-btn.active:hover { background: var(--accent2); }
+        .player-info-text { font-size: 0.7rem; color: var(--text2); flex: 1; min-width: 80px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         /* Toast */
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 6px 16px; border-radius: 25px; font-size: 0.7rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
@@ -108,32 +141,43 @@
         
         /* Responsive */
         @media (max-width: 768px) {
-            .sidebar { width: 260px; }
+            .sidebar { width: 300px; }
             .header { padding: 6px 10px; min-height: 44px; }
             .logo-text { font-size: 0.95rem; }
             .logo-img { width: 28px; height: 28px; }
             .theme-toggle, .edit-btn { width: 28px; height: 28px; font-size: 0.8rem; }
-            .list-item { padding: 8px 10px; }
-            .list-item .title { font-size: 0.75rem; }
+            .list-item { padding: 6px 8px; }
+            .list-item .title { font-size: 0.72rem; }
+            .list-item .thumb { width: 40px; height: 22px; }
             .control-btn { width: 32px; height: 32px; font-size: 0.8rem; }
             .player-info-text { font-size: 0.6rem; min-width: 60px; }
+            .radio-visualizer .radio-icon { font-size: 3rem; }
+            .radio-visualizer .radio-title { font-size: 0.95rem; }
         }
         @media (max-width: 480px) {
-            .sidebar { width: 220px; }
-            .sidebar-header { padding: 6px 8px; }
-            .sidebar-search { font-size: 0.65rem; padding: 4px 10px; }
-            .list-item { padding: 6px 8px; gap: 6px; }
-            .list-item .title { font-size: 0.7rem; }
-            .list-item .sub { font-size: 0.55rem; }
+            .sidebar { width: 260px; }
+            .sidebar-header { padding: 6px 8px; flex-wrap: wrap; }
+            .sidebar-search { font-size: 0.65rem; padding: 4px 10px; min-width: 80px; }
+            .list-item { padding: 5px 6px; gap: 6px; }
+            .list-item .title { font-size: 0.68rem; }
+            .list-item .sub { font-size: 0.5rem; }
+            .list-item .thumb { width: 36px; height: 20px; }
             .list-item .icon { font-size: 1rem; width: 22px; }
-            .controls { gap: 8px; padding: 6px 10px; }
+            .controls { gap: 6px; padding: 6px 8px; }
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
+            .control-btn.mode-btn { font-size: 0.6rem; padding: 0 10px; height: 28px; }
             .player-info-text { font-size: 0.55rem; min-width: 40px; }
             .header { gap: 4px; }
             .status-badge { font-size: 0.5rem; padding: 2px 6px; }
+            .back-btn { font-size: 0.6rem; padding: 3px 8px; }
+            .refresh-btn { width: 26px; height: 26px; font-size: 0.7rem; }
+            .radio-visualizer .radio-icon { font-size: 2.5rem; }
+            .radio-visualizer .radio-title { font-size: 0.8rem; }
+            .radio-visualizer .equalizer { height: 30px; gap: 3px; }
+            .radio-visualizer .equalizer-bar { width: 3px; }
         }
         @media (max-width: 380px) {
-            .sidebar { width: 180px; }
+            .sidebar { width: 220px; }
         }
     </style>
 </head>
@@ -157,8 +201,9 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <input class="sidebar-search" id="searchInput" type="text" placeholder="🔍 Search playlists...">
-                <button class="back-btn" id="backBtn">‹ Back to Playlists</button>
+                <input class="sidebar-search" id="searchInput" type="text" placeholder="🔍 Search...">
+                <button class="refresh-btn" id="refreshBtn" title="Refresh metadata">⟳</button>
+                <button class="back-btn" id="backBtn">‹ Back</button>
             </div>
             <div class="list-container" id="listContainer">
                 <div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">Loading playlists...</div>
@@ -168,6 +213,23 @@
         <!-- Player Area -->
         <div class="player-area">
             <div class="video-container" id="videoContainer">
+                <!-- Radio Visualizer -->
+                <div class="radio-visualizer" id="radioVisualizer">
+                    <div class="radio-icon">🎵</div>
+                    <div class="radio-title" id="radioTitle">Select a video</div>
+                    <div class="radio-sub" id="radioSub">Radio Mode</div>
+                    <div class="equalizer">
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div>
+                    </div>
+                </div>
+                
                 <div class="placeholder" id="placeholder">
                     <span class="big-icon">🎬</span>
                     <p>Select a playlist and video to start</p>
@@ -179,6 +241,8 @@
                 <button class="control-btn" id="playBtn" title="Play/Pause">⏸</button>
                 <button class="control-btn" id="nextBtn" title="Next">⏭</button>
                 <button class="control-btn shuffle-btn" id="shuffleBtn" title="Toggle Shuffle">🎲</button>
+                <button class="control-btn mode-btn active" id="tvModeBtn" title="TV Mode">📺 TV</button>
+                <button class="control-btn mode-btn" id="radioModeBtn" title="Radio Mode">🎵 Radio</button>
                 <span class="player-info-text" id="playerInfo">No video playing</span>
             </div>
         </div>
@@ -203,8 +267,11 @@
     let currentVideoIndex = -1;
     let shuffleMode = true;
     let isPlaying = false;
-    let isPlaylistView = true; // true = showing playlists, false = showing videos
+    let isPlaylistView = true;
     let toastTimeout = null;
+    let metadataCache = {};
+    let isLoadingMetadata = false;
+    let currentMode = 'tv'; // 'tv' or 'radio'
 
     // DOM refs
     const listContainer = document.getElementById('listContainer');
@@ -213,6 +280,7 @@
     const themeToggle = document.getElementById('themeToggle');
     const editBtn = document.getElementById('editBtn');
     const backBtn = document.getElementById('backBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
     const iframe = document.getElementById('playerIframe');
     const placeholder = document.getElementById('placeholder');
     const playerInfo = document.getElementById('playerInfo');
@@ -220,6 +288,11 @@
     const nextBtn = document.getElementById('nextBtn');
     const playBtn = document.getElementById('playBtn');
     const shuffleBtn = document.getElementById('shuffleBtn');
+    const tvModeBtn = document.getElementById('tvModeBtn');
+    const radioModeBtn = document.getElementById('radioModeBtn');
+    const radioVisualizer = document.getElementById('radioVisualizer');
+    const radioTitle = document.getElementById('radioTitle');
+    const radioSub = document.getElementById('radioSub');
     const toast = document.getElementById('toast');
 
     // ============================================================
@@ -232,8 +305,8 @@
         themeToggle.textContent = darkMode ? '🌙' : '☀️';
         localStorage.setItem('shafin-theme', darkMode ? 'dark' : 'light');
     }
-    const saved = localStorage.getItem('shafin-theme');
-    if (saved === 'light') { darkMode = false; document.documentElement.setAttribute('data-theme', 'light'); themeToggle.textContent = '☀️'; }
+    const savedTheme = localStorage.getItem('shafin-theme');
+    if (savedTheme === 'light') { darkMode = false; document.documentElement.setAttribute('data-theme', 'light'); themeToggle.textContent = '☀️'; }
     themeToggle.addEventListener('click', toggleTheme);
 
     // ============================================================
@@ -244,6 +317,69 @@
         toast.textContent = msg;
         toast.classList.remove('hidden');
         toastTimeout = setTimeout(() => { toast.classList.add('hidden'); }, duration);
+    }
+
+    // ============================================================
+    // METADATA FETCHING
+    // ============================================================
+    async function fetchVideoMetadata(videoId) {
+        try {
+            const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            return {
+                title: data.title || `Video ${videoId}`,
+                author: data.author_name || 'Unknown',
+                thumbnail: data.thumbnail_url || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+            };
+        } catch (err) {
+            console.warn(`Failed to fetch metadata for ${videoId}:`, err);
+            return {
+                title: `Video ${videoId}`,
+                author: 'Unknown',
+                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+            };
+        }
+    }
+
+    async function fetchPlaylistMetadata(playlist) {
+        if (!playlist || playlist.videoIds.length === 0) return;
+        const cacheKey = playlist.name;
+        if (metadataCache[cacheKey]) {
+            const allCached = playlist.videoIds.every(id => metadataCache[cacheKey][id]);
+            if (allCached) return;
+        }
+        if (!metadataCache[cacheKey]) metadataCache[cacheKey] = {};
+
+        isLoadingMetadata = true;
+        showToast(`Fetching metadata for ${playlist.name}...`);
+
+        const batchSize = 5;
+        let fetched = 0;
+        for (let i = 0; i < playlist.videoIds.length; i += batchSize) {
+            const batch = playlist.videoIds.slice(i, i + batchSize);
+            const promises = batch.map(async (id) => {
+                if (metadataCache[cacheKey][id]) return;
+                const meta = await fetchVideoMetadata(id);
+                metadataCache[cacheKey][id] = meta;
+                fetched++;
+                if (fetched % 5 === 0 || fetched === playlist.videoIds.length) {
+                    statusBadge.textContent = `📥 ${fetched}/${playlist.videoIds.length}`;
+                }
+                await new Promise(r => setTimeout(r, 200));
+            });
+            await Promise.all(promises);
+            await new Promise(r => setTimeout(r, 300));
+        }
+
+        isLoadingMetadata = false;
+        statusBadge.textContent = `✅ ${playlist.videoIds.length} videos`;
+        showToast(`Loaded metadata for ${playlist.videoIds.length} videos`);
+        
+        if (currentPlaylist === playlist && !isPlaylistView) {
+            renderVideos(playlist);
+        }
     }
 
     // ============================================================
@@ -299,6 +435,7 @@
     function renderPlaylists() {
         isPlaylistView = true;
         backBtn.classList.remove('show');
+        searchInput.placeholder = '🔍 Search playlists...';
         const search = searchInput.value.toLowerCase().trim();
         let filtered = playlists;
         if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
@@ -311,13 +448,15 @@
         let html = '';
         filtered.forEach((pl, idx) => {
             const isActive = currentPlaylist === pl && isPlaylistView;
-            const firstLetter = pl.name.charAt(0).toUpperCase();
+            const cacheKey = pl.name;
+            const cachedCount = metadataCache[cacheKey] ? Object.keys(metadataCache[cacheKey]).length : 0;
+            const hasMetadata = cachedCount > 0 && cachedCount >= pl.videoIds.length;
             html += `
                 <div class="list-item ${isActive ? 'active' : ''}" data-index="${idx}" data-type="playlist">
-                    <span class="icon">📋</span>
+                    <span class="icon">${hasMetadata ? '📋' : '📋'}</span>
                     <div class="info">
                         <div class="title">${escapeHtml(pl.name)}</div>
-                        <div class="sub">${pl.videoIds.length} videos</div>
+                        <div class="sub">${pl.videoIds.length} videos ${hasMetadata ? '✅' : (cachedCount > 0 ? `(${cachedCount}/${pl.videoIds.length})` : '')}</div>
                     </div>
                     <span class="video-count">${pl.videoIds.length}</span>
                 </div>
@@ -325,7 +464,6 @@
         });
         listContainer.innerHTML = html;
 
-        // Click handlers
         listContainer.querySelectorAll('.list-item[data-type="playlist"]').forEach(el => {
             el.addEventListener('click', () => {
                 const idx = parseInt(el.dataset.index);
@@ -334,6 +472,10 @@
                     currentPlaylist = pl;
                     currentVideoIndex = -1;
                     renderVideos(pl);
+                    const cacheKey = pl.name;
+                    if (!metadataCache[cacheKey] || Object.keys(metadataCache[cacheKey]).length < pl.videoIds.length) {
+                        fetchPlaylistMetadata(pl);
+                    }
                 }
             });
         });
@@ -344,26 +486,54 @@
         backBtn.classList.add('show');
         searchInput.placeholder = '🔍 Search videos...';
         const search = searchInput.value.toLowerCase().trim();
+        const cacheKey = playlist.name;
+        const cache = metadataCache[cacheKey] || {};
 
-        let html = `<div style="padding:4px 8px; font-size:0.7rem; color:var(--text2); border-bottom:1px solid var(--border); margin-bottom:4px;">${escapeHtml(playlist.name)} (${playlist.videoIds.length})</div>`;
+        let html = `<div style="padding:4px 8px; font-size:0.7rem; color:var(--text2); border-bottom:1px solid var(--border); margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
+            <span>${escapeHtml(playlist.name)} (${playlist.videoIds.length})</span>
+            <span style="font-size:0.6rem;">${Object.keys(cache).length}/${playlist.videoIds.length} loaded</span>
+        </div>`;
+
         let videos = playlist.videoIds.map((id, idx) => ({ id, index: idx }));
         if (search) {
-            // Simple search: just filter by index or show all (no title search available)
-            // We'll just show all with highlight
+            videos = videos.filter(v => {
+                const meta = cache[v.id];
+                if (meta) return meta.title.toLowerCase().includes(search);
+                return false;
+            });
         }
-        videos.forEach((v, idx) => {
+
+        if (videos.length === 0 && search) {
+            html += `<div style="text-align:center; padding:20px; font-size:0.7rem; color:var(--text2);">No matching videos</div>`;
+            listContainer.innerHTML = html;
+            return;
+        }
+
+        videos.forEach((v) => {
             const isActive = currentVideoIndex === v.index;
+            const meta = cache[v.id];
+            const title = meta ? meta.title : `Video ${v.index + 1}`;
+            const thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+            const author = meta ? meta.author : '';
+
             html += `
                 <div class="list-item ${isActive ? 'active' : ''}" data-video-index="${v.index}" data-type="video">
-                    <span class="icon">▶️</span>
+                    <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
                     <div class="info">
-                        <div class="title">Video ${v.index + 1}</div>
-                        <div class="sub">${escapeHtml(playlist.name)}</div>
+                        <div class="title">${escapeHtml(title)}</div>
+                        <div class="sub">${escapeHtml(author)} • ${v.index + 1}/${playlist.videoIds.length}</div>
                     </div>
                     <span class="badge">${v.index + 1}</span>
                 </div>
             `;
         });
+
+        if (isLoadingMetadata && Object.keys(cache).length < playlist.videoIds.length) {
+            html += `<div style="text-align:center; padding:12px; font-size:0.65rem; color:var(--text2);">
+                <span class="loading-spinner" style="display:inline-block; margin-right:8px;"></span> Loading metadata...
+            </div>`;
+        }
+
         listContainer.innerHTML = html;
 
         listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(el => {
@@ -374,6 +544,44 @@
         });
     }
 
+    // ============================================================
+    // PLAYER FUNCTIONS
+    // ============================================================
+    function updateModeUI() {
+        if (currentMode === 'tv') {
+            tvModeBtn.classList.add('active');
+            radioModeBtn.classList.remove('active');
+            radioVisualizer.classList.remove('active');
+            iframe.style.display = 'block';
+            placeholder.style.display = 'none';
+            // Restore iframe visibility
+            if (currentPlaylist && currentVideoIndex >= 0) {
+                const videoId = currentPlaylist.videoIds[currentVideoIndex];
+                if (videoId) {
+                    iframe.src = iframe.src; // reload
+                }
+            }
+        } else {
+            radioModeBtn.classList.add('active');
+            tvModeBtn.classList.remove('active');
+            radioVisualizer.classList.add('active');
+            iframe.style.display = 'none';
+            placeholder.style.display = 'none';
+            // Update radio info
+            if (currentPlaylist && currentVideoIndex >= 0) {
+                const cacheKey = currentPlaylist.name;
+                const cache = metadataCache[cacheKey] || {};
+                const videoId = currentPlaylist.videoIds[currentVideoIndex];
+                const meta = cache[videoId];
+                radioTitle.textContent = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
+                radioSub.textContent = `${currentPlaylist.name} • Radio Mode`;
+            } else {
+                radioTitle.textContent = 'Select a video';
+                radioSub.textContent = 'Radio Mode';
+            }
+        }
+    }
+
     function playVideo(playlist, videoIndex) {
         if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) return;
         currentPlaylist = playlist;
@@ -381,28 +589,31 @@
         const videoId = playlist.videoIds[videoIndex];
         if (!videoId) return;
 
-        // Show iframe, hide placeholder
-        iframe.style.display = 'block';
+        const cacheKey = playlist.name;
+        const cache = metadataCache[cacheKey] || {};
+        const meta = cache[videoId];
+        const title = meta ? meta.title : `Video ${videoIndex + 1}`;
+
+        // Update iframe
+        iframe.style.display = (currentMode === 'tv') ? 'block' : 'none';
         placeholder.style.display = 'none';
         iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
+        
+        // Update radio visualizer
+        if (currentMode === 'radio') {
+            radioVisualizer.classList.add('active');
+            radioTitle.textContent = title;
+            radioSub.textContent = `${playlist.name} • Radio Mode`;
+        } else {
+            radioVisualizer.classList.remove('active');
+        }
+
         isPlaying = true;
         playBtn.textContent = '⏸';
-        playerInfo.textContent = `${playlist.name} • ${videoIndex+1}/${playlist.videoIds.length}`;
-        showToast(`▶ ${playlist.name} • Video ${videoIndex+1}`);
+        playerInfo.textContent = `${playlist.name} • ${title}`;
+        showToast(`▶ ${title}`);
 
-        // Update active state in video list
         renderVideos(playlist);
-    }
-
-    function playRandomVideo(playlist) {
-        if (!playlist || playlist.videoIds.length === 0) return;
-        let idx;
-        if (shuffleMode) {
-            idx = Math.floor(Math.random() * playlist.videoIds.length);
-        } else {
-            idx = (currentVideoIndex + 1) % playlist.videoIds.length;
-        }
-        playVideo(playlist, idx);
     }
 
     function nextVideo() {
@@ -435,7 +646,6 @@
 
     function togglePlayPause() {
         if (!currentPlaylist) return;
-        // YouTube iframe control via src reload (simplified)
         if (isPlaying) {
             iframe.src = iframe.src.replace('autoplay=1', 'autoplay=0');
             playBtn.textContent = '▶';
@@ -453,7 +663,44 @@
         searchInput.placeholder = '🔍 Search playlists...';
         searchInput.value = '';
         renderPlaylists();
-        // Don't reset player
+    }
+
+    function refreshMetadata() {
+        if (currentPlaylist && !isPlaylistView) {
+            const cacheKey = currentPlaylist.name;
+            if (metadataCache[cacheKey]) {
+                delete metadataCache[cacheKey];
+            }
+            fetchPlaylistMetadata(currentPlaylist);
+            showToast('Refreshing metadata...');
+        } else {
+            showToast('Open a playlist first to refresh');
+        }
+    }
+
+    function switchMode(mode) {
+        if (mode === currentMode) return;
+        currentMode = mode;
+        updateModeUI();
+        showToast(mode === 'tv' ? '📺 TV Mode' : '🎵 Radio Mode');
+        
+        // If a video is playing, update display
+        if (currentPlaylist && currentVideoIndex >= 0) {
+            const videoId = currentPlaylist.videoIds[currentVideoIndex];
+            if (videoId) {
+                if (mode === 'tv') {
+                    iframe.style.display = 'block';
+                    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
+                } else {
+                    iframe.style.display = 'none';
+                    const cacheKey = currentPlaylist.name;
+                    const cache = metadataCache[cacheKey] || {};
+                    const meta = cache[videoId];
+                    radioTitle.textContent = meta ? meta.title : `Video ${currentVideoIndex + 1}`;
+                    radioSub.textContent = `${currentPlaylist.name} • Radio Mode`;
+                }
+            }
+        }
     }
 
     // ============================================================
@@ -476,6 +723,7 @@
     });
 
     backBtn.addEventListener('click', goBackToPlaylists);
+    refreshBtn.addEventListener('click', refreshMetadata);
 
     prevBtn.addEventListener('click', prevVideo);
     nextBtn.addEventListener('click', nextVideo);
@@ -488,6 +736,9 @@
         showToast(shuffleMode ? '🎲 Shuffle ON' : '➡️ Sequential');
     });
 
+    tvModeBtn.addEventListener('click', () => switchMode('tv'));
+    radioModeBtn.addEventListener('click', () => switchMode('radio'));
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT') return;
@@ -496,28 +747,24 @@
         if (e.key === ' ') { e.preventDefault(); togglePlayPause(); }
         if (e.key === 'Escape' && !isPlaylistView) { goBackToPlaylists(); }
         if (e.key === 's' || e.key === 'S') { shuffleBtn.click(); }
-    });
-
-    // When video ends, play next
-    iframe.addEventListener('load', () => {
-        // YouTube iframe doesn't fire 'ended' event easily, we'll use a timer or rely on user interaction
-        // Simpler: let user control navigation
-    });
-
-    // Auto-play next when video ends (polling approach)
-    let checkInterval = null;
-    iframe.addEventListener('load', () => {
-        if (checkInterval) clearInterval(checkInterval);
-        // We can't reliably detect ended state from iframe, so we rely on user clicks
+        if (e.key === 'r' || e.key === 'R') { refreshBtn.click(); }
+        if (e.key === 't' || e.key === 'T') { switchMode('tv'); }
+        if (e.key === 'r' && e.ctrlKey) { e.preventDefault(); } // avoid conflict
+        if (e.key === 'm' || e.key === 'M') { 
+            switchMode(currentMode === 'tv' ? 'radio' : 'tv');
+        }
     });
 
     // ============================================================
     // INIT
     // ============================================================
+    // Initialize mode UI
+    updateModeUI();
     loadFromSheet();
 
-    console.log('🟢 Shafin Tube IPTV-style loaded.');
+    console.log('🟢 Shafin Tube IPTV-style loaded with TV/Radio mode.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
+    console.log('📺 Press "M" to toggle TV/Radio mode');
 </script>
 </body>
 </html>
