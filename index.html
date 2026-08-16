@@ -45,7 +45,6 @@
         body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: background var(--transition), color var(--transition); }
         .app { display: flex; flex-direction: column; height: 100vh; max-width: 100vw; overflow: hidden; }
         
-        /* Header */
         .header { background: var(--bg2); padding: 6px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 44px; gap: 6px; flex-wrap: nowrap; }
         .logo-area { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
@@ -73,10 +72,8 @@
         .header-btn.refresh-btn { font-size: 0.85rem; }
         .header-btn.refresh-btn:hover { transform: rotate(60deg); }
         
-        /* Status Badge */
         .status-badge { font-size: 0.5rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
         
-        /* Timer Display */
         .timer-display { 
             font-size: 0.6rem; 
             font-weight: 600; 
@@ -90,93 +87,46 @@
             font-variant-numeric: tabular-nums;
             flex-shrink: 0;
         }
-        .timer-display.active { 
-            background: var(--accent); 
-            color: #fff; 
-            border-color: var(--accent); 
-            box-shadow: 0 0 12px var(--accent-glow); 
-        }
+        .timer-display.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
         
-        /* Timer Preset Dropdown - Opens Downward */
         .timer-preset-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
         .timer-preset-btn { 
-            padding: 2px 10px; 
-            height: 28px; 
-            border-radius: 16px; 
-            font-size: 0.55rem; 
-            font-weight: 500;
-            background: var(--bg3); 
-            border: 1px solid var(--border); 
-            color: var(--text2); 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 3px;
-            cursor: pointer; 
-            transition: all var(--transition); 
-            white-space: nowrap;
-            min-width: 36px;
+            padding: 2px 10px; height: 28px; border-radius: 16px; font-size: 0.55rem; font-weight: 500;
+            background: var(--bg3); border: 1px solid var(--border); color: var(--text2); 
+            display: inline-flex; align-items: center; justify-content: center; gap: 3px;
+            cursor: pointer; transition: all var(--transition); white-space: nowrap; min-width: 36px;
         }
         .timer-preset-btn:hover { background: var(--bg4); color: var(--text); }
         .timer-preset-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .timer-preset-btn.active:hover { background: var(--accent2); }
         
-        /* Dropdown opens downward */
         .timer-preset-dropdown { 
-            position: absolute; 
-            top: 34px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: var(--bg3); 
-            border: 1px solid var(--border); 
-            border-radius: 10px; 
-            padding: 4px 0; 
-            min-width: 80px; 
-            display: none; 
-            flex-direction: column; 
-            box-shadow: 0 8px 30px var(--shadow); 
-            z-index: 100; 
+            position: absolute; top: 34px; left: 50%; transform: translateX(-50%); 
+            background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; 
+            padding: 4px 0; min-width: 80px; display: none; flex-direction: column; 
+            box-shadow: 0 8px 30px var(--shadow); z-index: 100; 
         }
         .timer-preset-dropdown.open { display: flex; }
         .timer-preset-dropdown .preset-option { 
-            padding: 5px 14px; 
-            font-size: 0.6rem; 
-            color: var(--text2); 
-            cursor: pointer; 
-            transition: all var(--transition); 
-            border: none; 
-            background: transparent; 
-            text-align: center; 
+            padding: 5px 14px; font-size: 0.6rem; color: var(--text2); cursor: pointer; 
+            transition: all var(--transition); border: none; background: transparent; text-align: center; 
         }
         .timer-preset-dropdown .preset-option:hover { background: var(--bg4); color: var(--text); }
         .timer-preset-dropdown .preset-option.active { color: var(--accent); }
         .timer-preset-dropdown .preset-option.off { border-top: 1px solid var(--border); margin-top: 3px; padding-top: 6px; color: var(--text2); }
         .timer-preset-dropdown .preset-option.off:hover { color: var(--text); }
         
-        /* Clock Tile - Wider, two lines */
         .clock-tile { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            background: var(--bg3); 
-            border: 1px solid var(--border); 
-            border-radius: 4px; 
-            padding: 1px 10px; 
-            min-width: 85px; 
-            width: 85px;
-            min-height: 34px;
-            flex-shrink: 0;
-            line-height: 1.2;
-            text-align: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; 
+            padding: 1px 10px; min-width: 85px; width: 85px; min-height: 34px;
+            flex-shrink: 0; line-height: 1.2; text-align: center;
         }
         .clock-tile .time { font-size: 0.7rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; }
         .clock-tile .day { font-size: 0.45rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
         
-        /* Main Content */
         .main-content { display: flex; flex: 1; overflow: hidden; min-height: 0; }
         
-        /* Sidebar */
         .sidebar { width: 380px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
         .sidebar-header { padding: 6px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
         .sidebar-search { flex: 1; min-width: 100px; padding: 5px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.7rem; outline: none; }
@@ -204,7 +154,6 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .list-item .translated-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
         
-        /* Player Area */
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
         .video-container { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden; }
         .video-container iframe { width: 100%; height: 100%; border: none; transition: opacity 0.3s ease; }
@@ -239,7 +188,6 @@
         .radio-visualizer.paused .equalizer-bar { animation-play-state: paused !important; }
         .radio-visualizer.paused .radio-icon { animation-play-state: paused !important; }
         
-        /* Controls */
         .controls { background: var(--bg2); padding: 8px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
         .control-btn { width: 34px; height: 34px; border-radius: 50%; font-size: 0.85rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
@@ -256,61 +204,32 @@
         .control-btn.mute-btn.muted { background: var(--accent); border-color: var(--accent); color: #fff; }
         .control-btn.mute-btn.muted:hover { background: var(--accent2); }
         
-        /* TV/Radio Toggle Switch */
         .mode-switch { display: flex; align-items: center; gap: 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 2px; flex-shrink: 0; }
         .mode-switch .mode-option { padding: 4px 12px; border-radius: 18px; font-size: 0.6rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
         .mode-switch .mode-option:hover { color: var(--text); }
         .mode-switch .mode-option.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .mode-switch .mode-option.active:hover { background: var(--accent2); }
         
-        /* Sleep Timer */
         .sleep-timer-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
         .sleep-timer-btn { 
-            padding: 4px 12px; 
-            height: 34px; 
-            border-radius: 20px; 
-            font-size: 0.6rem; 
-            font-weight: 500;
-            background: var(--bg3); 
-            border: 1px solid var(--border); 
-            color: var(--text2); 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 4px;
-            cursor: pointer; 
-            transition: all var(--transition); 
-            white-space: nowrap;
-            min-width: 56px;
+            padding: 4px 12px; height: 34px; border-radius: 20px; font-size: 0.6rem; font-weight: 500;
+            background: var(--bg3); border: 1px solid var(--border); color: var(--text2); 
+            display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+            cursor: pointer; transition: all var(--transition); white-space: nowrap; min-width: 56px;
         }
         .sleep-timer-btn:hover { background: var(--bg4); color: var(--text); }
         .sleep-timer-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .sleep-timer-btn.active:hover { background: var(--accent2); }
         .sleep-timer-dropdown { 
-            position: absolute; 
-            bottom: 40px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: var(--bg3); 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            padding: 6px 0; 
-            min-width: 100px; 
-            display: none; 
-            flex-direction: column; 
-            box-shadow: 0 8px 30px var(--shadow); 
-            z-index: 100; 
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); 
+            background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; 
+            padding: 6px 0; min-width: 100px; display: none; flex-direction: column; 
+            box-shadow: 0 8px 30px var(--shadow); z-index: 100; 
         }
         .sleep-timer-dropdown.open { display: flex; }
         .sleep-timer-dropdown .sleep-option { 
-            padding: 6px 16px; 
-            font-size: 0.65rem; 
-            color: var(--text2); 
-            cursor: pointer; 
-            transition: all var(--transition); 
-            border: none; 
-            background: transparent; 
-            text-align: center; 
+            padding: 6px 16px; font-size: 0.65rem; color: var(--text2); cursor: pointer; 
+            transition: all var(--transition); border: none; background: transparent; text-align: center; 
         }
         .sleep-timer-dropdown .sleep-option:hover { background: var(--bg4); color: var(--text); }
         .sleep-timer-dropdown .sleep-option.active { color: var(--accent); }
@@ -320,12 +239,10 @@
         .player-info-text { font-size: 0.65rem; color: var(--text2); flex: 1; min-width: 60px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .player-timer { font-size: 0.6rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right; flex-shrink: 0; }
         
-        /* Toast */
         .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 5px 14px; border-radius: 25px; font-size: 0.65rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
         @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
         .toast.hidden { display: none; }
         
-        /* History Panel */
         .history-panel { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
         .history-panel.open { right: 0; }
         .history-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
@@ -345,7 +262,6 @@
         .history-item .count-badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
         .history-item .position-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
         
-        /* Overlay for history */
         .history-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2999; display: none; }
         .history-overlay.open { display: block; }
         
@@ -426,7 +342,6 @@
 </head>
 <body>
 <div class="app">
-    <!-- Header -->
     <header class="header">
         <div class="logo-area">
             <img class="logo-img" src="https://i.postimg.cc/yYbyhL4w/Rounded-Profile.png" alt="Shafin Tube" onerror="this.style.display='none'">
@@ -465,9 +380,7 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <input class="sidebar-search" id="searchInput" type="text" placeholder="🔍 Search...">
@@ -478,7 +391,6 @@
             </div>
         </div>
 
-        <!-- Player Area -->
         <div class="player-area">
             <div class="video-container" id="videoContainer">
                 <div class="blank" id="blankScreen"></div>
@@ -534,7 +446,6 @@
     </div>
 </div>
 
-<!-- History Panel -->
 <div class="history-overlay" id="historyOverlay"></div>
 <div class="history-panel" id="historyPanel">
     <div class="history-header">
@@ -546,7 +457,6 @@
     </div>
 </div>
 
-<!-- Toast -->
 <div class="toast hidden" id="toast"></div>
 
 <script>
@@ -566,7 +476,7 @@
     let playlists = [];
     let currentPlaylist = null;
     let currentVideoIndex = -1;
-    let shuffleMode = true;
+    let shuffleMode = false; // Default to OFF
     let isPlaying = false;
     let isPlaylistView = true;
     let toastTimeout = null;
@@ -585,6 +495,8 @@
     let isStopped = false;
     let isMuted = false;
     let videoEnded = false;
+    let isNavigating = false; // Prevent multiple navigation triggers
+    let pendingNextVideo = false;
     
     // Timer state
     let timerMinutes = 0;
@@ -695,19 +607,16 @@
                 if (isPlaying && currentPlaylist && currentVideoIndex >= 0) {
                     updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], currentPosition);
                 }
-                // Check if video ended (within 1 second of duration)
-                if (duration > 0 && current >= duration - 1 && isPlaying) {
-                    if (!videoEnded) {
-                        videoEnded = true;
-                        // Auto-play next video after a short delay
-                        setTimeout(() => {
-                            if (currentPlaylist && isPlaying) {
-                                nextVideo();
-                            }
-                        }, 500);
-                    }
-                } else {
-                    videoEnded = false;
+                // Check if video ended - but only trigger once
+                if (duration > 0 && current >= duration - 0.5 && isPlaying && !videoEnded && !isNavigating) {
+                    videoEnded = true;
+                    isNavigating = true;
+                    setTimeout(() => {
+                        if (currentPlaylist && isPlaying) {
+                            nextVideo();
+                        }
+                        isNavigating = false;
+                    }, 300);
                 }
             } else {
                 playerTimer.textContent = '--:-- / --:--';
@@ -731,21 +640,21 @@
     }
 
     // ============================================================
-    // PAGE VISIBILITY API - Fix background auto-play
+    // PAGE VISIBILITY API
     // ============================================================
     document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && !isPlaying && currentPlaylist && currentVideoIndex >= 0) {
-            // User returned to tab - check if video ended
+        if (!document.hidden && !isPlaying && currentPlaylist && currentVideoIndex >= 0 && !isNavigating) {
             if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && typeof ytPlayer.getDuration === 'function') {
                 const current = ytPlayer.getCurrentTime();
                 const duration = ytPlayer.getDuration();
-                if (duration > 0 && current >= duration - 1) {
-                    // Video ended while tab was hidden - play next
+                if (duration > 0 && current >= duration - 0.5) {
                     videoEnded = true;
+                    isNavigating = true;
                     setTimeout(() => {
                         if (currentPlaylist) {
                             nextVideo();
                         }
+                        isNavigating = false;
                     }, 300);
                 }
             }
@@ -781,13 +690,15 @@
                 clearInterval(timerCountdownInterval);
                 timerCountdownInterval = null;
                 timerDisplay.textContent = '0:00';
-                if (currentPlaylist && currentPlaylist.videoIds.length > 0) {
+                if (currentPlaylist && currentPlaylist.videoIds.length > 0 && !isNavigating) {
+                    isNavigating = true;
                     randomVideoWithPosition();
                     showToast('⏱️ Timer: Playing random video at random position');
                     setTimeout(() => {
                         if (timerMinutes > 0) {
                             startCountdown(timerMinutes);
                         }
+                        isNavigating = false;
                     }, 1000);
                 }
             } else {
@@ -868,6 +779,8 @@
     function stopPlayback() {
         isStopped = true;
         videoEnded = false;
+        isNavigating = false;
+        pendingNextVideo = false;
         
         if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
             ytPlayer.pauseVideo();
@@ -927,11 +840,14 @@
             return;
         }
         
+        if (isNavigating) return;
+        isNavigating = true;
         isStopped = false;
         videoEnded = false;
         const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
         playVideo(currentPlaylist, randomIndex);
         showToast('✨ Random video from start');
+        setTimeout(() => { isNavigating = false; }, 500);
     }
 
     function randomVideoWithPosition() {
@@ -940,6 +856,8 @@
             return;
         }
         
+        if (isNavigating) return;
+        isNavigating = true;
         isStopped = false;
         videoEnded = false;
         const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
@@ -963,6 +881,7 @@
             } else {
                 showToast('✨ Random video selected');
             }
+            setTimeout(() => { isNavigating = false; }, 500);
         }, 1500);
     }
 
@@ -1299,6 +1218,7 @@
 
         isStopped = false;
         videoEnded = false;
+        isNavigating = false;
         blankScreen.classList.remove('show');
         
         const container = document.getElementById('videoContainer');
@@ -1342,6 +1262,8 @@
                     if (isMuted && typeof event.target.setVolume === 'function') {
                         event.target.setVolume(0);
                     }
+                    // Reset navigation flag after play starts
+                    setTimeout(() => { isNavigating = false; }, 500);
                 },
                 onStateChange: (event) => {
                     const state = event.data;
@@ -1351,6 +1273,7 @@
                         radioVisualizer.classList.remove('paused');
                         videoEnded = false;
                         startTimer();
+                        isNavigating = false;
                     } else if (state === YT.PlayerState.PAUSED) {
                         isPlaying = false;
                         playBtn.textContent = '▶';
@@ -1364,8 +1287,14 @@
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
                         videoEnded = true;
-                        if (currentPlaylist) {
-                            setTimeout(() => nextVideo(), 500);
+                        if (currentPlaylist && !isNavigating) {
+                            isNavigating = true;
+                            setTimeout(() => {
+                                if (currentPlaylist) {
+                                    nextVideo();
+                                }
+                                isNavigating = false;
+                            }, 500);
                         }
                     }
                 },
@@ -1424,7 +1353,7 @@
             
             const state = restoreState();
             if (state) {
-                shuffleMode = state.shuffleMode !== undefined ? state.shuffleMode : true;
+                shuffleMode = state.shuffleMode !== undefined ? state.shuffleMode : false;
                 currentMode = state.currentMode || 'tv';
                 translateEnabled = state.translateEnabled || false;
                 if (translateEnabled) {
@@ -1577,13 +1506,15 @@
         listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(el => {
             el.addEventListener('click', () => {
                 const idx = parseInt(el.dataset.videoIndex);
-                playVideo(playlist, idx);
+                if (!isNavigating) {
+                    playVideo(playlist, idx);
+                }
             });
         });
     }
 
     // ============================================================
-    // PLAYER FUNCTIONS - FIXED NEXT/PREV
+    // PLAYER FUNCTIONS
     // ============================================================
     function updateModeUI() {
         if (currentMode === 'tv') {
@@ -1635,7 +1566,9 @@
 
     function playVideo(playlist, videoIndex, restore = false, startPosition = 0) {
         if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) return;
+        if (isNavigating) return;
         
+        isNavigating = true;
         isStopped = false;
         videoEnded = false;
         blankScreen.classList.remove('show');
@@ -1643,7 +1576,10 @@
         currentPlaylist = playlist;
         currentVideoIndex = videoIndex;
         const videoId = playlist.videoIds[videoIndex];
-        if (!videoId) return;
+        if (!videoId) {
+            isNavigating = false;
+            return;
+        }
 
         const cacheKey = playlist.name;
         const cache = metadataCache[cacheKey] || {};
@@ -1715,6 +1651,7 @@
                         if (isMuted && typeof event.target.setVolume === 'function') {
                             event.target.setVolume(0);
                         }
+                        isNavigating = false;
                     },
                     onStateChange: (event) => {
                         const state = event.data;
@@ -1724,6 +1661,7 @@
                             radioVisualizer.classList.remove('paused');
                             videoEnded = false;
                             startTimer();
+                            isNavigating = false;
                         } else if (state === YT.PlayerState.PAUSED) {
                             isPlaying = false;
                             playBtn.textContent = '▶';
@@ -1737,8 +1675,14 @@
                             playBtn.textContent = '▶';
                             radioVisualizer.classList.add('paused');
                             videoEnded = true;
-                            if (currentPlaylist) {
-                                setTimeout(() => nextVideo(), 500);
+                            if (currentPlaylist && !isNavigating) {
+                                isNavigating = true;
+                                setTimeout(() => {
+                                    if (currentPlaylist) {
+                                        nextVideo();
+                                    }
+                                    isNavigating = false;
+                                }, 500);
                             }
                         }
                     },
@@ -1751,6 +1695,7 @@
             });
         } else {
             fallbackToIframe(videoId);
+            isNavigating = false;
         }
 
         if (currentMode === 'radio') {
@@ -1808,7 +1753,6 @@
         }
     }
 
-    // FIXED: Next video function with proper sequential navigation
     function nextVideo() {
         if (isStopped) {
             showToast('Playback is stopped', true);
@@ -1818,33 +1762,34 @@
             showToast('No playlist available', true);
             return;
         }
+        if (isNavigating) return;
+        
+        isNavigating = true;
         
         if (sleepTimerMinutes > 0) {
             setSleepTimer(sleepTimerMinutes);
         }
         
         if (shuffleMode) {
-            // Shuffle mode: pick random video (avoid repeating the same one)
             let idx;
             if (currentPlaylist.videoIds.length === 1) {
                 idx = 0;
             } else {
                 do {
                     idx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-                } while (idx === currentVideoIndex);
+                } while (idx === currentVideoIndex && currentPlaylist.videoIds.length > 1);
             }
             playVideo(currentPlaylist, idx);
         } else {
-            // Sequential mode: go to next video in order
             let nextIdx = currentVideoIndex + 1;
             if (nextIdx >= currentPlaylist.videoIds.length) {
-                nextIdx = 0; // Wrap around to first
+                nextIdx = 0;
             }
             playVideo(currentPlaylist, nextIdx);
         }
+        setTimeout(() => { isNavigating = false; }, 500);
     }
 
-    // FIXED: Previous video function with proper sequential navigation
     function prevVideo() {
         if (isStopped) {
             showToast('Playback is stopped', true);
@@ -1854,30 +1799,32 @@
             showToast('No playlist available', true);
             return;
         }
+        if (isNavigating) return;
+        
+        isNavigating = true;
         
         if (sleepTimerMinutes > 0) {
             setSleepTimer(sleepTimerMinutes);
         }
         
         if (shuffleMode) {
-            // Shuffle mode: pick random video (avoid repeating the same one)
             let idx;
             if (currentPlaylist.videoIds.length === 1) {
                 idx = 0;
             } else {
                 do {
                     idx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-                } while (idx === currentVideoIndex);
+                } while (idx === currentVideoIndex && currentPlaylist.videoIds.length > 1);
             }
             playVideo(currentPlaylist, idx);
         } else {
-            // Sequential mode: go to previous video in order
             let prevIdx = currentVideoIndex - 1;
             if (prevIdx < 0) {
-                prevIdx = currentPlaylist.videoIds.length - 1; // Wrap around to last
+                prevIdx = currentPlaylist.videoIds.length - 1;
             }
             playVideo(currentPlaylist, prevIdx);
         }
+        setTimeout(() => { isNavigating = false; }, 500);
     }
 
     function togglePlayPause() {
@@ -2003,6 +1950,8 @@
             return;
         }
         
+        if (isNavigating) return;
+        isNavigating = true;
         isStopped = false;
         videoEnded = false;
         blankScreen.classList.remove('show');
@@ -2025,6 +1974,7 @@
                 fetchPlaylistMetadata(tempPlaylist);
                 setTimeout(() => {
                     playVideo(tempPlaylist, 0);
+                    isNavigating = false;
                 }, 500);
                 showToast(`▶ Playing: ${url}`);
                 return;
@@ -2050,6 +2000,7 @@
         playerInfo.textContent = `Custom Stream`;
         showToast(`▶ Playing custom stream`);
         saveState(currentPlaylist?.name, currentVideoIndex);
+        setTimeout(() => { isNavigating = false; }, 500);
     }
 
     // ============================================================
@@ -2089,7 +2040,6 @@
     tvModeOption.addEventListener('click', () => setMode('tv'));
     radioModeOption.addEventListener('click', () => setMode('radio'));
 
-    // Sleep Timer
     sleepTimerBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         sleepTimerDropdown.classList.toggle('open');
@@ -2108,7 +2058,6 @@
         sleepTimerDropdown.classList.remove('open');
     });
 
-    // Timer Preset
     timerPresetBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         timerPresetDropdown.classList.toggle('open');
@@ -2127,13 +2076,11 @@
         timerPresetDropdown.classList.remove('open');
     });
 
-    // Manual Input
     manualPlayBtn.addEventListener('click', playManualInput);
     manualInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') playManualInput();
     });
 
-    // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT') return;
         
@@ -2182,7 +2129,6 @@
     updateModeUI();
     loadFromSheet();
 
-    // Set default timer to infinite
     setTimerPreset(0);
 
     console.log('🟢 Shafin Tube loaded with all features.');
