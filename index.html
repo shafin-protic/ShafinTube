@@ -46,14 +46,18 @@
         .app { display: flex; flex-direction: column; height: 100vh; max-width: 100vw; overflow: hidden; }
         
         /* Header */
-        .header { background: var(--bg2); padding: 6px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 44px; gap: 6px; flex-wrap: wrap; }
+        .header { background: var(--bg2); padding: 6px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 44px; gap: 6px; flex-wrap: nowrap; }
         .logo-area { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
         .logo-text { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
         .logo-text span { color: var(--accent); }
         
-        .header-center { display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; flex-wrap: wrap; }
-        .status-badge { font-size: 0.55rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; }
+        .header-center { display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; flex-wrap: nowrap; overflow: hidden; }
+        .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 1px 4px 1px 12px; flex-shrink: 1; max-width: 280px; min-width: 120px; }
+        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.6rem; outline: none; padding: 4px 0; width: 100%; min-width: 60px; }
+        .manual-input-wrap input::placeholder { color: var(--text2); }
+        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 2px 12px; border-radius: 16px; cursor: pointer; font-size: 0.55rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        .manual-input-wrap .play-btn:hover { background: var(--accent2); }
         
         .header-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; flex-wrap: nowrap; }
         .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
@@ -69,16 +73,19 @@
         .header-btn.refresh-btn { font-size: 0.85rem; }
         .header-btn.refresh-btn:hover { transform: rotate(60deg); }
         
+        /* Status Badge */
+        .status-badge { font-size: 0.5rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
+        
         /* Timer Display */
         .timer-display { 
-            font-size: 0.65rem; 
+            font-size: 0.6rem; 
             font-weight: 600; 
-            color: var(--accent); 
+            color: var(--text2); 
             background: var(--bg3); 
-            padding: 2px 10px; 
+            padding: 2px 8px; 
             border-radius: 16px; 
             border: 1px solid var(--border); 
-            min-width: 50px; 
+            min-width: 40px; 
             text-align: center; 
             font-variant-numeric: tabular-nums;
             flex-shrink: 0;
@@ -90,10 +97,10 @@
             box-shadow: 0 0 12px var(--accent-glow); 
         }
         
-        /* Timer Preset Dropdown */
+        /* Timer Preset Dropdown - Opens Downward */
         .timer-preset-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
         .timer-preset-btn { 
-            padding: 4px 10px; 
+            padding: 2px 10px; 
             height: 28px; 
             border-radius: 16px; 
             font-size: 0.55rem; 
@@ -108,14 +115,16 @@
             cursor: pointer; 
             transition: all var(--transition); 
             white-space: nowrap;
-            min-width: 40px;
+            min-width: 36px;
         }
         .timer-preset-btn:hover { background: var(--bg4); color: var(--text); }
         .timer-preset-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .timer-preset-btn.active:hover { background: var(--accent2); }
+        
+        /* Dropdown opens downward */
         .timer-preset-dropdown { 
             position: absolute; 
-            bottom: 34px; 
+            top: 34px; 
             left: 50%; 
             transform: translateX(-50%); 
             background: var(--bg3); 
@@ -143,13 +152,6 @@
         .timer-preset-dropdown .preset-option.active { color: var(--accent); }
         .timer-preset-dropdown .preset-option.off { border-top: 1px solid var(--border); margin-top: 3px; padding-top: 6px; color: var(--text2); }
         .timer-preset-dropdown .preset-option.off:hover { color: var(--text); }
-        
-        /* Manual Input Tile - Wider */
-        .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 1px 4px 1px 12px; flex-shrink: 0; max-width: 280px; min-width: 180px; }
-        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.6rem; outline: none; padding: 4px 0; width: 160px; min-width: 100px; }
-        .manual-input-wrap input::placeholder { color: var(--text2); }
-        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 2px 12px; border-radius: 16px; cursor: pointer; font-size: 0.55rem; font-weight: 600; white-space: nowrap; }
-        .manual-input-wrap .play-btn:hover { background: var(--accent2); }
         
         /* Clock Tile - Wider, two lines */
         .clock-tile { 
@@ -349,18 +351,19 @@
         
         @media (max-width: 768px) {
             .sidebar { width: 300px; }
-            .header { padding: 4px 8px; min-height: 38px; }
+            .header { padding: 4px 8px; min-height: 38px; gap: 4px; }
             .logo-text { font-size: 0.8rem; }
             .logo-img { width: 24px; height: 24px; }
             .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
             .clock-tile { min-width: 72px; width: 72px; min-height: 28px; padding: 1px 6px; }
             .clock-tile .time { font-size: 0.6rem; }
             .clock-tile .day { font-size: 0.4rem; }
-            .manual-input-wrap { max-width: 200px; min-width: 120px; }
-            .manual-input-wrap input { width: 110px; font-size: 0.5rem; }
+            .manual-input-wrap { max-width: 180px; min-width: 90px; }
+            .manual-input-wrap input { font-size: 0.5rem; }
             .manual-input-wrap .play-btn { font-size: 0.45rem; padding: 1px 8px; }
-            .timer-display { font-size: 0.55rem; min-width: 40px; padding: 1px 8px; }
-            .timer-preset-btn { font-size: 0.5rem; padding: 3px 8px; height: 24px; min-width: 34px; }
+            .timer-display { font-size: 0.5rem; min-width: 34px; padding: 1px 6px; }
+            .timer-preset-btn { font-size: 0.5rem; padding: 2px 8px; height: 24px; min-width: 32px; }
+            .status-badge { font-size: 0.45rem; padding: 1px 6px; }
             .sleep-timer-btn { font-size: 0.55rem; padding: 3px 10px; height: 30px; min-width: 48px; }
             .list-item .thumb { width: 34px; height: 19px; }
             .list-item .title { font-size: 0.7rem; }
@@ -371,6 +374,8 @@
             .history-panel { width: 340px; right: -340px; }
             .radio-visualizer .radio-icon { font-size: 3rem; }
             .radio-visualizer .radio-title { font-size: 0.9rem; }
+            .timer-preset-dropdown { top: 30px; min-width: 70px; }
+            .timer-preset-dropdown .preset-option { font-size: 0.55rem; padding: 4px 10px; }
         }
         @media (max-width: 480px) {
             .sidebar { width: 240px; }
@@ -384,16 +389,16 @@
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
             .sleep-timer-btn { font-size: 0.5rem; padding: 2px 8px; height: 28px; min-width: 42px; }
-            .timer-display { font-size: 0.5rem; min-width: 34px; padding: 1px 6px; }
-            .timer-preset-btn { font-size: 0.45rem; padding: 2px 6px; height: 22px; min-width: 30px; }
+            .timer-display { font-size: 0.45rem; min-width: 30px; padding: 1px 4px; }
+            .timer-preset-btn { font-size: 0.45rem; padding: 2px 6px; height: 22px; min-width: 28px; }
+            .status-badge { font-size: 0.4rem; padding: 1px 4px; }
             .player-info-text { font-size: 0.5rem; min-width: 30px; }
             .player-timer { font-size: 0.45rem; min-width: 40px; }
-            .header { gap: 4px; padding: 3px 6px; min-height: 34px; }
-            .status-badge { font-size: 0.45rem; padding: 1px 6px; }
+            .header { gap: 3px; padding: 3px 6px; min-height: 34px; flex-wrap: nowrap; }
             .header-btn { width: 22px; height: 22px; font-size: 0.6rem; }
-            .manual-input-wrap { max-width: 160px; min-width: 90px; padding: 1px 3px 1px 8px; }
-            .manual-input-wrap input { width: 80px; font-size: 0.45rem; padding: 2px 0; }
-            .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 6px; }
+            .manual-input-wrap { max-width: 140px; min-width: 70px; padding: 1px 3px 1px 6px; }
+            .manual-input-wrap input { font-size: 0.45rem; padding: 2px 0; min-width: 40px; }
+            .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 5px; }
             .clock-tile { min-width: 62px; width: 62px; min-height: 24px; padding: 1px 4px; }
             .clock-tile .time { font-size: 0.5rem; }
             .clock-tile .day { font-size: 0.35rem; }
@@ -402,6 +407,8 @@
             .radio-visualizer .radio-title { font-size: 0.8rem; }
             .radio-visualizer .equalizer { height: 28px; gap: 2px; }
             .radio-visualizer .equalizer-bar { width: 2px; }
+            .timer-preset-dropdown { top: 26px; min-width: 60px; }
+            .timer-preset-dropdown .preset-option { font-size: 0.5rem; padding: 3px 8px; }
         }
         @media (max-width: 380px) {
             .sidebar { width: 200px; }
@@ -409,10 +416,11 @@
             .clock-tile { min-width: 54px; width: 54px; min-height: 22px; }
             .clock-tile .time { font-size: 0.45rem; }
             .clock-tile .day { font-size: 0.3rem; }
-            .manual-input-wrap { max-width: 120px; min-width: 70px; }
-            .manual-input-wrap input { width: 60px; font-size: 0.4rem; }
-            .timer-display { font-size: 0.45rem; min-width: 30px; padding: 1px 4px; }
-            .timer-preset-btn { font-size: 0.4rem; padding: 2px 5px; height: 20px; min-width: 26px; }
+            .manual-input-wrap { max-width: 100px; min-width: 60px; }
+            .manual-input-wrap input { min-width: 30px; font-size: 0.4rem; }
+            .timer-display { font-size: 0.4rem; min-width: 26px; padding: 1px 3px; }
+            .timer-preset-btn { font-size: 0.4rem; padding: 2px 4px; height: 20px; min-width: 24px; }
+            .status-badge { font-size: 0.35rem; padding: 1px 3px; }
         }
     </style>
 </head>
@@ -425,6 +433,12 @@
             <div class="logo-text">Shafin<span>Tube</span></div>
         </div>
         <div class="header-center">
+            <div class="manual-input-wrap">
+                <input type="text" id="manualInput" placeholder="YouTube/MP3/MP4..." />
+                <button class="play-btn" id="manualPlayBtn">▶</button>
+            </div>
+        </div>
+        <div class="header-right">
             <span class="status-badge" id="statusBadge">📡 Loading...</span>
             <span class="timer-display" id="timerDisplay">∞</span>
             <div class="timer-preset-wrap">
@@ -437,12 +451,6 @@
                     <button class="preset-option" data-minutes="15">15 min</button>
                     <button class="preset-option off" data-minutes="0">Infinite</button>
                 </div>
-            </div>
-        </div>
-        <div class="header-right">
-            <div class="manual-input-wrap">
-                <input type="text" id="manualInput" placeholder="YouTube/MP3/MP4..." />
-                <button class="play-btn" id="manualPlayBtn">▶</button>
             </div>
             <button class="header-btn random-btn" id="randomBtn" title="Random Video (Random Position)">✨</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
