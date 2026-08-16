@@ -58,17 +58,20 @@
         .header-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; flex-wrap: nowrap; }
         .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
         .header-btn:hover { background: var(--bg4); transform: scale(1.05); }
-        .header-btn.random-btn { font-size: 0.85rem; background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.random-btn:hover { background: var(--accent2); }
+        .header-btn.random-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .header-btn.random-btn:hover { background: var(--bg4); }
+        .header-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+        .header-btn.random-btn.active:hover { background: var(--accent2); }
         .header-btn.history-btn { font-size: 0.85rem; }
         .header-btn.translate-btn { font-size: 0.75rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.translate-btn.active:hover { background: var(--accent2); }
         .header-btn.refresh-btn { font-size: 0.85rem; }
         .header-btn.refresh-btn:hover { transform: rotate(60deg); }
-        .header-btn.reel-btn { font-size: 0.85rem; background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.reel-btn:hover { background: var(--accent2); }
-        .header-btn.reel-btn.active { animation: pulse-glow 1.5s infinite; }
+        .header-btn.reel-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .header-btn.reel-btn:hover { background: var(--bg4); }
+        .header-btn.reel-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); animation: pulse-glow 1.5s infinite; }
+        .header-btn.reel-btn.active:hover { background: var(--accent2); }
         @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 5px var(--accent-glow); } 50% { box-shadow: 0 0 20px var(--accent-glow); } }
         
         /* Manual Input Tile - Wider */
@@ -174,6 +177,8 @@
         .control-btn.shuffle-btn.active:hover { background: var(--accent2); }
         .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
         .control-btn.random-btn:hover { background: var(--bg4); }
+        .control-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+        .control-btn.random-btn.active:hover { background: var(--accent2); }
         .control-btn.mute-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.75rem; }
         .control-btn.mute-btn:hover { background: var(--bg4); }
         .control-btn.mute-btn.muted { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -692,7 +697,6 @@
         if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
             ytPlayer.setVolume(isMuted ? 0 : 70);
         } else if (iframe) {
-            // Try to mute via iframe
             try {
                 iframe.contentWindow.postMessage('{"event":"command","func":"setVolume","args":[' + (isMuted ? 0 : 70) + ']}', '*');
             } catch(e) {}
@@ -705,7 +709,7 @@
     // ============================================================
     // REEL MODE
     // ============================================================
-    function startReelMode() {
+    function toggleReelMode() {
         if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
             showToast('Select a playlist first', true);
             return;
@@ -713,6 +717,14 @@
         
         if (reelModeActive) {
             stopReelMode();
+        } else {
+            startReelMode();
+        }
+    }
+
+    function startReelMode() {
+        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
+            showToast('Select a playlist first', true);
             return;
         }
         
@@ -720,42 +732,54 @@
         reelBtn.classList.add('active');
         showToast('📱 Reel Mode: 5-minute random clips');
         
+        // Stop any existing timers
+        if (reelTimeout) {
+            clearTimeout(reelTimeout);
+            reelTimeout = null;
+        }
+        if (reelTimer) {
+            clearInterval(reelTimer);
+            reelTimer = null;
+        }
+        
+        // Play first reel
         playNextReel();
     }
 
     function stopReelMode() {
         reelModeActive = false;
         reelBtn.classList.remove('active');
-        if (reelTimer) {
-            clearInterval(reelTimer);
-            reelTimer = null;
-        }
         if (reelTimeout) {
             clearTimeout(reelTimeout);
             reelTimeout = null;
+        }
+        if (reelTimer) {
+            clearInterval(reelTimer);
+            reelTimer = null;
         }
         showToast('📱 Reel Mode stopped');
     }
 
     function playNextReel() {
-        if (!reelModeActive || !currentPlaylist || currentPlaylist.videoIds.length === 0) {
+        if (!reelModeActive) {
+            stopReelMode();
+            return;
+        }
+        
+        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
+            showToast('No playlist available', true);
             stopReelMode();
             return;
         }
         
         // Pick random video
         let idx;
-        do {
-            idx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-        } while (currentPlaylist.videoIds.length > 1 && idx === currentVideoIndex);
-        
-        // Pick random position (10% to 85% to ensure we have at least 5 minutes if possible)
-        const videoId = currentPlaylist.videoIds[idx];
-        let randomPos = 0;
-        
-        // Try to get duration and set random position
-        if (ytPlayer && typeof ytPlayer.getDuration === 'function') {
-            // We'll set position after video loads
+        if (currentPlaylist.videoIds.length === 1) {
+            idx = 0;
+        } else {
+            do {
+                idx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
+            } while (idx === currentVideoIndex && currentPlaylist.videoIds.length > 1);
         }
         
         // Play the video
@@ -765,8 +789,7 @@
         setTimeout(() => {
             if (ytPlayer && typeof ytPlayer.getDuration === 'function') {
                 const duration = ytPlayer.getDuration();
-                if (duration && duration > 60) { // At least 1 minute
-                    // Random position between 10% and 85%
+                if (duration && duration > 60) {
                     const pos = 0.1 + Math.random() * 0.75;
                     const seekTime = duration * pos;
                     ytPlayer.seekTo(seekTime, true);
@@ -775,11 +798,7 @@
             }
         }, 1500);
         
-        // Clear existing timer
-        if (reelTimer) {
-            clearInterval(reelTimer);
-            reelTimer = null;
-        }
+        // Clear existing timeout
         if (reelTimeout) {
             clearTimeout(reelTimeout);
             reelTimeout = null;
@@ -788,7 +807,15 @@
         // Set timer to switch after 5 minutes (300 seconds)
         reelTimeout = setTimeout(() => {
             if (reelModeActive) {
-                playNextReel();
+                // Check if still playing, if not, just play next
+                if (isPlaying) {
+                    playNextReel();
+                } else {
+                    // If paused/stopped, restart reel mode
+                    if (reelModeActive) {
+                        playNextReel();
+                    }
+                }
             }
         }, 300000); // 5 minutes
     }
@@ -1165,7 +1192,6 @@
                         event.target.playVideo();
                     }
                     startTimer();
-                    // Apply mute state if muted
                     if (isMuted && typeof event.target.setVolume === 'function') {
                         event.target.setVolume(0);
                     }
@@ -1190,7 +1216,6 @@
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
                         if (reelModeActive) {
-                            // Reel mode handles next video
                             setTimeout(() => playNextReel(), 500);
                         } else if (currentPlaylist) {
                             setTimeout(() => nextVideo(), 1000);
@@ -1468,7 +1493,7 @@
         blankScreen.classList.remove('show');
         
         // Stop reel mode if it was active (user manually selected video)
-        if (reelModeActive) {
+        if (reelModeActive && !restore) {
             stopReelMode();
         }
         
@@ -1544,7 +1569,6 @@
                         if (sleepTimerMinutes > 0) {
                             setSleepTimer(sleepTimerMinutes);
                         }
-                        // Apply mute state
                         if (isMuted && typeof event.target.setVolume === 'function') {
                             event.target.setVolume(0);
                         }
@@ -1932,7 +1956,7 @@
     shuffleBtn.addEventListener('click', toggleShuffle);
 
     // Reel Mode
-    reelBtn.addEventListener('click', startReelMode);
+    reelBtn.addEventListener('click', toggleReelMode);
 
     tvModeOption.addEventListener('click', () => setMode('tv'));
     radioModeOption.addEventListener('click', () => setMode('radio'));
@@ -1987,10 +2011,6 @@
             randomVideo();
         } else if (e.key === 'm' || e.key === 'M') {
             toggleMute();
-        } else if (e.key === 'M') {
-            // Also handle shift+M for mode toggle
-        } else if (e.key === 'm' && e.shiftKey) {
-            setMode(currentMode === 'tv' ? 'radio' : 'tv');
         } else if (e.key === 'h' || e.key === 'H') {
             openHistory();
         } else if (e.key === 'n' || e.key === 'N') {
@@ -2004,7 +2024,7 @@
         } else if (e.key === 'x' || e.key === 'X') {
             stopPlayback();
         } else if (e.key === 'f' || e.key === 'F') {
-            startReelMode();
+            toggleReelMode();
         }
     });
 
