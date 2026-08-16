@@ -68,11 +68,81 @@
         .header-btn.translate-btn.active:hover { background: var(--accent2); }
         .header-btn.refresh-btn { font-size: 0.85rem; }
         .header-btn.refresh-btn:hover { transform: rotate(60deg); }
-        .header-btn.reel-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
-        .header-btn.reel-btn:hover { background: var(--bg4); }
-        .header-btn.reel-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); animation: pulse-glow 1.5s infinite; }
-        .header-btn.reel-btn.active:hover { background: var(--accent2); }
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 5px var(--accent-glow); } 50% { box-shadow: 0 0 20px var(--accent-glow); } }
+        
+        /* Timer Display */
+        .timer-display { 
+            font-size: 0.65rem; 
+            font-weight: 600; 
+            color: var(--accent); 
+            background: var(--bg3); 
+            padding: 2px 10px; 
+            border-radius: 16px; 
+            border: 1px solid var(--border); 
+            min-width: 50px; 
+            text-align: center; 
+            font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
+        }
+        .timer-display.active { 
+            background: var(--accent); 
+            color: #fff; 
+            border-color: var(--accent); 
+            box-shadow: 0 0 12px var(--accent-glow); 
+        }
+        
+        /* Timer Preset Dropdown */
+        .timer-preset-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
+        .timer-preset-btn { 
+            padding: 4px 10px; 
+            height: 28px; 
+            border-radius: 16px; 
+            font-size: 0.55rem; 
+            font-weight: 500;
+            background: var(--bg3); 
+            border: 1px solid var(--border); 
+            color: var(--text2); 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 3px;
+            cursor: pointer; 
+            transition: all var(--transition); 
+            white-space: nowrap;
+            min-width: 40px;
+        }
+        .timer-preset-btn:hover { background: var(--bg4); color: var(--text); }
+        .timer-preset-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+        .timer-preset-btn.active:hover { background: var(--accent2); }
+        .timer-preset-dropdown { 
+            position: absolute; 
+            bottom: 34px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: var(--bg3); 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
+            padding: 4px 0; 
+            min-width: 80px; 
+            display: none; 
+            flex-direction: column; 
+            box-shadow: 0 8px 30px var(--shadow); 
+            z-index: 100; 
+        }
+        .timer-preset-dropdown.open { display: flex; }
+        .timer-preset-dropdown .preset-option { 
+            padding: 5px 14px; 
+            font-size: 0.6rem; 
+            color: var(--text2); 
+            cursor: pointer; 
+            transition: all var(--transition); 
+            border: none; 
+            background: transparent; 
+            text-align: center; 
+        }
+        .timer-preset-dropdown .preset-option:hover { background: var(--bg4); color: var(--text); }
+        .timer-preset-dropdown .preset-option.active { color: var(--accent); }
+        .timer-preset-dropdown .preset-option.off { border-top: 1px solid var(--border); margin-top: 3px; padding-top: 6px; color: var(--text2); }
+        .timer-preset-dropdown .preset-option.off:hover { color: var(--text); }
         
         /* Manual Input Tile - Wider */
         .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 1px 4px 1px 12px; flex-shrink: 0; max-width: 280px; min-width: 180px; }
@@ -175,7 +245,7 @@
         .control-btn.shuffle-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
         .control-btn.shuffle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .control-btn.shuffle-btn.active:hover { background: var(--accent2); }
-        .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.85rem; }
         .control-btn.random-btn:hover { background: var(--bg4); }
         .control-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .control-btn.random-btn.active:hover { background: var(--accent2); }
@@ -289,6 +359,8 @@
             .manual-input-wrap { max-width: 200px; min-width: 120px; }
             .manual-input-wrap input { width: 110px; font-size: 0.5rem; }
             .manual-input-wrap .play-btn { font-size: 0.45rem; padding: 1px 8px; }
+            .timer-display { font-size: 0.55rem; min-width: 40px; padding: 1px 8px; }
+            .timer-preset-btn { font-size: 0.5rem; padding: 3px 8px; height: 24px; min-width: 34px; }
             .sleep-timer-btn { font-size: 0.55rem; padding: 3px 10px; height: 30px; min-width: 48px; }
             .list-item .thumb { width: 34px; height: 19px; }
             .list-item .title { font-size: 0.7rem; }
@@ -312,6 +384,8 @@
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
             .sleep-timer-btn { font-size: 0.5rem; padding: 2px 8px; height: 28px; min-width: 42px; }
+            .timer-display { font-size: 0.5rem; min-width: 34px; padding: 1px 6px; }
+            .timer-preset-btn { font-size: 0.45rem; padding: 2px 6px; height: 22px; min-width: 30px; }
             .player-info-text { font-size: 0.5rem; min-width: 30px; }
             .player-timer { font-size: 0.45rem; min-width: 40px; }
             .header { gap: 4px; padding: 3px 6px; min-height: 34px; }
@@ -337,6 +411,8 @@
             .clock-tile .day { font-size: 0.3rem; }
             .manual-input-wrap { max-width: 120px; min-width: 70px; }
             .manual-input-wrap input { width: 60px; font-size: 0.4rem; }
+            .timer-display { font-size: 0.45rem; min-width: 30px; padding: 1px 4px; }
+            .timer-preset-btn { font-size: 0.4rem; padding: 2px 5px; height: 20px; min-width: 26px; }
         }
     </style>
 </head>
@@ -350,14 +426,25 @@
         </div>
         <div class="header-center">
             <span class="status-badge" id="statusBadge">📡 Loading...</span>
+            <span class="timer-display" id="timerDisplay">∞</span>
+            <div class="timer-preset-wrap">
+                <button class="timer-preset-btn" id="timerPresetBtn">⏱️ Inf</button>
+                <div class="timer-preset-dropdown" id="timerPresetDropdown">
+                    <button class="preset-option" data-minutes="2">2 min</button>
+                    <button class="preset-option" data-minutes="3">3 min</button>
+                    <button class="preset-option" data-minutes="5">5 min</button>
+                    <button class="preset-option" data-minutes="10">10 min</button>
+                    <button class="preset-option" data-minutes="15">15 min</button>
+                    <button class="preset-option off" data-minutes="0">Infinite</button>
+                </div>
+            </div>
         </div>
         <div class="header-right">
             <div class="manual-input-wrap">
                 <input type="text" id="manualInput" placeholder="YouTube/MP3/MP4..." />
                 <button class="play-btn" id="manualPlayBtn">▶</button>
             </div>
-            <button class="header-btn reel-btn" id="reelBtn" title="Reel Mode">📱</button>
-            <button class="header-btn random-btn" id="randomBtn" title="Random Video">🎲</button>
+            <button class="header-btn random-btn" id="randomBtn" title="Random Video (Random Position)">✨</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
             <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles">🌐</button>
             <button class="header-btn refresh-btn" id="refreshBtn" title="Refresh Metadata">⟳</button>
@@ -414,7 +501,7 @@
                 <button class="control-btn" id="nextBtn" title="Next (N)">⏭</button>
                 <button class="control-btn shuffle-btn" id="shuffleBtn" title="Shuffle (S)">🔀</button>
                 <button class="control-btn mute-btn" id="muteBtn" title="Mute/Unmute">🔊</button>
-                <button class="control-btn random-btn" id="randomVideoBtn" title="Random (R)">🎲</button>
+                <button class="control-btn random-btn" id="randomVideoBtn" title="Random Video (From Start)">✨</button>
                 <div class="mode-switch" id="modeSwitch">
                     <button class="mode-option active" data-mode="tv" id="tvModeOption">📺 TV</button>
                     <button class="mode-option" data-mode="radio" id="radioModeOption">🎧 Radio</button>
@@ -489,9 +576,12 @@
     let sleepTimerMinutes = 0;
     let isStopped = false;
     let isMuted = false;
-    let reelModeActive = false;
-    let reelTimer = null;
-    let reelTimeout = null;
+    
+    // Timer state
+    let timerMinutes = 0; // 0 = infinite
+    let timerSeconds = 0;
+    let timerCountdownInterval = null;
+    let timerActive = false;
 
     // DOM refs
     const listContainer = document.getElementById('listContainer');
@@ -519,11 +609,13 @@
     const shuffleBtn = document.getElementById('shuffleBtn');
     const randomBtn = document.getElementById('randomBtn');
     const randomVideoBtn = document.getElementById('randomVideoBtn');
-    const reelBtn = document.getElementById('reelBtn');
     const tvModeOption = document.getElementById('tvModeOption');
     const radioModeOption = document.getElementById('radioModeOption');
     const sleepTimerBtn = document.getElementById('sleepTimerBtn');
     const sleepTimerDropdown = document.getElementById('sleepTimerDropdown');
+    const timerPresetBtn = document.getElementById('timerPresetBtn');
+    const timerPresetDropdown = document.getElementById('timerPresetDropdown');
+    const timerDisplay = document.getElementById('timerDisplay');
     const manualInput = document.getElementById('manualInput');
     const manualPlayBtn = document.getElementById('manualPlayBtn');
     const radioVisualizer = document.getElementById('radioVisualizer');
@@ -616,6 +708,86 @@
     }
 
     // ============================================================
+    // COUNTDOWN TIMER
+    // ============================================================
+    function startCountdown(minutes) {
+        if (timerCountdownInterval) {
+            clearInterval(timerCountdownInterval);
+            timerCountdownInterval = null;
+        }
+        
+        timerMinutes = minutes;
+        timerActive = true;
+        
+        if (minutes === 0) {
+            timerDisplay.textContent = '∞';
+            timerDisplay.classList.remove('active');
+            timerPresetBtn.textContent = '⏱️ Inf';
+            return;
+        }
+        
+        timerSeconds = minutes * 60;
+        timerDisplay.classList.add('active');
+        updateCountdownDisplay();
+        
+        timerCountdownInterval = setInterval(() => {
+            timerSeconds--;
+            if (timerSeconds <= 0) {
+                clearInterval(timerCountdownInterval);
+                timerCountdownInterval = null;
+                timerDisplay.textContent = '0:00';
+                // Play random video at random position
+                if (currentPlaylist && currentPlaylist.videoIds.length > 0) {
+                    randomVideoWithPosition();
+                    showToast('⏱️ Timer: Playing random video at random position');
+                    // Restart countdown
+                    setTimeout(() => {
+                        if (timerMinutes > 0) {
+                            startCountdown(timerMinutes);
+                        }
+                    }, 1000);
+                }
+            } else {
+                updateCountdownDisplay();
+            }
+        }, 1000);
+    }
+
+    function updateCountdownDisplay() {
+        const mins = Math.floor(timerSeconds / 60);
+        const secs = timerSeconds % 60;
+        timerDisplay.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function stopCountdown() {
+        if (timerCountdownInterval) {
+            clearInterval(timerCountdownInterval);
+            timerCountdownInterval = null;
+        }
+        timerActive = false;
+        timerDisplay.textContent = '∞';
+        timerDisplay.classList.remove('active');
+        timerPresetBtn.textContent = '⏱️ Inf';
+    }
+
+    function setTimerPreset(minutes) {
+        stopCountdown();
+        if (minutes > 0) {
+            timerPresetBtn.textContent = `⏱️ ${minutes}m`;
+            timerPresetBtn.classList.add('active');
+            startCountdown(minutes);
+        } else {
+            timerPresetBtn.textContent = '⏱️ Inf';
+            timerPresetBtn.classList.remove('active');
+            timerDisplay.textContent = '∞';
+        }
+        
+        document.querySelectorAll('.preset-option').forEach(opt => {
+            opt.classList.toggle('active', parseInt(opt.dataset.minutes) === minutes);
+        });
+    }
+
+    // ============================================================
     // SLEEP TIMER
     // ============================================================
     function setSleepTimer(minutes) {
@@ -652,10 +824,6 @@
 
     function stopPlayback() {
         isStopped = true;
-        
-        if (reelModeActive) {
-            stopReelMode();
-        }
         
         if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
             ytPlayer.pauseVideo();
@@ -707,117 +875,50 @@
     }
 
     // ============================================================
-    // REEL MODE
+    // RANDOM VIDEO FUNCTIONS
     // ============================================================
-    function toggleReelMode() {
+    function randomVideoFromStart() {
         if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
-            showToast('Select a playlist first', true);
+            showToast('No playlist selected', true);
             return;
         }
         
-        if (reelModeActive) {
-            stopReelMode();
-        } else {
-            startReelMode();
-        }
+        isStopped = false;
+        const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
+        playVideo(currentPlaylist, randomIndex);
+        showToast('✨ Random video from start');
     }
 
-    function startReelMode() {
+    function randomVideoWithPosition() {
         if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
-            showToast('Select a playlist first', true);
+            showToast('No playlist selected', true);
             return;
         }
         
-        reelModeActive = true;
-        reelBtn.classList.add('active');
-        showToast('📱 Reel Mode: 5-minute random clips');
+        isStopped = false;
+        const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
+        const videoId = currentPlaylist.videoIds[randomIndex];
         
-        // Stop any existing timers
-        if (reelTimeout) {
-            clearTimeout(reelTimeout);
-            reelTimeout = null;
-        }
-        if (reelTimer) {
-            clearInterval(reelTimer);
-            reelTimer = null;
-        }
+        playVideo(currentPlaylist, randomIndex);
         
-        // Play first reel
-        playNextReel();
-    }
-
-    function stopReelMode() {
-        reelModeActive = false;
-        reelBtn.classList.remove('active');
-        if (reelTimeout) {
-            clearTimeout(reelTimeout);
-            reelTimeout = null;
-        }
-        if (reelTimer) {
-            clearInterval(reelTimer);
-            reelTimer = null;
-        }
-        showToast('📱 Reel Mode stopped');
-    }
-
-    function playNextReel() {
-        if (!reelModeActive) {
-            stopReelMode();
-            return;
-        }
-        
-        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
-            showToast('No playlist available', true);
-            stopReelMode();
-            return;
-        }
-        
-        // Pick random video
-        let idx;
-        if (currentPlaylist.videoIds.length === 1) {
-            idx = 0;
-        } else {
-            do {
-                idx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-            } while (idx === currentVideoIndex && currentPlaylist.videoIds.length > 1);
-        }
-        
-        // Play the video
-        playVideo(currentPlaylist, idx);
-        
-        // After video loads, seek to random position
         setTimeout(() => {
             if (ytPlayer && typeof ytPlayer.getDuration === 'function') {
                 const duration = ytPlayer.getDuration();
-                if (duration && duration > 60) {
-                    const pos = 0.1 + Math.random() * 0.75;
-                    const seekTime = duration * pos;
+                if (duration && duration > 10) {
+                    const randomPos = 0.1 + Math.random() * 0.8;
+                    const seekTime = duration * randomPos;
                     ytPlayer.seekTo(seekTime, true);
-                    showToast(`📱 Reel: ${Math.round(pos * 100)}% position`);
+                    showToast(`✨ Random video at ${Math.round(randomPos * 100)}% position`);
+                    if (currentPlaylist && currentVideoIndex >= 0) {
+                        updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], seekTime);
+                    }
+                } else {
+                    showToast('✨ Random video selected');
                 }
+            } else {
+                showToast('✨ Random video selected');
             }
         }, 1500);
-        
-        // Clear existing timeout
-        if (reelTimeout) {
-            clearTimeout(reelTimeout);
-            reelTimeout = null;
-        }
-        
-        // Set timer to switch after 5 minutes (300 seconds)
-        reelTimeout = setTimeout(() => {
-            if (reelModeActive) {
-                // Check if still playing, if not, just play next
-                if (isPlaying) {
-                    playNextReel();
-                } else {
-                    // If paused/stopped, restart reel mode
-                    if (reelModeActive) {
-                        playNextReel();
-                    }
-                }
-            }
-        }, 300000); // 5 minutes
     }
 
     // ============================================================
@@ -1215,9 +1316,7 @@
                         isPlaying = false;
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
-                        if (reelModeActive) {
-                            setTimeout(() => playNextReel(), 500);
-                        } else if (currentPlaylist) {
+                        if (currentPlaylist) {
                             setTimeout(() => nextVideo(), 1000);
                         }
                     }
@@ -1492,11 +1591,6 @@
         isStopped = false;
         blankScreen.classList.remove('show');
         
-        // Stop reel mode if it was active (user manually selected video)
-        if (reelModeActive && !restore) {
-            stopReelMode();
-        }
-        
         currentPlaylist = playlist;
         currentVideoIndex = videoIndex;
         const videoId = playlist.videoIds[videoIndex];
@@ -1592,9 +1686,7 @@
                             isPlaying = false;
                             playBtn.textContent = '▶';
                             radioVisualizer.classList.add('paused');
-                            if (reelModeActive) {
-                                setTimeout(() => playNextReel(), 500);
-                            } else if (currentPlaylist) {
+                            if (currentPlaylist) {
                                 setTimeout(() => nextVideo(), 1000);
                             }
                         }
@@ -1670,9 +1762,6 @@
             return;
         }
         if (!currentPlaylist) return;
-        if (reelModeActive) {
-            stopReelMode();
-        }
         if (sleepTimerMinutes > 0) {
             setSleepTimer(sleepTimerMinutes);
         }
@@ -1694,9 +1783,6 @@
             return;
         }
         if (!currentPlaylist) return;
-        if (reelModeActive) {
-            stopReelMode();
-        }
         if (sleepTimerMinutes > 0) {
             setSleepTimer(sleepTimerMinutes);
         }
@@ -1816,42 +1902,6 @@
         saveState(currentPlaylist?.name, currentVideoIndex);
     }
 
-    function randomVideo() {
-        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
-            showToast('No playlist selected', true);
-            return;
-        }
-        
-        if (reelModeActive) {
-            stopReelMode();
-        }
-        
-        isStopped = false;
-        const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-        const videoId = currentPlaylist.videoIds[randomIndex];
-        
-        playVideo(currentPlaylist, randomIndex);
-        
-        setTimeout(() => {
-            if (ytPlayer && typeof ytPlayer.getDuration === 'function') {
-                const duration = ytPlayer.getDuration();
-                if (duration && duration > 10) {
-                    const randomPos = 0.1 + Math.random() * 0.8;
-                    const seekTime = duration * randomPos;
-                    ytPlayer.seekTo(seekTime, true);
-                    showToast(`🎲 Random video at ${Math.round(randomPos * 100)}% position`);
-                    if (currentPlaylist && currentVideoIndex >= 0) {
-                        updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], seekTime);
-                    }
-                } else {
-                    showToast('🎲 Random video selected');
-                }
-            } else {
-                showToast('🎲 Random video selected');
-            }
-        }, 1500);
-    }
-
     function toggleShuffle() {
         shuffleMode = !shuffleMode;
         shuffleBtn.classList.toggle('active', shuffleMode);
@@ -1867,10 +1917,6 @@
         if (!url) {
             showToast('Please enter a URL', true);
             return;
-        }
-        
-        if (reelModeActive) {
-            stopReelMode();
         }
         
         isStopped = false;
@@ -1946,17 +1992,14 @@
     historyBtn.addEventListener('click', openHistory);
     historyCloseBtn.addEventListener('click', closeHistory);
     historyOverlay.addEventListener('click', closeHistory);
-    randomBtn.addEventListener('click', randomVideo);
-    randomVideoBtn.addEventListener('click', randomVideo);
+    randomBtn.addEventListener('click', randomVideoWithPosition);
+    randomVideoBtn.addEventListener('click', randomVideoFromStart);
     muteBtn.addEventListener('click', toggleMute);
 
     prevBtn.addEventListener('click', prevVideo);
     nextBtn.addEventListener('click', nextVideo);
     playBtn.addEventListener('click', togglePlayPause);
     shuffleBtn.addEventListener('click', toggleShuffle);
-
-    // Reel Mode
-    reelBtn.addEventListener('click', toggleReelMode);
 
     tvModeOption.addEventListener('click', () => setMode('tv'));
     radioModeOption.addEventListener('click', () => setMode('radio'));
@@ -1978,6 +2021,25 @@
 
     document.addEventListener('click', () => {
         sleepTimerDropdown.classList.remove('open');
+    });
+
+    // Timer Preset
+    timerPresetBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        timerPresetDropdown.classList.toggle('open');
+    });
+
+    document.querySelectorAll('.preset-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const minutes = parseInt(opt.dataset.minutes);
+            setTimerPreset(minutes);
+            timerPresetDropdown.classList.remove('open');
+        });
+    });
+
+    document.addEventListener('click', () => {
+        timerPresetDropdown.classList.remove('open');
     });
 
     // Manual Input
@@ -2008,7 +2070,7 @@
         } else if (e.key === 's' || e.key === 'S') {
             toggleShuffle();
         } else if (e.key === 'r' || e.key === 'R') {
-            randomVideo();
+            randomVideoFromStart();
         } else if (e.key === 'm' || e.key === 'M') {
             toggleMute();
         } else if (e.key === 'h' || e.key === 'H') {
@@ -2024,7 +2086,7 @@
         } else if (e.key === 'x' || e.key === 'X') {
             stopPlayback();
         } else if (e.key === 'f' || e.key === 'F') {
-            toggleReelMode();
+            randomVideoWithPosition();
         }
     });
 
@@ -2035,9 +2097,12 @@
     updateModeUI();
     loadFromSheet();
 
+    // Set default timer to infinite
+    setTimerPreset(0);
+
     console.log('🟢 Shafin Tube loaded with all features.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
-    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mute, F reel mode, R random, S shuffle, H history, T translate, X stop');
+    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mute, R random (start), F random (position), S shuffle, H history, T translate, X stop');
 </script>
 </body>
 </html>
