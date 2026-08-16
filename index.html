@@ -66,12 +66,16 @@
         .header-btn.translate-btn.active:hover { background: var(--accent2); }
         .header-btn.refresh-btn { font-size: 0.85rem; }
         .header-btn.refresh-btn:hover { transform: rotate(60deg); }
+        .header-btn.reel-btn { font-size: 0.85rem; background: var(--accent); border-color: var(--accent); color: #fff; }
+        .header-btn.reel-btn:hover { background: var(--accent2); }
+        .header-btn.reel-btn.active { animation: pulse-glow 1.5s infinite; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 5px var(--accent-glow); } 50% { box-shadow: 0 0 20px var(--accent-glow); } }
         
-        /* Manual Input Tile - Right Aligned */
-        .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 1px 4px 1px 10px; flex-shrink: 0; max-width: 200px; }
-        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.6rem; outline: none; padding: 4px 0; width: 110px; min-width: 70px; }
+        /* Manual Input Tile - Wider */
+        .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 1px 4px 1px 12px; flex-shrink: 0; max-width: 280px; min-width: 180px; }
+        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.6rem; outline: none; padding: 4px 0; width: 160px; min-width: 100px; }
         .manual-input-wrap input::placeholder { color: var(--text2); }
-        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 2px 10px; border-radius: 16px; cursor: pointer; font-size: 0.55rem; font-weight: 600; white-space: nowrap; }
+        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 2px 12px; border-radius: 16px; cursor: pointer; font-size: 0.55rem; font-weight: 600; white-space: nowrap; }
         .manual-input-wrap .play-btn:hover { background: var(--accent2); }
         
         /* Clock Tile - Wider, two lines */
@@ -160,7 +164,7 @@
         .radio-visualizer.paused .equalizer-bar { animation-play-state: paused !important; }
         .radio-visualizer.paused .radio-icon { animation-play-state: paused !important; }
         
-        /* Controls - Restored to previous size */
+        /* Controls */
         .controls { background: var(--bg2); padding: 8px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
         .control-btn { width: 34px; height: 34px; border-radius: 50%; font-size: 0.85rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
@@ -170,8 +174,10 @@
         .control-btn.shuffle-btn.active:hover { background: var(--accent2); }
         .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
         .control-btn.random-btn:hover { background: var(--bg4); }
-        .control-btn.stop-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.75rem; }
-        .control-btn.stop-btn:hover { background: var(--bg4); }
+        .control-btn.mute-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.75rem; }
+        .control-btn.mute-btn:hover { background: var(--bg4); }
+        .control-btn.mute-btn.muted { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .control-btn.mute-btn.muted:hover { background: var(--accent2); }
         
         /* TV/Radio Toggle Switch */
         .mode-switch { display: flex; align-items: center; gap: 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 2px; flex-shrink: 0; }
@@ -275,9 +281,9 @@
             .clock-tile { min-width: 72px; width: 72px; min-height: 28px; padding: 1px 6px; }
             .clock-tile .time { font-size: 0.6rem; }
             .clock-tile .day { font-size: 0.4rem; }
-            .manual-input-wrap { max-width: 150px; }
-            .manual-input-wrap input { width: 80px; font-size: 0.5rem; }
-            .manual-input-wrap .play-btn { font-size: 0.45rem; padding: 1px 6px; }
+            .manual-input-wrap { max-width: 200px; min-width: 120px; }
+            .manual-input-wrap input { width: 110px; font-size: 0.5rem; }
+            .manual-input-wrap .play-btn { font-size: 0.45rem; padding: 1px 8px; }
             .sleep-timer-btn { font-size: 0.55rem; padding: 3px 10px; height: 30px; min-width: 48px; }
             .list-item .thumb { width: 34px; height: 19px; }
             .list-item .title { font-size: 0.7rem; }
@@ -306,9 +312,9 @@
             .header { gap: 4px; padding: 3px 6px; min-height: 34px; }
             .status-badge { font-size: 0.45rem; padding: 1px 6px; }
             .header-btn { width: 22px; height: 22px; font-size: 0.6rem; }
-            .manual-input-wrap { max-width: 120px; padding: 1px 3px 1px 6px; }
-            .manual-input-wrap input { width: 60px; font-size: 0.45rem; padding: 2px 0; }
-            .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 5px; }
+            .manual-input-wrap { max-width: 160px; min-width: 90px; padding: 1px 3px 1px 8px; }
+            .manual-input-wrap input { width: 80px; font-size: 0.45rem; padding: 2px 0; }
+            .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 6px; }
             .clock-tile { min-width: 62px; width: 62px; min-height: 24px; padding: 1px 4px; }
             .clock-tile .time { font-size: 0.5rem; }
             .clock-tile .day { font-size: 0.35rem; }
@@ -324,8 +330,8 @@
             .clock-tile { min-width: 54px; width: 54px; min-height: 22px; }
             .clock-tile .time { font-size: 0.45rem; }
             .clock-tile .day { font-size: 0.3rem; }
-            .manual-input-wrap { max-width: 100px; }
-            .manual-input-wrap input { width: 50px; font-size: 0.4rem; }
+            .manual-input-wrap { max-width: 120px; min-width: 70px; }
+            .manual-input-wrap input { width: 60px; font-size: 0.4rem; }
         }
     </style>
 </head>
@@ -345,6 +351,7 @@
                 <input type="text" id="manualInput" placeholder="YouTube/MP3/MP4..." />
                 <button class="play-btn" id="manualPlayBtn">▶</button>
             </div>
+            <button class="header-btn reel-btn" id="reelBtn" title="Reel Mode">📱</button>
             <button class="header-btn random-btn" id="randomBtn" title="Random Video">🎲</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
             <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles">🌐</button>
@@ -401,7 +408,7 @@
                 <button class="control-btn" id="playBtn" title="Play/Pause (Space)">⏸</button>
                 <button class="control-btn" id="nextBtn" title="Next (N)">⏭</button>
                 <button class="control-btn shuffle-btn" id="shuffleBtn" title="Shuffle (S)">🔀</button>
-                <button class="control-btn stop-btn" id="stopBtn" title="Stop (X)">⏹</button>
+                <button class="control-btn mute-btn" id="muteBtn" title="Mute/Unmute">🔊</button>
                 <button class="control-btn random-btn" id="randomVideoBtn" title="Random (R)">🎲</button>
                 <div class="mode-switch" id="modeSwitch">
                     <button class="mode-option active" data-mode="tv" id="tvModeOption">📺 TV</button>
@@ -476,6 +483,10 @@
     let sleepTimerTimeout = null;
     let sleepTimerMinutes = 0;
     let isStopped = false;
+    let isMuted = false;
+    let reelModeActive = false;
+    let reelTimer = null;
+    let reelTimeout = null;
 
     // DOM refs
     const listContainer = document.getElementById('listContainer');
@@ -499,10 +510,11 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const playBtn = document.getElementById('playBtn');
-    const stopBtn = document.getElementById('stopBtn');
+    const muteBtn = document.getElementById('muteBtn');
     const shuffleBtn = document.getElementById('shuffleBtn');
     const randomBtn = document.getElementById('randomBtn');
     const randomVideoBtn = document.getElementById('randomVideoBtn');
+    const reelBtn = document.getElementById('reelBtn');
     const tvModeOption = document.getElementById('tvModeOption');
     const radioModeOption = document.getElementById('radioModeOption');
     const sleepTimerBtn = document.getElementById('sleepTimerBtn');
@@ -636,6 +648,10 @@
     function stopPlayback() {
         isStopped = true;
         
+        if (reelModeActive) {
+            stopReelMode();
+        }
+        
         if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
             ytPlayer.pauseVideo();
         }
@@ -654,7 +670,6 @@
             }
         }
         
-        // Hide everything and show blank screen
         if (ytPlayer) {
             const container = document.getElementById('yt-player-container');
             if (container) container.style.display = 'none';
@@ -667,6 +682,115 @@
         playerTimer.textContent = '--:-- / --:--';
         stopTimer();
         showToast('⏹ Playback stopped');
+    }
+
+    // ============================================================
+    // MUTE
+    // ============================================================
+    function toggleMute() {
+        isMuted = !isMuted;
+        if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
+            ytPlayer.setVolume(isMuted ? 0 : 70);
+        } else if (iframe) {
+            // Try to mute via iframe
+            try {
+                iframe.contentWindow.postMessage('{"event":"command","func":"setVolume","args":[' + (isMuted ? 0 : 70) + ']}', '*');
+            } catch(e) {}
+        }
+        muteBtn.textContent = isMuted ? '🔇' : '🔊';
+        muteBtn.classList.toggle('muted', isMuted);
+        showToast(isMuted ? '🔇 Muted' : '🔊 Unmuted');
+    }
+
+    // ============================================================
+    // REEL MODE
+    // ============================================================
+    function startReelMode() {
+        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
+            showToast('Select a playlist first', true);
+            return;
+        }
+        
+        if (reelModeActive) {
+            stopReelMode();
+            return;
+        }
+        
+        reelModeActive = true;
+        reelBtn.classList.add('active');
+        showToast('📱 Reel Mode: 5-minute random clips');
+        
+        playNextReel();
+    }
+
+    function stopReelMode() {
+        reelModeActive = false;
+        reelBtn.classList.remove('active');
+        if (reelTimer) {
+            clearInterval(reelTimer);
+            reelTimer = null;
+        }
+        if (reelTimeout) {
+            clearTimeout(reelTimeout);
+            reelTimeout = null;
+        }
+        showToast('📱 Reel Mode stopped');
+    }
+
+    function playNextReel() {
+        if (!reelModeActive || !currentPlaylist || currentPlaylist.videoIds.length === 0) {
+            stopReelMode();
+            return;
+        }
+        
+        // Pick random video
+        let idx;
+        do {
+            idx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
+        } while (currentPlaylist.videoIds.length > 1 && idx === currentVideoIndex);
+        
+        // Pick random position (10% to 85% to ensure we have at least 5 minutes if possible)
+        const videoId = currentPlaylist.videoIds[idx];
+        let randomPos = 0;
+        
+        // Try to get duration and set random position
+        if (ytPlayer && typeof ytPlayer.getDuration === 'function') {
+            // We'll set position after video loads
+        }
+        
+        // Play the video
+        playVideo(currentPlaylist, idx);
+        
+        // After video loads, seek to random position
+        setTimeout(() => {
+            if (ytPlayer && typeof ytPlayer.getDuration === 'function') {
+                const duration = ytPlayer.getDuration();
+                if (duration && duration > 60) { // At least 1 minute
+                    // Random position between 10% and 85%
+                    const pos = 0.1 + Math.random() * 0.75;
+                    const seekTime = duration * pos;
+                    ytPlayer.seekTo(seekTime, true);
+                    showToast(`📱 Reel: ${Math.round(pos * 100)}% position`);
+                }
+            }
+        }, 1500);
+        
+        // Clear existing timer
+        if (reelTimer) {
+            clearInterval(reelTimer);
+            reelTimer = null;
+        }
+        if (reelTimeout) {
+            clearTimeout(reelTimeout);
+            reelTimeout = null;
+        }
+        
+        // Set timer to switch after 5 minutes (300 seconds)
+        reelTimeout = setTimeout(() => {
+            if (reelModeActive) {
+                playNextReel();
+            }
+        }, 300000); // 5 minutes
     }
 
     // ============================================================
@@ -1041,6 +1165,10 @@
                         event.target.playVideo();
                     }
                     startTimer();
+                    // Apply mute state if muted
+                    if (isMuted && typeof event.target.setVolume === 'function') {
+                        event.target.setVolume(0);
+                    }
                 },
                 onStateChange: (event) => {
                     const state = event.data;
@@ -1061,7 +1189,10 @@
                         isPlaying = false;
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
-                        if (currentPlaylist) {
+                        if (reelModeActive) {
+                            // Reel mode handles next video
+                            setTimeout(() => playNextReel(), 500);
+                        } else if (currentPlaylist) {
                             setTimeout(() => nextVideo(), 1000);
                         }
                     }
@@ -1336,6 +1467,11 @@
         isStopped = false;
         blankScreen.classList.remove('show');
         
+        // Stop reel mode if it was active (user manually selected video)
+        if (reelModeActive) {
+            stopReelMode();
+        }
+        
         currentPlaylist = playlist;
         currentVideoIndex = videoIndex;
         const videoId = playlist.videoIds[videoIndex];
@@ -1408,6 +1544,10 @@
                         if (sleepTimerMinutes > 0) {
                             setSleepTimer(sleepTimerMinutes);
                         }
+                        // Apply mute state
+                        if (isMuted && typeof event.target.setVolume === 'function') {
+                            event.target.setVolume(0);
+                        }
                     },
                     onStateChange: (event) => {
                         const state = event.data;
@@ -1428,7 +1568,9 @@
                             isPlaying = false;
                             playBtn.textContent = '▶';
                             radioVisualizer.classList.add('paused');
-                            if (currentPlaylist) {
+                            if (reelModeActive) {
+                                setTimeout(() => playNextReel(), 500);
+                            } else if (currentPlaylist) {
                                 setTimeout(() => nextVideo(), 1000);
                             }
                         }
@@ -1504,6 +1646,9 @@
             return;
         }
         if (!currentPlaylist) return;
+        if (reelModeActive) {
+            stopReelMode();
+        }
         if (sleepTimerMinutes > 0) {
             setSleepTimer(sleepTimerMinutes);
         }
@@ -1525,6 +1670,9 @@
             return;
         }
         if (!currentPlaylist) return;
+        if (reelModeActive) {
+            stopReelMode();
+        }
         if (sleepTimerMinutes > 0) {
             setSleepTimer(sleepTimerMinutes);
         }
@@ -1650,6 +1798,10 @@
             return;
         }
         
+        if (reelModeActive) {
+            stopReelMode();
+        }
+        
         isStopped = false;
         const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
         const videoId = currentPlaylist.videoIds[randomIndex];
@@ -1693,10 +1845,13 @@
             return;
         }
         
+        if (reelModeActive) {
+            stopReelMode();
+        }
+        
         isStopped = false;
         blankScreen.classList.remove('show');
         
-        // Check if it's a YouTube URL
         if (url.includes('youtube.com/watch') || url.includes('youtu.be/') || url.includes('youtube.com/live')) {
             const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
             const match = url.match(regex);
@@ -1721,7 +1876,6 @@
             }
         }
         
-        // For non-YouTube URLs (MP3, MP4, etc.)
         const tempPlaylist = {
             name: 'Custom Stream',
             videoIds: [url]
@@ -1770,12 +1924,15 @@
     historyOverlay.addEventListener('click', closeHistory);
     randomBtn.addEventListener('click', randomVideo);
     randomVideoBtn.addEventListener('click', randomVideo);
-    stopBtn.addEventListener('click', stopPlayback);
+    muteBtn.addEventListener('click', toggleMute);
 
     prevBtn.addEventListener('click', prevVideo);
     nextBtn.addEventListener('click', nextVideo);
     playBtn.addEventListener('click', togglePlayPause);
     shuffleBtn.addEventListener('click', toggleShuffle);
+
+    // Reel Mode
+    reelBtn.addEventListener('click', startReelMode);
 
     tvModeOption.addEventListener('click', () => setMode('tv'));
     radioModeOption.addEventListener('click', () => setMode('radio'));
@@ -1829,6 +1986,10 @@
         } else if (e.key === 'r' || e.key === 'R') {
             randomVideo();
         } else if (e.key === 'm' || e.key === 'M') {
+            toggleMute();
+        } else if (e.key === 'M') {
+            // Also handle shift+M for mode toggle
+        } else if (e.key === 'm' && e.shiftKey) {
             setMode(currentMode === 'tv' ? 'radio' : 'tv');
         } else if (e.key === 'h' || e.key === 'H') {
             openHistory();
@@ -1842,6 +2003,8 @@
             toggleTranslation();
         } else if (e.key === 'x' || e.key === 'X') {
             stopPlayback();
+        } else if (e.key === 'f' || e.key === 'F') {
+            startReelMode();
         }
     });
 
@@ -1854,7 +2017,7 @@
 
     console.log('🟢 Shafin Tube loaded with all features.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
-    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mode, R random, S shuffle, H history, T translate, X stop');
+    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mute, F reel mode, R random, S shuffle, H history, T translate, X stop');
 </script>
 </body>
 </html>
