@@ -210,32 +210,6 @@
         .mode-switch .mode-option.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .mode-switch .mode-option.active:hover { background: var(--accent2); }
         
-        .sleep-timer-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
-        .sleep-timer-btn { 
-            padding: 4px 12px; height: 34px; border-radius: 20px; font-size: 0.6rem; font-weight: 500;
-            background: var(--bg3); border: 1px solid var(--border); color: var(--text2); 
-            display: inline-flex; align-items: center; justify-content: center; gap: 4px;
-            cursor: pointer; transition: all var(--transition); white-space: nowrap; min-width: 56px;
-        }
-        .sleep-timer-btn:hover { background: var(--bg4); color: var(--text); }
-        .sleep-timer-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .sleep-timer-btn.active:hover { background: var(--accent2); }
-        .sleep-timer-dropdown { 
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); 
-            background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; 
-            padding: 6px 0; min-width: 100px; display: none; flex-direction: column; 
-            box-shadow: 0 8px 30px var(--shadow); z-index: 100; 
-        }
-        .sleep-timer-dropdown.open { display: flex; }
-        .sleep-timer-dropdown .sleep-option { 
-            padding: 6px 16px; font-size: 0.65rem; color: var(--text2); cursor: pointer; 
-            transition: all var(--transition); border: none; background: transparent; text-align: center; 
-        }
-        .sleep-timer-dropdown .sleep-option:hover { background: var(--bg4); color: var(--text); }
-        .sleep-timer-dropdown .sleep-option.active { color: var(--accent); }
-        .sleep-timer-dropdown .sleep-option.off { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 8px; color: var(--text2); }
-        .sleep-timer-dropdown .sleep-option.off:hover { color: var(--text); }
-        
         .player-info-text { font-size: 0.65rem; color: var(--text2); flex: 1; min-width: 60px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .player-timer { font-size: 0.6rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right; flex-shrink: 0; }
         
@@ -280,7 +254,6 @@
             .timer-display { font-size: 0.5rem; min-width: 34px; padding: 1px 6px; }
             .timer-preset-btn { font-size: 0.5rem; padding: 2px 8px; height: 24px; min-width: 32px; }
             .status-badge { font-size: 0.45rem; padding: 1px 6px; }
-            .sleep-timer-btn { font-size: 0.55rem; padding: 3px 10px; height: 30px; min-width: 48px; }
             .list-item .thumb { width: 34px; height: 19px; }
             .list-item .title { font-size: 0.7rem; }
             .control-btn { width: 30px; height: 30px; font-size: 0.75rem; }
@@ -304,7 +277,6 @@
             .controls { gap: 6px; padding: 6px 8px; }
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
-            .sleep-timer-btn { font-size: 0.5rem; padding: 2px 8px; height: 28px; min-width: 42px; }
             .timer-display { font-size: 0.45rem; min-width: 30px; padding: 1px 4px; }
             .timer-preset-btn { font-size: 0.45rem; padding: 2px 6px; height: 22px; min-width: 28px; }
             .status-badge { font-size: 0.4rem; padding: 1px 4px; }
@@ -426,19 +398,6 @@
                     <button class="mode-option active" data-mode="tv" id="tvModeOption">📺 TV</button>
                     <button class="mode-option" data-mode="radio" id="radioModeOption">🎧 Radio</button>
                 </div>
-                <div class="sleep-timer-wrap">
-                    <button class="sleep-timer-btn" id="sleepTimerBtn" title="Sleep Timer">⏰ Off</button>
-                    <div class="sleep-timer-dropdown" id="sleepTimerDropdown">
-                        <button class="sleep-option" data-minutes="5">5 min</button>
-                        <button class="sleep-option" data-minutes="10">10 min</button>
-                        <button class="sleep-option" data-minutes="15">15 min</button>
-                        <button class="sleep-option" data-minutes="20">20 min</button>
-                        <button class="sleep-option" data-minutes="30">30 min</button>
-                        <button class="sleep-option" data-minutes="45">45 min</button>
-                        <button class="sleep-option" data-minutes="60">1 hour</button>
-                        <button class="sleep-option off" data-minutes="0">Off</button>
-                    </div>
-                </div>
                 <span class="player-info-text" id="playerInfo">No video playing</span>
                 <span class="player-timer" id="playerTimer">--:-- / --:--</span>
             </div>
@@ -484,11 +443,9 @@
     let history = [];
     let ytPlayer = null;
     let timerInterval = null;
-    let sleepTimerTimeout = null;
-    let sleepTimerMinutes = 0;
     let isStopped = false;
     let isMuted = false;
-    let isBusy = false; // Simple lock to prevent concurrent operations
+    let isBusy = false;
     
     let timerMinutes = 0;
     let timerSeconds = 0;
@@ -522,8 +479,6 @@
     const randomVideoBtn = document.getElementById('randomVideoBtn');
     const tvModeOption = document.getElementById('tvModeOption');
     const radioModeOption = document.getElementById('radioModeOption');
-    const sleepTimerBtn = document.getElementById('sleepTimerBtn');
-    const sleepTimerDropdown = document.getElementById('sleepTimerDropdown');
     const timerPresetBtn = document.getElementById('timerPresetBtn');
     const timerPresetDropdown = document.getElementById('timerPresetDropdown');
     const timerDisplay = document.getElementById('timerDisplay');
@@ -593,7 +548,6 @@
             const duration = ytPlayer.getDuration();
             if (duration && duration > 0) {
                 playerTimer.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
-                // Check for video end
                 if (current >= duration - 1 && isPlaying && !isBusy) {
                     isBusy = true;
                     setTimeout(() => {
@@ -698,36 +652,8 @@
     }
 
     // ============================================================
-    // SLEEP TIMER
+    // STOP PLAYBACK
     // ============================================================
-    function setSleepTimer(minutes) {
-        if (sleepTimerTimeout) {
-            clearTimeout(sleepTimerTimeout);
-            sleepTimerTimeout = null;
-        }
-        sleepTimerMinutes = minutes;
-        if (minutes > 0) {
-            sleepTimerBtn.classList.add('active');
-            sleepTimerBtn.textContent = `⏰ ${minutes}m`;
-            showToast(`💤 Sleep timer set for ${minutes} minutes`);
-            sleepTimerTimeout = setTimeout(() => {
-                stopPlayback();
-                showToast(`💤 Sleep timer: Playback stopped after ${minutes} minutes`);
-                sleepTimerBtn.classList.remove('active');
-                sleepTimerBtn.textContent = '⏰ Off';
-                sleepTimerMinutes = 0;
-                sleepTimerDropdown.classList.remove('open');
-            }, minutes * 60 * 1000);
-        } else {
-            sleepTimerBtn.classList.remove('active');
-            sleepTimerBtn.textContent = '⏰ Off';
-            showToast('💤 Sleep timer turned off');
-        }
-        document.querySelectorAll('.sleep-option').forEach(opt => {
-            opt.classList.toggle('active', parseInt(opt.dataset.minutes) === minutes);
-        });
-    }
-
     function stopPlayback() {
         isStopped = true;
         isBusy = false;
@@ -1073,8 +999,6 @@
         }
         if (isBusy) return;
         
-        if (sleepTimerMinutes > 0) setSleepTimer(sleepTimerMinutes);
-        
         let nextIdx;
         if (shuffleMode) {
             do {
@@ -1093,8 +1017,6 @@
             return;
         }
         if (isBusy) return;
-        
-        if (sleepTimerMinutes > 0) setSleepTimer(sleepTimerMinutes);
         
         let prevIdx;
         if (shuffleMode) {
@@ -1158,7 +1080,6 @@
                 playBtn.textContent = '⏸';
                 radioVisualizer.classList.remove('paused');
                 startTimer();
-                if (sleepTimerMinutes > 0) setSleepTimer(sleepTimerMinutes);
             }
         }
     }
@@ -1534,7 +1455,6 @@
             statusBadge.textContent = `✅ ${playlists.length} playlists`;
             showToast(`Loaded ${playlists.length} playlists`);
             
-            // Load cache
             try {
                 const raw = localStorage.getItem('shafin_tube_cache');
                 if (raw) {
@@ -1609,24 +1529,6 @@
     tvModeOption.addEventListener('click', () => setMode('tv'));
     radioModeOption.addEventListener('click', () => setMode('radio'));
 
-    sleepTimerBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        sleepTimerDropdown.classList.toggle('open');
-    });
-
-    document.querySelectorAll('.sleep-option').forEach(opt => {
-        opt.addEventListener('click', (e) => {
-            e.stopPropagation();
-            setSleepTimer(parseInt(opt.dataset.minutes));
-            sleepTimerDropdown.classList.remove('open');
-        });
-    });
-
-    document.addEventListener('click', () => {
-        sleepTimerDropdown.classList.remove('open');
-        timerPresetDropdown.classList.remove('open');
-    });
-
     timerPresetBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         timerPresetDropdown.classList.toggle('open');
@@ -1638,6 +1540,10 @@
             setTimerPreset(parseInt(opt.dataset.minutes));
             timerPresetDropdown.classList.remove('open');
         });
+    });
+
+    document.addEventListener('click', () => {
+        timerPresetDropdown.classList.remove('open');
     });
 
     manualPlayBtn.addEventListener('click', playManualInput);
