@@ -476,7 +476,7 @@
     let playlists = [];
     let currentPlaylist = null;
     let currentVideoIndex = -1;
-    let shuffleMode = false; // Default to OFF
+    let shuffleMode = false;
     let isPlaying = false;
     let isPlaylistView = true;
     let toastTimeout = null;
@@ -495,10 +495,8 @@
     let isStopped = false;
     let isMuted = false;
     let videoEnded = false;
-    let isNavigating = false; // Prevent multiple navigation triggers
-    let pendingNextVideo = false;
+    let isNavigating = false;
     
-    // Timer state
     let timerMinutes = 0;
     let timerSeconds = 0;
     let timerCountdownInterval = null;
@@ -607,7 +605,6 @@
                 if (isPlaying && currentPlaylist && currentVideoIndex >= 0) {
                     updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], currentPosition);
                 }
-                // Check if video ended - but only trigger once
                 if (duration > 0 && current >= duration - 0.5 && isPlaying && !videoEnded && !isNavigating) {
                     videoEnded = true;
                     isNavigating = true;
@@ -669,21 +666,17 @@
             clearInterval(timerCountdownInterval);
             timerCountdownInterval = null;
         }
-        
         timerMinutes = minutes;
         timerActive = true;
-        
         if (minutes === 0) {
             timerDisplay.textContent = '∞';
             timerDisplay.classList.remove('active');
             timerPresetBtn.textContent = '⏱️ Inf';
             return;
         }
-        
         timerSeconds = minutes * 60;
         timerDisplay.classList.add('active');
         updateCountdownDisplay();
-        
         timerCountdownInterval = setInterval(() => {
             timerSeconds--;
             if (timerSeconds <= 0) {
@@ -735,7 +728,6 @@
             timerPresetBtn.classList.remove('active');
             timerDisplay.textContent = '∞';
         }
-        
         document.querySelectorAll('.preset-option').forEach(opt => {
             opt.classList.toggle('active', parseInt(opt.dataset.minutes) === minutes);
         });
@@ -749,14 +741,11 @@
             clearTimeout(sleepTimerTimeout);
             sleepTimerTimeout = null;
         }
-        
         sleepTimerMinutes = minutes;
-        
         if (minutes > 0) {
             sleepTimerBtn.classList.add('active');
             sleepTimerBtn.textContent = `⏰ ${minutes}m`;
             showToast(`💤 Sleep timer set for ${minutes} minutes`);
-            
             sleepTimerTimeout = setTimeout(() => {
                 stopPlayback();
                 showToast(`💤 Sleep timer: Playback stopped after ${minutes} minutes`);
@@ -770,7 +759,6 @@
             sleepTimerBtn.textContent = '⏰ Off';
             showToast('💤 Sleep timer turned off');
         }
-        
         document.querySelectorAll('.sleep-option').forEach(opt => {
             opt.classList.toggle('active', parseInt(opt.dataset.minutes) === minutes);
         });
@@ -780,26 +768,21 @@
         isStopped = true;
         videoEnded = false;
         isNavigating = false;
-        pendingNextVideo = false;
-        
         if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
             ytPlayer.pauseVideo();
         }
         if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
             ytPlayer.stopVideo();
         }
-        
         isPlaying = false;
         playBtn.textContent = '▶';
         radioVisualizer.classList.add('paused');
-        
         if (currentPlaylist && currentVideoIndex >= 0) {
             const pos = ytPlayer ? ytPlayer.getCurrentTime() : 0;
             if (pos > 0) {
                 updateHistoryPosition(currentPlaylist.name, currentPlaylist.videoIds[currentVideoIndex], pos);
             }
         }
-        
         if (ytPlayer) {
             const container = document.getElementById('yt-player-container');
             if (container) container.style.display = 'none';
@@ -839,7 +822,6 @@
             showToast('No playlist selected', true);
             return;
         }
-        
         if (isNavigating) return;
         isNavigating = true;
         isStopped = false;
@@ -855,15 +837,12 @@
             showToast('No playlist selected', true);
             return;
         }
-        
         if (isNavigating) return;
         isNavigating = true;
         isStopped = false;
         videoEnded = false;
         const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-        
         playVideo(currentPlaylist, randomIndex);
-        
         setTimeout(() => {
             if (ytPlayer && typeof ytPlayer.getDuration === 'function') {
                 const duration = ytPlayer.getDuration();
@@ -972,7 +951,6 @@
             historyList.innerHTML = '<div class="empty">No history in the last 7 days</div>';
             return;
         }
-        
         const groups = {};
         history.forEach(h => {
             const date = new Date(h.timestamp);
@@ -980,7 +958,6 @@
             if (!groups[dateKey]) groups[dateKey] = [];
             groups[dateKey].push(h);
         });
-
         let html = '';
         const sortedDates = Object.keys(groups).sort((a, b) => new Date(b) - new Date(a));
         sortedDates.forEach(dateKey => {
@@ -1040,12 +1017,10 @@
     // ============================================================
     async function translateText(text, targetLang = 'en') {
         if (!text || text.length < 2) return text;
-        
         const cacheKey = text.substring(0, 100);
         if (translateCache[cacheKey]) {
             return translateCache[cacheKey];
         }
-        
         try {
             const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
             const response = await fetch(url);
@@ -1066,10 +1041,8 @@
 
     async function translateVideoTitles(playlist) {
         if (!playlist || !translateEnabled) return;
-        
         const cacheKey = playlist.name;
         const cache = metadataCache[cacheKey] || {};
-        
         let translatedCount = 0;
         for (const videoId of playlist.videoIds) {
             if (cache[videoId] && cache[videoId].title) {
@@ -1085,7 +1058,6 @@
                 }
             }
         }
-        
         if (translatedCount > 0) {
             showToast(`Translated ${translatedCount} titles for ${playlist.name}`);
             if (currentPlaylist === playlist && !isPlaylistView) {
@@ -1098,7 +1070,6 @@
         translateEnabled = !translateEnabled;
         translateBtn.classList.toggle('active', translateEnabled);
         showToast(translateEnabled ? '🌐 Translation ON' : '🌐 Translation OFF');
-        
         if (translateEnabled && currentPlaylist) {
             translateVideoTitles(currentPlaylist);
         }
@@ -1158,10 +1129,8 @@
             if (allCached) return;
         }
         if (!metadataCache[cacheKey]) metadataCache[cacheKey] = {};
-
         isLoadingMetadata = true;
         showToast(`Fetching metadata for ${playlist.name}...`);
-
         const batchSize = 5;
         let fetched = 0;
         for (let i = 0; i < playlist.videoIds.length; i += batchSize) {
@@ -1179,16 +1148,13 @@
             await Promise.all(promises);
             await new Promise(r => setTimeout(r, 300));
         }
-
         isLoadingMetadata = false;
         statusBadge.textContent = `✅ ${playlist.videoIds.length} videos`;
         showToast(`Loaded metadata for ${playlist.videoIds.length} videos`);
         saveCache();
-        
         if (translateEnabled) {
             await translateVideoTitles(playlist);
         }
-        
         if (currentPlaylist === playlist && !isPlaylistView) {
             renderVideos(playlist);
         }
@@ -1210,27 +1176,22 @@
             setTimeout(() => createYouTubePlayer(videoId, autoplay, startPosition), 500);
             return;
         }
-        
         if (ytPlayer && typeof ytPlayer.destroy === 'function') {
             ytPlayer.destroy();
             ytPlayer = null;
         }
-
         isStopped = false;
         videoEnded = false;
         isNavigating = false;
         blankScreen.classList.remove('show');
-        
         const container = document.getElementById('videoContainer');
         const playerDiv = document.createElement('div');
         playerDiv.id = 'yt-player-container';
         playerDiv.style.width = '100%';
         playerDiv.style.height = '100%';
         playerDiv.style.position = 'relative';
-        
         const old = document.getElementById('yt-player-container');
         if (old) old.remove();
-        
         iframe.style.display = 'none';
         placeholder.style.display = 'none';
         container.appendChild(playerDiv);
@@ -1262,7 +1223,6 @@
                     if (isMuted && typeof event.target.setVolume === 'function') {
                         event.target.setVolume(0);
                     }
-                    // Reset navigation flag after play starts
                     setTimeout(() => { isNavigating = false; }, 500);
                 },
                 onStateChange: (event) => {
@@ -1343,14 +1303,11 @@
             }
             if (parsed.length === 0) throw new Error('No valid playlists found');
             playlists = parsed;
-            
             statusBadge.textContent = `✅ ${playlists.length} playlists`;
             showToast(`Loaded ${playlists.length} playlists`);
-            
             loadCache();
             loadTranslateCache();
             renderPlaylists();
-            
             const state = restoreState();
             if (state) {
                 shuffleMode = state.shuffleMode !== undefined ? state.shuffleMode : false;
@@ -1377,7 +1334,6 @@
                     }, 500);
                 }
             }
-            
             loadYouTubeAPI();
         } catch (err) {
             statusBadge.textContent = '❌ Failed';
