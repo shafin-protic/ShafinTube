@@ -204,9 +204,32 @@
         .control-btn { width: 32px; height: 32px; border-radius: 50%; font-size: 0.8rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .control-btn:active { transform: scale(0.94); }
-        .control-btn.shuffle-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
-        .control-btn.shuffle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .control-btn.shuffle-btn.active:hover { background: var(--accent2); }
+        .control-btn.shuffle-btn { 
+            background: var(--bg3); 
+            border-color: var(--border); 
+            color: var(--text); 
+            font-size: 0.75rem;
+            min-width: 32px;
+        }
+        .control-btn.shuffle-btn.active-sequential { 
+            background: var(--bg3); 
+            border-color: var(--border); 
+            color: var(--text); 
+        }
+        .control-btn.shuffle-btn.active-shuffle { 
+            background: var(--accent); 
+            border-color: var(--accent); 
+            color: #fff; 
+            box-shadow: 0 0 12px var(--accent-glow); 
+        }
+        .control-btn.shuffle-btn.active-shuffle:hover { background: var(--accent2); }
+        .control-btn.shuffle-btn.active-loop { 
+            background: var(--accent); 
+            border-color: var(--accent); 
+            color: #fff; 
+            box-shadow: 0 0 12px var(--accent-glow); 
+        }
+        .control-btn.shuffle-btn.active-loop:hover { background: var(--accent2); }
         .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.8rem; }
         .control-btn.random-btn:hover { background: var(--bg4); }
         .control-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
@@ -308,6 +331,7 @@
             .list-item .thumb { width: 30px; height: 17px; }
             .controls { gap: 5px; padding: 4px 8px; }
             .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
+            .control-btn.shuffle-btn { font-size: 0.6rem; min-width: 26px; }
             .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
             .timer-display { font-size: 0.45rem; min-width: 30px; padding: 1px 4px; }
             .timer-preset-btn { font-size: 0.45rem; padding: 2px 6px; height: 22px; min-width: 28px; }
@@ -343,6 +367,7 @@
             .timer-preset-btn { font-size: 0.4rem; padding: 2px 4px; height: 20px; min-width: 24px; }
             .status-badge { font-size: 0.35rem; padding: 1px 3px; }
             .video-id-tile { font-size: 0.35rem; padding: 1px 3px; min-width: 24px; }
+            .control-btn.shuffle-btn { font-size: 0.55rem; min-width: 24px; }
         }
     </style>
 </head>
@@ -425,7 +450,7 @@
                 <button class="control-btn" id="prevBtn" title="Previous (B)">⏮</button>
                 <button class="control-btn" id="playBtn" title="Play/Pause (Space)">⏸</button>
                 <button class="control-btn" id="nextBtn" title="Next (N)">⏭</button>
-                <button class="control-btn shuffle-btn" id="shuffleBtn" title="Shuffle (S)">🔀</button>
+                <button class="control-btn shuffle-btn" id="shuffleBtn" title="Playback Mode">➡️</button>
                 <button class="control-btn mute-btn" id="muteBtn" title="Mute/Unmute">🔊</button>
                 <button class="control-btn random-btn" id="randomVideoBtn" title="Random Video (From Start)">✨</button>
                 <div class="mode-switch" id="modeSwitch">
@@ -461,13 +486,22 @@
     const SHEET_EDIT_URL = "https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing";
 
     // ============================================================
+    // PLAYBACK MODES
+    // ============================================================
+    const MODE_SEQUENTIAL = 0;
+    const MODE_SHUFFLE = 1;
+    const MODE_LOOP = 2;
+    const MODE_ICONS = ['➡️', '🔀', '🔁'];
+    const MODE_NAMES = ['Sequential', 'Shuffle', 'Loop'];
+
+    // ============================================================
     // STATE
     // ============================================================
     let groups = {};
     let playlists = [];
     let currentPlaylist = null;
     let currentVideoIndex = -1;
-    let shuffleMode = false;
+    let playbackMode = MODE_SEQUENTIAL;
     let isPlaying = false;
     let isPlaylistView = false;
     let isGroupView = true;
@@ -596,7 +630,7 @@
                     autoPlayPending = true;
                     setTimeout(() => {
                         if (currentPlaylist && !isStopped) {
-                            nextVideo();
+                            handleVideoEnd();
                         }
                         autoPlayPending = false;
                     }, 300);
@@ -619,6 +653,52 @@
         if (timerInterval) {
             clearInterval(timerInterval);
             timerInterval = null;
+        }
+    }
+
+    // ============================================================
+    // PLAYBACK MODE HANDLING
+    // ============================================================
+    function updateShuffleButton() {
+        shuffleBtn.textContent = MODE_ICONS[playbackMode];
+        shuffleBtn.className = 'control-btn shuffle-btn';
+        if (playbackMode === MODE_SEQUENTIAL) {
+            shuffleBtn.classList.add('active-sequential');
+            shuffleBtn.title = 'Sequential Mode';
+        } else if (playbackMode === MODE_SHUFFLE) {
+            shuffleBtn.classList.add('active-shuffle');
+            shuffleBtn.title = 'Shuffle Mode';
+        } else {
+            shuffleBtn.classList.add('active-loop');
+            shuffleBtn.title = 'Loop Mode (repeat current)';
+        }
+    }
+
+    function cyclePlaybackMode() {
+        playbackMode = (playbackMode + 1) % 3;
+        updateShuffleButton();
+        showToast(`🔄 ${MODE_NAMES[playbackMode]} Mode`);
+        saveState(currentPlaylist?.name, currentVideoIndex);
+    }
+
+    function handleVideoEnd() {
+        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) return;
+        
+        if (playbackMode === MODE_LOOP) {
+            // Loop current video
+            playVideo(currentPlaylist, currentVideoIndex);
+            showToast('🔁 Looping current video');
+        } else if (playbackMode === MODE_SHUFFLE) {
+            // Play random video
+            let idx;
+            do {
+                idx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
+            } while (idx === currentVideoIndex && currentPlaylist.videoIds.length > 1);
+            playVideo(currentPlaylist, idx);
+        } else {
+            // Sequential: go to next
+            let nextIdx = (currentVideoIndex + 1) % currentPlaylist.videoIds.length;
+            playVideo(currentPlaylist, nextIdx);
         }
     }
 
@@ -708,7 +788,7 @@
                     autoPlayPending = true;
                     setTimeout(() => {
                         if (currentPlaylist && !isStopped) {
-                            nextVideo();
+                            handleVideoEnd();
                         }
                         autoPlayPending = false;
                     }, 300);
@@ -984,7 +1064,7 @@
                             autoPlayPending = true;
                             setTimeout(() => {
                                 if (currentPlaylist && !isStopped) {
-                                    nextVideo();
+                                    handleVideoEnd();
                                 }
                                 autoPlayPending = false;
                             }, 300);
@@ -1035,7 +1115,10 @@
         searchInput.placeholder = '🔍 Search playlists...';
         searchInput.value = '';
         currentGroupName = groupName;
-        navigationStack.push('group:' + groupName);
+        // Update navigation stack - ensure we don't duplicate
+        if (navigationStack[navigationStack.length - 1] !== 'group:' + groupName) {
+            navigationStack.push('group:' + groupName);
+        }
         renderGroupPlaylists(groupName);
     }
 
@@ -1046,7 +1129,10 @@
         searchInput.placeholder = '🔍 Search videos...';
         searchInput.value = '';
         currentPlaylist = playlist;
-        navigationStack.push('playlist:' + playlist.name);
+        // Update navigation stack - ensure we don't duplicate
+        if (navigationStack[navigationStack.length - 1] !== 'playlist:' + playlist.name) {
+            navigationStack.push('playlist:' + playlist.name);
+        }
         renderVideos(playlist);
     }
 
@@ -1061,12 +1147,22 @@
             navigateToGroups();
         } else if (last.startsWith('group:')) {
             const groupName = last.replace('group:', '');
-            navigateToGroup(groupName);
+            currentGroupName = groupName;
+            isGroupView = false;
+            isPlaylistView = false;
+            backBtn.classList.add('show');
+            searchInput.placeholder = '🔍 Search playlists...';
+            renderGroupPlaylists(groupName);
         } else if (last.startsWith('playlist:')) {
             const playlistName = last.replace('playlist:', '');
             const playlist = playlists.find(p => p.name === playlistName);
             if (playlist) {
-                navigateToPlaylist(playlist);
+                currentPlaylist = playlist;
+                isGroupView = false;
+                isPlaylistView = true;
+                backBtn.classList.add('show');
+                searchInput.placeholder = '🔍 Search videos...';
+                renderVideos(playlist);
             } else {
                 navigateToGroups();
             }
@@ -1298,133 +1394,12 @@
         }
     }
 
-    function nextVideo() {
-        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
-            showToast('No playlist available', true);
-            return;
-        }
-        
-        videoEndDetected = false;
-        autoPlayPending = false;
-        isStopped = false;
-        
-        let nextIdx;
-        if (shuffleMode) {
-            do {
-                nextIdx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-            } while (nextIdx === currentVideoIndex && currentPlaylist.videoIds.length > 1);
-        } else {
-            nextIdx = (currentVideoIndex + 1) % currentPlaylist.videoIds.length;
-        }
-        playVideo(currentPlaylist, nextIdx);
-    }
-
-    function prevVideo() {
-        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
-            showToast('No playlist available', true);
-            return;
-        }
-        
-        videoEndDetected = false;
-        autoPlayPending = false;
-        isStopped = false;
-        
-        let prevIdx;
-        if (shuffleMode) {
-            do {
-                prevIdx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-            } while (prevIdx === currentVideoIndex && currentPlaylist.videoIds.length > 1);
-        } else {
-            prevIdx = (currentVideoIndex - 1 + currentPlaylist.videoIds.length) % currentPlaylist.videoIds.length;
-        }
-        playVideo(currentPlaylist, prevIdx);
-    }
-
-    function randomVideoFromStart() {
-        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
-            showToast('No playlist selected', true);
-            return;
-        }
-        isStopped = false;
-        videoEndDetected = false;
-        autoPlayPending = false;
-        const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-        playVideo(currentPlaylist, randomIndex);
-        showToast('✨ Random video from start');
-    }
-
-    function randomVideoWithPosition() {
-        if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
-            showToast('No playlist selected', true);
-            return;
-        }
-        isStopped = false;
-        videoEndDetected = false;
-        autoPlayPending = false;
-        const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
-        playVideo(currentPlaylist, randomIndex);
-        setTimeout(() => {
-            if (ytPlayer && typeof ytPlayer.getDuration === 'function') {
-                const duration = ytPlayer.getDuration();
-                if (duration && duration > 10) {
-                    const randomPos = 0.1 + Math.random() * 0.8;
-                    const seekTime = duration * randomPos;
-                    ytPlayer.seekTo(seekTime, true);
-                    showToast(`✨ Random video at ${Math.round(randomPos * 100)}% position`);
-                } else {
-                    showToast('✨ Random video selected');
-                }
-            }
-        }, 1500);
-    }
-
-    function togglePlayPause() {
-        if (isStopped) {
-            showToast('Playback is stopped. Select a video to play.', true);
-            return;
-        }
-        if (ytPlayer && typeof ytPlayer.playVideo === 'function' && typeof ytPlayer.pauseVideo === 'function') {
-            if (isPlaying) {
-                ytPlayer.pauseVideo();
-                isPlaying = false;
-                playBtn.textContent = '▶';
-                radioVisualizer.classList.add('paused');
-            } else {
-                ytPlayer.playVideo();
-                isPlaying = true;
-                playBtn.textContent = '⏸';
-                radioVisualizer.classList.remove('paused');
-                videoEndDetected = false;
-                startTimer();
-            }
-        }
-    }
-
-    function seekVideo(seconds) {
-        if (isStopped) { showToast('Playback is stopped', true); return; }
-        if (ytPlayer && typeof ytPlayer.seekTo === 'function') {
-            const currentTime = ytPlayer.getCurrentTime();
-            const duration = ytPlayer.getDuration();
-            const newTime = Math.max(0, Math.min(duration || 0, currentTime + seconds));
-            ytPlayer.seekTo(newTime, true);
-            showToast(`${seconds > 0 ? '⏩' : '⏪'} ${Math.abs(seconds)}s`);
-            videoEndDetected = false;
-        }
-    }
-
-    function toggleShuffle() {
-        shuffleMode = !shuffleMode;
-        shuffleBtn.classList.toggle('active', shuffleMode);
-        showToast(shuffleMode ? '🔀 Shuffle ON' : '➡️ Sequential');
-        saveState(currentPlaylist?.name, currentVideoIndex);
-    }
-
     // ============================================================
     // STATE MANAGEMENT
     // ============================================================
     function saveState(playlistName, videoIndex) {
         try {
-            const state = { playlistName, videoIndex, shuffleMode, currentMode, translateEnabled };
+            const state = { playlistName, videoIndex, playbackMode, currentMode, translateEnabled };
             localStorage.setItem('shafin_tube_state', JSON.stringify(state));
         } catch (e) {}
     }
@@ -1694,10 +1669,11 @@
             // Restore settings but NOT auto-play
             const state = restoreState();
             if (state) {
-                shuffleMode = state.shuffleMode !== undefined ? state.shuffleMode : false;
+                playbackMode = state.playbackMode !== undefined ? state.playbackMode : MODE_SEQUENTIAL;
                 currentMode = state.currentMode || 'tv';
                 translateEnabled = state.translateEnabled || false;
                 if (translateEnabled) translateBtn.classList.add('active');
+                updateShuffleButton();
                 updateModeUI();
                 // Do NOT auto-play the last video on startup
                 // Reset any playing state
@@ -1755,7 +1731,7 @@
     prevBtn.addEventListener('click', prevVideo);
     nextBtn.addEventListener('click', nextVideo);
     playBtn.addEventListener('click', togglePlayPause);
-    shuffleBtn.addEventListener('click', toggleShuffle);
+    shuffleBtn.addEventListener('click', cyclePlaybackMode);
 
     tvModeOption.addEventListener('click', () => setMode('tv'));
     radioModeOption.addEventListener('click', () => setMode('radio'));
@@ -1795,7 +1771,7 @@
             if (historyPanel.classList.contains('open')) closeHistory();
             else if (!isGroupView) goBack();
         }
-        else if (e.key === 's' || e.key === 'S') { toggleShuffle(); }
+        else if (e.key === 's' || e.key === 'S') { cyclePlaybackMode(); }
         else if (e.key === 'r' || e.key === 'R') { randomVideoFromStart(); }
         else if (e.key === 'm' || e.key === 'M') { toggleMute(); }
         else if (e.key === 'h' || e.key === 'H') { openHistory(); }
@@ -1813,10 +1789,11 @@
     loadHistory();
     loadFromSheet();
     setTimerPreset(0);
+    updateShuffleButton();
 
     console.log('🟢 Shafin Tube loaded with all features.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
-    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mute, R random (start), F random (position), S shuffle, H history, T translate, X stop, C copy video ID, Escape to go back');
+    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, S cycle playback mode, M mute, R random (start), F random (position), H history, T translate, X stop, C copy video ID, Escape to go back');
 </script>
 </body>
 </html>
