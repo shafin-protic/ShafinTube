@@ -158,7 +158,18 @@
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
         .video-container { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden; }
         .video-container iframe { width: 100%; height: 100%; border: none; transition: opacity 0.3s ease; }
-        .video-container .placeholder { color: var(--text2); font-size: 0.85rem; text-align: center; padding: 20px; }
+        .video-container .placeholder { 
+            color: var(--text2); 
+            font-size: 0.85rem; 
+            text-align: center; 
+            padding: 20px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            pointer-events: none;
+        }
         .video-container .placeholder .big-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
         .video-container .blank { display: none; width: 100%; height: 100%; background: #000; }
         .video-container .blank.show { display: block; }
@@ -226,8 +237,12 @@
             letter-spacing: 0.5px;
             flex-shrink: 0;
             display: none;
+            cursor: pointer;
+            transition: all var(--transition);
         }
         .video-id-tile.show { display: block; }
+        .video-id-tile:hover { background: var(--bg4); border-color: var(--accent); }
+        .video-id-tile:active { transform: scale(0.96); }
         
         .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 5px 14px; border-radius: 25px; font-size: 0.65rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
         @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
@@ -419,7 +434,7 @@
                 </div>
                 <span class="player-info-text" id="playerInfo">No video playing</span>
                 <span class="player-timer" id="playerTimer">--:-- / --:--</span>
-                <span class="video-id-tile" id="videoIdTile">ID: ---</span>
+                <span class="video-id-tile" id="videoIdTile" title="Click to copy video ID">ID: ---</span>
             </div>
         </div>
     </div>
@@ -1055,6 +1070,8 @@
             } else {
                 navigateToGroups();
             }
+        } else {
+            navigateToGroups();
         }
     }
 
@@ -1578,6 +1595,32 @@
     }
 
     // ============================================================
+    // COPY VIDEO ID
+    // ============================================================
+    function copyVideoId() {
+        if (!currentVideoId) {
+            showToast('No video playing', true);
+            return;
+        }
+        navigator.clipboard.writeText(currentVideoId).then(() => {
+            showToast('📋 Video ID copied: ' + currentVideoId);
+            videoIdTile.style.borderColor = 'var(--accent)';
+            setTimeout(() => {
+                videoIdTile.style.borderColor = 'var(--border)';
+            }, 1500);
+        }).catch(() => {
+            // Fallback
+            const textArea = document.createElement('textarea');
+            textArea.value = currentVideoId;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showToast('📋 Video ID copied: ' + currentVideoId);
+        });
+    }
+
+    // ============================================================
     // UTILITY
     // ============================================================
     function escapeHtml(str) {
@@ -1661,7 +1704,6 @@
                 isPlaying = false;
                 isStopped = true;
                 blankScreen.classList.add('show');
-                placeholder.style.display = 'block';
                 playerInfo.textContent = 'No video playing';
                 playerTimer.textContent = '--:-- / --:--';
                 videoIdTile.classList.remove('show');
@@ -1740,6 +1782,9 @@
         if (e.key === 'Enter') playManualInput();
     });
 
+    // Video ID tile click to copy
+    videoIdTile.addEventListener('click', copyVideoId);
+
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT') return;
         
@@ -1759,6 +1804,7 @@
         else if (e.key === 't' || e.key === 'T') { toggleTranslation(); }
         else if (e.key === 'x' || e.key === 'X') { stopPlayback(); }
         else if (e.key === 'f' || e.key === 'F') { randomVideoWithPosition(); }
+        else if (e.key === 'c' || e.key === 'C') { copyVideoId(); }
     });
 
     // ============================================================
@@ -1770,7 +1816,7 @@
 
     console.log('🟢 Shafin Tube loaded with all features.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
-    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mute, R random (start), F random (position), S shuffle, H history, T translate, X stop, Escape to go back');
+    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mute, R random (start), F random (position), S shuffle, H history, T translate, X stop, C copy video ID, Escape to go back');
 </script>
 </body>
 </html>
