@@ -499,6 +499,7 @@
     // ============================================================
     let groups = {};
     let playlists = [];
+    let groupNames = [];
     let currentPlaylist = null;
     let currentVideoIndex = -1;
     let playbackMode = MODE_SEQUENTIAL;
@@ -1095,7 +1096,7 @@
     }
 
     // ============================================================
-    // NAVIGATION
+    // NAVIGATION - SIMPLIFIED
     // ============================================================
     function navigateToGroups() {
         isGroupView = true;
@@ -1115,7 +1116,7 @@
         searchInput.placeholder = '🔍 Search playlists...';
         searchInput.value = '';
         currentGroupName = groupName;
-        // Update navigation stack - ensure we don't duplicate
+        // Simple navigation: just push the group
         if (navigationStack[navigationStack.length - 1] !== 'group:' + groupName) {
             navigationStack.push('group:' + groupName);
         }
@@ -1129,7 +1130,6 @@
         searchInput.placeholder = '🔍 Search videos...';
         searchInput.value = '';
         currentPlaylist = playlist;
-        // Update navigation stack - ensure we don't duplicate
         if (navigationStack[navigationStack.length - 1] !== 'playlist:' + playlist.name) {
             navigationStack.push('playlist:' + playlist.name);
         }
@@ -1137,31 +1137,35 @@
     }
 
     function goBack() {
+        // If at groups, stay there
         if (navigationStack.length <= 1) {
             navigateToGroups();
             return;
         }
+        // Remove current from stack
         navigationStack.pop();
         const last = navigationStack[navigationStack.length - 1];
+        
         if (last === 'groups') {
             navigateToGroups();
         } else if (last.startsWith('group:')) {
             const groupName = last.replace('group:', '');
-            currentGroupName = groupName;
+            // Go back to group view
             isGroupView = false;
             isPlaylistView = false;
             backBtn.classList.add('show');
             searchInput.placeholder = '🔍 Search playlists...';
+            currentGroupName = groupName;
             renderGroupPlaylists(groupName);
         } else if (last.startsWith('playlist:')) {
             const playlistName = last.replace('playlist:', '');
             const playlist = playlists.find(p => p.name === playlistName);
             if (playlist) {
-                currentPlaylist = playlist;
                 isGroupView = false;
                 isPlaylistView = true;
                 backBtn.classList.add('show');
                 searchInput.placeholder = '🔍 Search videos...';
+                currentPlaylist = playlist;
                 renderVideos(playlist);
             } else {
                 navigateToGroups();
@@ -1176,18 +1180,18 @@
     // ============================================================
     function renderGroups() {
         const search = searchInput.value.toLowerCase().trim();
-        let groupNames = Object.keys(groups).sort();
+        let filteredGroups = groupNames;
         if (search) {
-            groupNames = groupNames.filter(g => g.toLowerCase().includes(search));
+            filteredGroups = groupNames.filter(g => g.toLowerCase().includes(search));
         }
 
-        if (groupNames.length === 0) {
+        if (filteredGroups.length === 0) {
             listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">No groups found</div>`;
             return;
         }
 
         let html = '';
-        groupNames.forEach(groupName => {
+        filteredGroups.forEach(groupName => {
             const playlistsInGroup = groups[groupName] || [];
             const totalVideos = playlistsInGroup.reduce((sum, p) => sum + p.videoIds.length, 0);
             const icon = groupName.toLowerCase().includes('quran') ? '📖' : 
@@ -1539,6 +1543,8 @@
                 if (!groups['Custom'].find(p => p.name === 'Custom Video')) {
                     groups['Custom'].push(tempPlaylist);
                 }
+                // Update groupNames
+                if (!groupNames.includes('Custom')) groupNames.push('Custom');
                 currentPlaylist = tempPlaylist;
                 currentVideoIndex = 0;
                 navigateToPlaylist(tempPlaylist);
@@ -1555,6 +1561,7 @@
         if (!groups['Custom'].find(p => p.name === 'Custom Stream')) {
             groups['Custom'].push(tempPlaylist);
         }
+        if (!groupNames.includes('Custom')) groupNames.push('Custom');
         currentPlaylist = tempPlaylist;
         currentVideoIndex = 0;
         navigateToPlaylist(tempPlaylist);
@@ -1604,52 +1611,104 @@
     }
 
     // ============================================================
-    // LOAD FROM GOOGLE SHEET
+    // LOAD FROM GOOGLE SHEET - SIMPLIFIED WITH ERROR HANDLING
     // ============================================================
     async function loadFromSheet() {
         statusBadge.textContent = '⏳ Loading...';
         try {
+            console.log('📡 Fetching CSV from:', SHEET_CSV_URL);
             const resp = await fetch(SHEET_CSV_URL);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const csv = await resp.text();
-            const rows = csv.split(/\r?\n/).filter(r => r.trim());
-            if (rows.length < 2) throw new Error('No data found');
-
-            const parsed = [];
-            groups = {};
             
-            for (let i = 1; i < rows.length; i++) {
-                const fields = [];
-                let current = '', inQuotes = false;
-                for (const ch of rows[i]) {
-                    if (ch === '"') inQuotes = !inQuotes;
-                    else if (ch === ',' && !inQuotes) { fields.push(current.trim()); current = ''; }
-                    else current += ch;
-                }
-                fields.push(current.trim());
-                const clean = s => s.replace(/^["']|["']$/g, '').trim();
-                const name = clean(fields[0] || '');
-                const idsRaw = clean(fields[1] || '');
-                const group = clean(fields[2] || 'Uncategorized');
-                const link = clean(fields[3] || '');
-                if (name && idsRaw) {
-                    const videoIds = idsRaw.split(',').map(id => id.trim()).filter(id => id.length === 11);
-                    if (videoIds.length > 0) {
-                        const playlist = { name, videoIds, group, link };
-                        parsed.push(playlist);
-                        if (!groups[group]) groups[group] = [];
-                        groups[group].push(playlist);
-                    }
-                }
+            if (!resp.ok) {
+                throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
             }
-            if (parsed.length === 0) throw new Error('No valid playlists found');
-            playlists = parsed;
             
-            // Ensure all groups are populated
-            const groupNames = Object.keys(groups);
-            statusBadge.textContent = `✅ ${playlists.length} playlists in ${groupNames.length} groups`;
-            showToast(`Loaded ${playlists.length} playlists in ${groupNames.length} groups`);
+            const csv = await resp.text();
+            console.log('📄 CSV loaded, length:', csv.length);
             
+            // Remove BOM if present and split into rows
+            const cleanCSV = csv.replace(/^\uFEFF/, '');
+            const rows = cleanCSV.split(/\r?\n/).filter(r => r.trim());
+            console.log('📊 Found', rows.length, 'rows');
+            
+            if (rows.length < 2) {
+                throw new Error('CSV has no data rows (only header or empty)');
+            }
+            
+            // Parse header
+            const headerRow = rows[0];
+            const headers = parseCSVLine(headerRow);
+            console.log('📋 Headers:', headers);
+            
+            // Find column indices
+            const nameIdx = 0; // Column A
+            const idsIdx = 1;  // Column B
+            const groupIdx = 2; // Column C
+            const linkIdx = 3;  // Column D
+            
+            // Reset data
+            groups = {};
+            playlists = [];
+            groupNames = [];
+            let validPlaylists = 0;
+            let totalVideos = 0;
+            
+            // Parse each row
+            for (let i = 1; i < rows.length; i++) {
+                const fields = parseCSVLine(rows[i]);
+                
+                // Skip if not enough fields or empty
+                if (fields.length < 2) continue;
+                
+                const name = fields[nameIdx] ? fields[nameIdx].trim() : '';
+                const idsRaw = fields[idsIdx] ? fields[idsIdx].trim() : '';
+                const group = fields[groupIdx] ? fields[groupIdx].trim() : 'Uncategorized';
+                const link = fields[linkIdx] ? fields[linkIdx].trim() : '';
+                
+                // Skip if name or ids are empty
+                if (!name || !idsRaw) continue;
+                
+                // Parse video IDs
+                const videoIds = idsRaw.split(',').map(id => id.trim()).filter(id => id.length === 11);
+                
+                if (videoIds.length === 0) {
+                    console.warn(`⚠️ No valid video IDs found for playlist: "${name}"`);
+                    continue;
+                }
+                
+                // Create playlist object
+                const playlist = { 
+                    name: name, 
+                    videoIds: videoIds, 
+                    group: group, 
+                    link: link 
+                };
+                
+                playlists.push(playlist);
+                totalVideos += videoIds.length;
+                validPlaylists++;
+                
+                // Add to group
+                if (!groups[group]) {
+                    groups[group] = [];
+                }
+                groups[group].push(playlist);
+            }
+            
+            // Get sorted group names
+            groupNames = Object.keys(groups).sort();
+            
+            console.log(`✅ Loaded ${validPlaylists} playlists with ${totalVideos} videos in ${groupNames.length} groups`);
+            console.log('📁 Groups:', groupNames);
+            
+            if (validPlaylists === 0) {
+                throw new Error('No valid playlists found. Check your CSV format.');
+            }
+            
+            statusBadge.textContent = `✅ ${validPlaylists} playlists in ${groupNames.length} groups`;
+            showToast(`Loaded ${validPlaylists} playlists in ${groupNames.length} groups`);
+            
+            // Load cached metadata
             try {
                 const raw = localStorage.getItem('shafin_tube_cache');
                 if (raw) {
@@ -1663,10 +1722,10 @@
                 if (raw) translateCache = JSON.parse(raw);
             } catch (e) {}
             
-            // Start at groups view - NO AUTO-PLAY
+            // Start at groups view
             navigateToGroups();
             
-            // Restore settings but NOT auto-play
+            // Restore settings
             const state = restoreState();
             if (state) {
                 playbackMode = state.playbackMode !== undefined ? state.playbackMode : MODE_SEQUENTIAL;
@@ -1675,25 +1734,51 @@
                 if (translateEnabled) translateBtn.classList.add('active');
                 updateShuffleButton();
                 updateModeUI();
-                // Do NOT auto-play the last video on startup
-                // Reset any playing state
-                isPlaying = false;
-                isStopped = true;
-                blankScreen.classList.add('show');
-                playerInfo.textContent = 'No video playing';
-                playerTimer.textContent = '--:-- / --:--';
-                videoIdTile.classList.remove('show');
-                videoIdTile.textContent = 'ID: ---';
-                currentVideoId = null;
             }
+            
+            // Reset player state (no auto-play)
+            isPlaying = false;
+            isStopped = true;
+            blankScreen.classList.add('show');
+            playerInfo.textContent = 'No video playing';
+            playerTimer.textContent = '--:-- / --:--';
+            videoIdTile.classList.remove('show');
+            videoIdTile.textContent = 'ID: ---';
+            currentVideoId = null;
+            
             loadYouTubeAPI();
             appInitialized = true;
+            
         } catch (err) {
             statusBadge.textContent = '❌ Failed';
             showToast('Error: ' + err.message, 4000);
-            console.error(err);
-            listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">❌ ${err.message}</div>`;
+            console.error('❌ Load error:', err);
+            listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">
+                ❌ ${err.message}<br>
+                <span style="font-size:0.6rem; margin-top:8px; display:block;">Check console for details (F12)</span>
+            </div>`;
         }
+    }
+    
+    // Simple CSV line parser (handles quoted fields)
+    function parseCSVLine(line) {
+        const fields = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (ch === '"') {
+                inQuotes = !inQuotes;
+            } else if (ch === ',' && !inQuotes) {
+                fields.push(current.trim());
+                current = '';
+            } else {
+                current += ch;
+            }
+        }
+        fields.push(current.trim());
+        return fields;
     }
 
     // ============================================================
@@ -1791,7 +1876,7 @@
     setTimerPreset(0);
     updateShuffleButton();
 
-    console.log('🟢 Shafin Tube loaded with all features.');
+    console.log('🟢 Shafin Tube loaded.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
     console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, S cycle playback mode, M mute, R random (start), F random (position), H history, T translate, X stop, C copy video ID, Escape to go back');
 </script>
