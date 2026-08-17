@@ -445,9 +445,10 @@
     let timerInterval = null;
     let isStopped = false;
     let isMuted = false;
-    let isBusy = false;
-    let autoPlayTimeout = null;
-    let videoEnded = false;
+    
+    // Auto-play flags - simplified
+    let autoPlayPending = false;
+    let videoEndDetected = false;
     
     let timerMinutes = 0;
     let timerSeconds = 0;
@@ -544,26 +545,30 @@
         return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
+    let lastCheckTime = 0;
+    let lastDuration = 0;
+
     function updatePlayerTimer() {
         if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && typeof ytPlayer.getDuration === 'function') {
             const current = ytPlayer.getCurrentTime();
             const duration = ytPlayer.getDuration();
             if (duration && duration > 0) {
                 playerTimer.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
-                // Check for video end - trigger auto-play
-                if (current >= duration - 1 && isPlaying && !videoEnded && !isBusy) {
-                    videoEnded = true;
-                    isBusy = true;
-                    if (autoPlayTimeout) clearTimeout(autoPlayTimeout);
-                    autoPlayTimeout = setTimeout(() => {
+                lastDuration = duration;
+                
+                // LAYER 2: Timer-based end detection (runs every 500ms)
+                // Check if video is near the end and not already detected
+                if (current >= duration - 0.5 && isPlaying && !videoEndDetected && !autoPlayPending && !isStopped) {
+                    console.log('Auto-play triggered by timer check');
+                    videoEndDetected = true;
+                    autoPlayPending = true;
+                    setTimeout(() => {
                         if (currentPlaylist && !isStopped) {
-                            console.log('Auto-playing next video');
+                            console.log('Executing auto-play from timer fallback');
                             nextVideo();
                         }
-                        isBusy = false;
-                        videoEnded = false;
-                        autoPlayTimeout = null;
-                    }, 500);
+                        autoPlayPending = false;
+                    }, 300);
                 }
             } else {
                 playerTimer.textContent = '--:-- / --:--';
@@ -610,15 +615,15 @@
                 clearInterval(timerCountdownInterval);
                 timerCountdownInterval = null;
                 timerDisplay.textContent = '0:00';
-                if (currentPlaylist && currentPlaylist.videoIds.length > 0 && !isBusy) {
-                    isBusy = true;
+                if (currentPlaylist && currentPlaylist.videoIds.length > 0 && !autoPlayPending) {
+                    autoPlayPending = true;
                     randomVideoWithPosition();
                     showToast('⏱️ Timer: Random video at random position');
                     setTimeout(() => {
                         if (timerMinutes > 0) {
                             startCountdown(timerMinutes);
                         }
-                        isBusy = false;
+                        autoPlayPending = false;
                     }, 1000);
                 }
             } else {
@@ -660,16 +665,36 @@
     }
 
     // ============================================================
+    // LAYER 3: Page Visibility API for background tab auto-play
+    // ============================================================
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && !isPlaying && currentPlaylist && !autoPlayPending && !isStopped) {
+            // User returned to tab - check if video ended
+            if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && typeof ytPlayer.getDuration === 'function') {
+                const current = ytPlayer.getCurrentTime();
+                const duration = ytPlayer.getDuration();
+                if (duration > 0 && current >= duration - 0.5) {
+                    console.log('Auto-play triggered by Page Visibility API');
+                    videoEndDetected = true;
+                    autoPlayPending = true;
+                    setTimeout(() => {
+                        if (currentPlaylist && !isStopped) {
+                            nextVideo();
+                        }
+                        autoPlayPending = false;
+                    }, 300);
+                }
+            }
+        }
+    });
+
+    // ============================================================
     // STOP PLAYBACK
     // ============================================================
     function stopPlayback() {
         isStopped = true;
-        isBusy = false;
-        videoEnded = false;
-        if (autoPlayTimeout) {
-            clearTimeout(autoPlayTimeout);
-            autoPlayTimeout = null;
-        }
+        videoEndDetected = false;
+        autoPlayPending = false;
         if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
             ytPlayer.pauseVideo();
         }
@@ -861,11 +886,8 @@
             ytPlayer = null;
         }
         isStopped = false;
-        videoEnded = false;
-        if (autoPlayTimeout) {
-            clearTimeout(autoPlayTimeout);
-            autoPlayTimeout = null;
-        }
+        videoEndDetected = false;
+        autoPlayPending = false;
         blankScreen.classList.remove('show');
         const container = document.getElementById('videoContainer');
         const playerDiv = document.createElement('div');
@@ -903,38 +925,36 @@
                     if (isMuted && typeof event.target.setVolume === 'function') {
                         event.target.setVolume(0);
                     }
-                    isBusy = false;
                 },
+                // LAYER 1: YouTube API ENDED event (primary)
                 onStateChange: (event) => {
                     const state = event.data;
                     if (state === YT.PlayerState.PLAYING) {
                         isPlaying = true;
                         playBtn.textContent = '⏸';
                         radioVisualizer.classList.remove('paused');
-                        videoEnded = false;
+                        videoEndDetected = false;
                         startTimer();
-                        isBusy = false;
                     } else if (state === YT.PlayerState.PAUSED) {
                         isPlaying = false;
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
+                        // Don't reset videoEndDetected here - if video was ending, keep it
                     } else if (state === YT.PlayerState.ENDED) {
+                        console.log('Auto-play triggered by YouTube ENDED event');
                         isPlaying = false;
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
-                        if (!videoEnded && currentPlaylist && !isStopped) {
-                            videoEnded = true;
-                            isBusy = true;
-                            if (autoPlayTimeout) clearTimeout(autoPlayTimeout);
-                            autoPlayTimeout = setTimeout(() => {
+                        if (!videoEndDetected && currentPlaylist && !isStopped && !autoPlayPending) {
+                            videoEndDetected = true;
+                            autoPlayPending = true;
+                            setTimeout(() => {
                                 if (currentPlaylist && !isStopped) {
-                                    console.log('Auto-playing next video from ENDED event');
+                                    console.log('Executing auto-play from YouTube ENDED event');
                                     nextVideo();
                                 }
-                                isBusy = false;
-                                videoEnded = false;
-                                autoPlayTimeout = null;
-                            }, 500);
+                                autoPlayPending = false;
+                            }, 300);
                         }
                     }
                 },
@@ -949,36 +969,31 @@
 
     function fallbackToIframe(videoId) {
         isStopped = false;
-        videoEnded = false;
+        videoEndDetected = false;
         blankScreen.classList.remove('show');
         iframe.style.display = (currentMode === 'tv') ? 'block' : 'none';
         iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
         isPlaying = true;
         playBtn.textContent = '⏸';
         startTimer();
-        isBusy = false;
     }
 
     // ============================================================
     // CORE PLAYER FUNCTIONS
     // ============================================================
     function playVideo(playlist, videoIndex, restore = false, startPosition = 0) {
-        if (isBusy) return;
         if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) return;
         
-        isBusy = true;
+        // Reset auto-play flags
+        videoEndDetected = false;
+        autoPlayPending = false;
         isStopped = false;
-        videoEnded = false;
-        if (autoPlayTimeout) {
-            clearTimeout(autoPlayTimeout);
-            autoPlayTimeout = null;
-        }
         blankScreen.classList.remove('show');
         
         currentPlaylist = playlist;
         currentVideoIndex = videoIndex;
         const videoId = playlist.videoIds[videoIndex];
-        if (!videoId) { isBusy = false; return; }
+        if (!videoId) return;
 
         const cacheKey = playlist.name;
         const cache = metadataCache[cacheKey] || {};
@@ -1019,27 +1034,18 @@
         } else {
             radioVisualizer.classList.remove('active');
         }
-        
-        setTimeout(() => { isBusy = false; }, 500);
     }
 
     function nextVideo() {
-        if (isStopped) { 
-            // If stopped, resume auto-play
-            isStopped = false;
-        }
         if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
             showToast('No playlist available', true);
             return;
         }
-        if (isBusy) return;
         
-        isBusy = true;
-        videoEnded = false;
-        if (autoPlayTimeout) {
-            clearTimeout(autoPlayTimeout);
-            autoPlayTimeout = null;
-        }
+        // Reset auto-play flags for new video
+        videoEndDetected = false;
+        autoPlayPending = false;
+        isStopped = false;
         
         let nextIdx;
         if (shuffleMode) {
@@ -1050,25 +1056,17 @@
             nextIdx = (currentVideoIndex + 1) % currentPlaylist.videoIds.length;
         }
         playVideo(currentPlaylist, nextIdx);
-        setTimeout(() => { isBusy = false; }, 500);
     }
 
     function prevVideo() {
-        if (isStopped) { 
-            isStopped = false;
-        }
         if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
             showToast('No playlist available', true);
             return;
         }
-        if (isBusy) return;
         
-        isBusy = true;
-        videoEnded = false;
-        if (autoPlayTimeout) {
-            clearTimeout(autoPlayTimeout);
-            autoPlayTimeout = null;
-        }
+        videoEndDetected = false;
+        autoPlayPending = false;
+        isStopped = false;
         
         let prevIdx;
         if (shuffleMode) {
@@ -1079,7 +1077,6 @@
             prevIdx = (currentVideoIndex - 1 + currentPlaylist.videoIds.length) % currentPlaylist.videoIds.length;
         }
         playVideo(currentPlaylist, prevIdx);
-        setTimeout(() => { isBusy = false; }, 500);
     }
 
     function randomVideoFromStart() {
@@ -1087,9 +1084,9 @@
             showToast('No playlist selected', true);
             return;
         }
-        if (isBusy) return;
         isStopped = false;
-        videoEnded = false;
+        videoEndDetected = false;
+        autoPlayPending = false;
         const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
         playVideo(currentPlaylist, randomIndex);
         showToast('✨ Random video from start');
@@ -1100,9 +1097,9 @@
             showToast('No playlist selected', true);
             return;
         }
-        if (isBusy) return;
         isStopped = false;
-        videoEnded = false;
+        videoEndDetected = false;
+        autoPlayPending = false;
         const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
         playVideo(currentPlaylist, randomIndex);
         setTimeout(() => {
@@ -1131,17 +1128,12 @@
                 isPlaying = false;
                 playBtn.textContent = '▶';
                 radioVisualizer.classList.add('paused');
-                videoEnded = false;
-                if (autoPlayTimeout) {
-                    clearTimeout(autoPlayTimeout);
-                    autoPlayTimeout = null;
-                }
             } else {
                 ytPlayer.playVideo();
                 isPlaying = true;
                 playBtn.textContent = '⏸';
                 radioVisualizer.classList.remove('paused');
-                videoEnded = false;
+                videoEndDetected = false;
                 startTimer();
             }
         }
@@ -1155,7 +1147,7 @@
             const newTime = Math.max(0, Math.min(duration || 0, currentTime + seconds));
             ytPlayer.seekTo(newTime, true);
             showToast(`${seconds > 0 ? '⏩' : '⏪'} ${Math.abs(seconds)}s`);
-            videoEnded = false;
+            videoEndDetected = false;
         }
     }
 
@@ -1361,7 +1353,7 @@
         listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(el => {
             el.addEventListener('click', () => {
                 const idx = parseInt(el.dataset.videoIndex);
-                if (!isBusy) playVideo(playlist, idx);
+                playVideo(playlist, idx);
             });
         });
     }
@@ -1434,10 +1426,10 @@
     function playManualInput() {
         const url = manualInput.value.trim();
         if (!url) { showToast('Please enter a URL', true); return; }
-        if (isBusy) return;
         
         isStopped = false;
-        videoEnded = false;
+        videoEndDetected = false;
+        autoPlayPending = false;
         blankScreen.classList.remove('show');
         
         if (url.includes('youtube.com/watch') || url.includes('youtu.be/') || url.includes('youtube.com/live')) {
