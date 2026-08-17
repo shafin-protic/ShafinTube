@@ -189,18 +189,18 @@
         .radio-visualizer.paused .equalizer-bar { animation-play-state: paused !important; }
         .radio-visualizer.paused .radio-icon { animation-play-state: paused !important; }
         
-        .controls { background: var(--bg2); padding: 8px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
-        .control-btn { width: 34px; height: 34px; border-radius: 50%; font-size: 0.85rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
+        .controls { background: var(--bg2); padding: 6px 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+        .control-btn { width: 32px; height: 32px; border-radius: 50%; font-size: 0.8rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .control-btn:active { transform: scale(0.94); }
         .control-btn.shuffle-btn { background: var(--bg3); border-color: var(--border); color: var(--text); }
         .control-btn.shuffle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .control-btn.shuffle-btn.active:hover { background: var(--accent2); }
-        .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.85rem; }
+        .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.8rem; }
         .control-btn.random-btn:hover { background: var(--bg4); }
         .control-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .control-btn.random-btn.active:hover { background: var(--accent2); }
-        .control-btn.mute-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.75rem; }
+        .control-btn.mute-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.7rem; }
         .control-btn.mute-btn:hover { background: var(--bg4); }
         .control-btn.mute-btn.muted { background: var(--accent); border-color: var(--accent); color: #fff; }
         .control-btn.mute-btn.muted:hover { background: var(--accent2); }
@@ -211,8 +211,23 @@
         .mode-switch .mode-option.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .mode-switch .mode-option.active:hover { background: var(--accent2); }
         
-        .player-info-text { font-size: 0.65rem; color: var(--text2); flex: 1; min-width: 60px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-timer { font-size: 0.6rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right; flex-shrink: 0; }
+        .player-info-text { font-size: 0.6rem; color: var(--text2); flex: 1; min-width: 50px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-timer { font-size: 0.55rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 60px; text-align: right; flex-shrink: 0; }
+        .video-id-tile { 
+            font-size: 0.5rem; 
+            color: var(--text2); 
+            background: var(--bg3); 
+            border: 1px solid var(--border); 
+            border-radius: 4px; 
+            padding: 2px 8px; 
+            min-width: 50px; 
+            text-align: center; 
+            font-family: monospace;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+            display: none;
+        }
+        .video-id-tile.show { display: block; }
         
         .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 5px 14px; border-radius: 25px; font-size: 0.65rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
         @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
@@ -257,10 +272,11 @@
             .status-badge { font-size: 0.45rem; padding: 1px 6px; }
             .list-item .thumb { width: 34px; height: 19px; }
             .list-item .title { font-size: 0.7rem; }
-            .control-btn { width: 30px; height: 30px; font-size: 0.75rem; }
+            .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .mode-switch .mode-option { font-size: 0.55rem; padding: 3px 10px; }
             .player-info-text { font-size: 0.55rem; min-width: 40px; }
             .player-timer { font-size: 0.5rem; min-width: 50px; }
+            .video-id-tile { font-size: 0.45rem; padding: 1px 6px; min-width: 40px; }
             .history-panel { width: 340px; right: -340px; }
             .radio-visualizer .radio-icon { font-size: 3rem; }
             .radio-visualizer .radio-title { font-size: 0.9rem; }
@@ -275,14 +291,15 @@
             .list-item .title { font-size: 0.65rem; }
             .list-item .sub { font-size: 0.5rem; }
             .list-item .thumb { width: 30px; height: 17px; }
-            .controls { gap: 6px; padding: 6px 8px; }
-            .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
+            .controls { gap: 5px; padding: 4px 8px; }
+            .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
             .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
             .timer-display { font-size: 0.45rem; min-width: 30px; padding: 1px 4px; }
             .timer-preset-btn { font-size: 0.45rem; padding: 2px 6px; height: 22px; min-width: 28px; }
             .status-badge { font-size: 0.4rem; padding: 1px 4px; }
             .player-info-text { font-size: 0.5rem; min-width: 30px; }
             .player-timer { font-size: 0.45rem; min-width: 40px; }
+            .video-id-tile { font-size: 0.4rem; padding: 1px 4px; min-width: 30px; }
             .header { gap: 3px; padding: 3px 6px; min-height: 34px; flex-wrap: nowrap; }
             .header-btn { width: 22px; height: 22px; font-size: 0.6rem; }
             .manual-input-wrap { max-width: 140px; min-width: 70px; padding: 1px 3px 1px 6px; }
@@ -310,6 +327,7 @@
             .timer-display { font-size: 0.4rem; min-width: 26px; padding: 1px 3px; }
             .timer-preset-btn { font-size: 0.4rem; padding: 2px 4px; height: 20px; min-width: 24px; }
             .status-badge { font-size: 0.35rem; padding: 1px 3px; }
+            .video-id-tile { font-size: 0.35rem; padding: 1px 3px; min-width: 24px; }
         }
     </style>
 </head>
@@ -401,6 +419,7 @@
                 </div>
                 <span class="player-info-text" id="playerInfo">No video playing</span>
                 <span class="player-timer" id="playerTimer">--:-- / --:--</span>
+                <span class="video-id-tile" id="videoIdTile">ID: ---</span>
             </div>
         </div>
     </div>
@@ -429,7 +448,7 @@
     // ============================================================
     // STATE
     // ============================================================
-    let groups = {}; // { groupName: [playlist1, playlist2, ...] }
+    let groups = {};
     let playlists = [];
     let currentPlaylist = null;
     let currentVideoIndex = -1;
@@ -453,6 +472,7 @@
     let navigationStack = ['groups'];
     let currentGroupName = null;
     let appInitialized = false;
+    let currentVideoId = null;
     
     let timerMinutes = 0;
     let timerSeconds = 0;
@@ -477,6 +497,7 @@
     const blankScreen = document.getElementById('blankScreen');
     const playerInfo = document.getElementById('playerInfo');
     const playerTimer = document.getElementById('playerTimer');
+    const videoIdTile = document.getElementById('videoIdTile');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const playBtn = document.getElementById('playBtn');
@@ -707,6 +728,9 @@
         blankScreen.classList.add('show');
         playerInfo.textContent = 'Stopped';
         playerTimer.textContent = '--:-- / --:--';
+        videoIdTile.classList.remove('show');
+        videoIdTile.textContent = 'ID: ---';
+        currentVideoId = null;
         stopTimer();
         showToast('⏹ Playback stopped');
     }
@@ -883,6 +907,10 @@
         videoEndDetected = false;
         autoPlayPending = false;
         blankScreen.classList.remove('show');
+        currentVideoId = videoId;
+        videoIdTile.textContent = 'ID: ' + videoId.substring(0, 8) + '...';
+        videoIdTile.classList.add('show');
+        
         const container = document.getElementById('videoContainer');
         const playerDiv = document.createElement('div');
         playerDiv.id = 'yt-player-container';
@@ -961,6 +989,9 @@
         isStopped = false;
         videoEndDetected = false;
         blankScreen.classList.remove('show');
+        currentVideoId = videoId;
+        videoIdTile.textContent = 'ID: ' + videoId.substring(0, 8) + '...';
+        videoIdTile.classList.add('show');
         iframe.style.display = (currentMode === 'tv') ? 'block' : 'none';
         iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
         isPlaying = true;
@@ -1005,7 +1036,10 @@
     }
 
     function goBack() {
-        if (navigationStack.length <= 1) return;
+        if (navigationStack.length <= 1) {
+            navigateToGroups();
+            return;
+        }
         navigationStack.pop();
         const last = navigationStack[navigationStack.length - 1];
         if (last === 'groups') {
@@ -1630,6 +1664,9 @@
                 placeholder.style.display = 'block';
                 playerInfo.textContent = 'No video playing';
                 playerTimer.textContent = '--:-- / --:--';
+                videoIdTile.classList.remove('show');
+                videoIdTile.textContent = 'ID: ---';
+                currentVideoId = null;
             }
             loadYouTubeAPI();
             appInitialized = true;
