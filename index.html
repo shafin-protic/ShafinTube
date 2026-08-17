@@ -446,6 +446,8 @@
     let isStopped = false;
     let isMuted = false;
     let isBusy = false;
+    let autoPlayTimeout = null;
+    let videoEnded = false;
     
     let timerMinutes = 0;
     let timerSeconds = 0;
@@ -548,14 +550,20 @@
             const duration = ytPlayer.getDuration();
             if (duration && duration > 0) {
                 playerTimer.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
-                if (current >= duration - 1 && isPlaying && !isBusy) {
+                // Check for video end - trigger auto-play
+                if (current >= duration - 1 && isPlaying && !videoEnded && !isBusy) {
+                    videoEnded = true;
                     isBusy = true;
-                    setTimeout(() => {
-                        if (currentPlaylist && isPlaying) {
+                    if (autoPlayTimeout) clearTimeout(autoPlayTimeout);
+                    autoPlayTimeout = setTimeout(() => {
+                        if (currentPlaylist && !isStopped) {
+                            console.log('Auto-playing next video');
                             nextVideo();
                         }
                         isBusy = false;
-                    }, 300);
+                        videoEnded = false;
+                        autoPlayTimeout = null;
+                    }, 500);
                 }
             } else {
                 playerTimer.textContent = '--:-- / --:--';
@@ -657,6 +665,11 @@
     function stopPlayback() {
         isStopped = true;
         isBusy = false;
+        videoEnded = false;
+        if (autoPlayTimeout) {
+            clearTimeout(autoPlayTimeout);
+            autoPlayTimeout = null;
+        }
         if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
             ytPlayer.pauseVideo();
         }
@@ -848,6 +861,11 @@
             ytPlayer = null;
         }
         isStopped = false;
+        videoEnded = false;
+        if (autoPlayTimeout) {
+            clearTimeout(autoPlayTimeout);
+            autoPlayTimeout = null;
+        }
         blankScreen.classList.remove('show');
         const container = document.getElementById('videoContainer');
         const playerDiv = document.createElement('div');
@@ -893,6 +911,7 @@
                         isPlaying = true;
                         playBtn.textContent = '⏸';
                         radioVisualizer.classList.remove('paused');
+                        videoEnded = false;
                         startTimer();
                         isBusy = false;
                     } else if (state === YT.PlayerState.PAUSED) {
@@ -903,11 +922,18 @@
                         isPlaying = false;
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
-                        if (currentPlaylist && !isBusy) {
+                        if (!videoEnded && currentPlaylist && !isStopped) {
+                            videoEnded = true;
                             isBusy = true;
-                            setTimeout(() => {
-                                if (currentPlaylist) nextVideo();
+                            if (autoPlayTimeout) clearTimeout(autoPlayTimeout);
+                            autoPlayTimeout = setTimeout(() => {
+                                if (currentPlaylist && !isStopped) {
+                                    console.log('Auto-playing next video from ENDED event');
+                                    nextVideo();
+                                }
                                 isBusy = false;
+                                videoEnded = false;
+                                autoPlayTimeout = null;
                             }, 500);
                         }
                     }
@@ -923,6 +949,7 @@
 
     function fallbackToIframe(videoId) {
         isStopped = false;
+        videoEnded = false;
         blankScreen.classList.remove('show');
         iframe.style.display = (currentMode === 'tv') ? 'block' : 'none';
         iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
@@ -941,6 +968,11 @@
         
         isBusy = true;
         isStopped = false;
+        videoEnded = false;
+        if (autoPlayTimeout) {
+            clearTimeout(autoPlayTimeout);
+            autoPlayTimeout = null;
+        }
         blankScreen.classList.remove('show');
         
         currentPlaylist = playlist;
@@ -992,12 +1024,22 @@
     }
 
     function nextVideo() {
-        if (isStopped) { showToast('Playback is stopped', true); return; }
+        if (isStopped) { 
+            // If stopped, resume auto-play
+            isStopped = false;
+        }
         if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
             showToast('No playlist available', true);
             return;
         }
         if (isBusy) return;
+        
+        isBusy = true;
+        videoEnded = false;
+        if (autoPlayTimeout) {
+            clearTimeout(autoPlayTimeout);
+            autoPlayTimeout = null;
+        }
         
         let nextIdx;
         if (shuffleMode) {
@@ -1008,15 +1050,25 @@
             nextIdx = (currentVideoIndex + 1) % currentPlaylist.videoIds.length;
         }
         playVideo(currentPlaylist, nextIdx);
+        setTimeout(() => { isBusy = false; }, 500);
     }
 
     function prevVideo() {
-        if (isStopped) { showToast('Playback is stopped', true); return; }
+        if (isStopped) { 
+            isStopped = false;
+        }
         if (!currentPlaylist || currentPlaylist.videoIds.length === 0) {
             showToast('No playlist available', true);
             return;
         }
         if (isBusy) return;
+        
+        isBusy = true;
+        videoEnded = false;
+        if (autoPlayTimeout) {
+            clearTimeout(autoPlayTimeout);
+            autoPlayTimeout = null;
+        }
         
         let prevIdx;
         if (shuffleMode) {
@@ -1027,6 +1079,7 @@
             prevIdx = (currentVideoIndex - 1 + currentPlaylist.videoIds.length) % currentPlaylist.videoIds.length;
         }
         playVideo(currentPlaylist, prevIdx);
+        setTimeout(() => { isBusy = false; }, 500);
     }
 
     function randomVideoFromStart() {
@@ -1035,6 +1088,8 @@
             return;
         }
         if (isBusy) return;
+        isStopped = false;
+        videoEnded = false;
         const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
         playVideo(currentPlaylist, randomIndex);
         showToast('✨ Random video from start');
@@ -1046,6 +1101,8 @@
             return;
         }
         if (isBusy) return;
+        isStopped = false;
+        videoEnded = false;
         const randomIndex = Math.floor(Math.random() * currentPlaylist.videoIds.length);
         playVideo(currentPlaylist, randomIndex);
         setTimeout(() => {
@@ -1074,11 +1131,17 @@
                 isPlaying = false;
                 playBtn.textContent = '▶';
                 radioVisualizer.classList.add('paused');
+                videoEnded = false;
+                if (autoPlayTimeout) {
+                    clearTimeout(autoPlayTimeout);
+                    autoPlayTimeout = null;
+                }
             } else {
                 ytPlayer.playVideo();
                 isPlaying = true;
                 playBtn.textContent = '⏸';
                 radioVisualizer.classList.remove('paused');
+                videoEnded = false;
                 startTimer();
             }
         }
@@ -1092,6 +1155,7 @@
             const newTime = Math.max(0, Math.min(duration || 0, currentTime + seconds));
             ytPlayer.seekTo(newTime, true);
             showToast(`${seconds > 0 ? '⏩' : '⏪'} ${Math.abs(seconds)}s`);
+            videoEnded = false;
         }
     }
 
@@ -1373,6 +1437,7 @@
         if (isBusy) return;
         
         isStopped = false;
+        videoEnded = false;
         blankScreen.classList.remove('show');
         
         if (url.includes('youtube.com/watch') || url.includes('youtu.be/') || url.includes('youtube.com/live')) {
