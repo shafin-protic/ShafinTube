@@ -482,7 +482,9 @@
     // ============================================================
     // CONFIG
     // ============================================================
+    // Using CORS proxy to bypass CORS issues with Google Sheets
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRx0WsM-o0uDBYquZ2jkvScyk_VKetZ2PQ-92qSpjx3PZIRqUyrlCP4DIDIXOcIUsXazIfJqcun7LAp/pub?gid=0&single=true&output=csv";
+    const PROXY_URL = "https://api.allorigins.win/raw?url=";
     const SHEET_EDIT_URL = "https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing";
 
     // ============================================================
@@ -686,18 +688,15 @@
         if (!currentPlaylist || currentPlaylist.videoIds.length === 0) return;
         
         if (playbackMode === MODE_LOOP) {
-            // Loop current video
             playVideo(currentPlaylist, currentVideoIndex);
             showToast('🔁 Looping current video');
         } else if (playbackMode === MODE_SHUFFLE) {
-            // Play random video
             let idx;
             do {
                 idx = Math.floor(Math.random() * currentPlaylist.videoIds.length);
             } while (idx === currentVideoIndex && currentPlaylist.videoIds.length > 1);
             playVideo(currentPlaylist, idx);
         } else {
-            // Sequential: go to next
             let nextIdx = (currentVideoIndex + 1) % currentPlaylist.videoIds.length;
             playVideo(currentPlaylist, nextIdx);
         }
@@ -1096,7 +1095,7 @@
     }
 
     // ============================================================
-    // NAVIGATION - SIMPLIFIED
+    // NAVIGATION
     // ============================================================
     function navigateToGroups() {
         isGroupView = true;
@@ -1116,7 +1115,6 @@
         searchInput.placeholder = '🔍 Search playlists...';
         searchInput.value = '';
         currentGroupName = groupName;
-        // Simple navigation: just push the group
         if (navigationStack[navigationStack.length - 1] !== 'group:' + groupName) {
             navigationStack.push('group:' + groupName);
         }
@@ -1137,12 +1135,10 @@
     }
 
     function goBack() {
-        // If at groups, stay there
         if (navigationStack.length <= 1) {
             navigateToGroups();
             return;
         }
-        // Remove current from stack
         navigationStack.pop();
         const last = navigationStack[navigationStack.length - 1];
         
@@ -1150,7 +1146,6 @@
             navigateToGroups();
         } else if (last.startsWith('group:')) {
             const groupName = last.replace('group:', '');
-            // Go back to group view
             isGroupView = false;
             isPlaylistView = false;
             backBtn.classList.add('show');
@@ -1543,7 +1538,6 @@
                 if (!groups['Custom'].find(p => p.name === 'Custom Video')) {
                     groups['Custom'].push(tempPlaylist);
                 }
-                // Update groupNames
                 if (!groupNames.includes('Custom')) groupNames.push('Custom');
                 currentPlaylist = tempPlaylist;
                 currentVideoIndex = 0;
@@ -1591,7 +1585,6 @@
                 videoIdTile.style.borderColor = 'var(--border)';
             }, 1500);
         }).catch(() => {
-            // Fallback
             const textArea = document.createElement('textarea');
             textArea.value = currentVideoId;
             document.body.appendChild(textArea);
@@ -1611,22 +1604,56 @@
     }
 
     // ============================================================
-    // LOAD FROM GOOGLE SHEET - SIMPLIFIED WITH ERROR HANDLING
+    // LOAD FROM GOOGLE SHEET - WITH CORS PROXY FALLBACK
     // ============================================================
     async function loadFromSheet() {
         statusBadge.textContent = '⏳ Loading...';
+        listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">
+            <span class="loading-spinner" style="display:inline-block; margin-right:8px;"></span> Loading groups...
+        </div>`;
+        
         try {
-            console.log('📡 Fetching CSV from:', SHEET_CSV_URL);
-            const resp = await fetch(SHEET_CSV_URL);
+            let csv = null;
+            let fetchError = null;
             
-            if (!resp.ok) {
-                throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+            // Try 1: Direct fetch
+            try {
+                console.log('📡 Attempt 1: Direct fetch');
+                const resp = await fetch(SHEET_CSV_URL);
+                if (resp.ok) {
+                    csv = await resp.text();
+                    console.log('✅ Direct fetch successful');
+                } else {
+                    throw new Error(`HTTP ${resp.status}`);
+                }
+            } catch (err) {
+                fetchError = err;
+                console.warn('⚠️ Direct fetch failed:', err.message);
+                
+                // Try 2: CORS Proxy
+                try {
+                    console.log('📡 Attempt 2: CORS Proxy');
+                    const proxyUrl = PROXY_URL + encodeURIComponent(SHEET_CSV_URL);
+                    const resp = await fetch(proxyUrl);
+                    if (resp.ok) {
+                        csv = await resp.text();
+                        console.log('✅ CORS proxy successful');
+                    } else {
+                        throw new Error(`HTTP ${resp.status}`);
+                    }
+                } catch (err2) {
+                    console.warn('⚠️ CORS proxy failed:', err2.message);
+                    throw new Error('Failed to load data. Check console for details.');
+                }
             }
             
-            const csv = await resp.text();
+            if (!csv || csv.length < 100) {
+                throw new Error('CSV data is empty or too small');
+            }
+            
             console.log('📄 CSV loaded, length:', csv.length);
             
-            // Remove BOM if present and split into rows
+            // Remove BOM if present
             const cleanCSV = csv.replace(/^\uFEFF/, '');
             const rows = cleanCSV.split(/\r?\n/).filter(r => r.trim());
             console.log('📊 Found', rows.length, 'rows');
@@ -1639,12 +1666,6 @@
             const headerRow = rows[0];
             const headers = parseCSVLine(headerRow);
             console.log('📋 Headers:', headers);
-            
-            // Find column indices
-            const nameIdx = 0; // Column A
-            const idsIdx = 1;  // Column B
-            const groupIdx = 2; // Column C
-            const linkIdx = 3;  // Column D
             
             // Reset data
             groups = {};
@@ -1660,15 +1681,15 @@
                 // Skip if not enough fields or empty
                 if (fields.length < 2) continue;
                 
-                const name = fields[nameIdx] ? fields[nameIdx].trim() : '';
-                const idsRaw = fields[idsIdx] ? fields[idsIdx].trim() : '';
-                const group = fields[groupIdx] ? fields[groupIdx].trim() : 'Uncategorized';
-                const link = fields[linkIdx] ? fields[linkIdx].trim() : '';
+                const name = fields[0] ? fields[0].trim() : '';
+                const idsRaw = fields[1] ? fields[1].trim() : '';
+                const group = fields[2] ? fields[2].trim() : 'Uncategorized';
+                const link = fields[3] ? fields[3].trim() : '';
                 
                 // Skip if name or ids are empty
                 if (!name || !idsRaw) continue;
                 
-                // Parse video IDs
+                // Parse video IDs - only keep 11 character IDs
                 const videoIds = idsRaw.split(',').map(id => id.trim()).filter(id => id.length === 11);
                 
                 if (videoIds.length === 0) {
@@ -1755,7 +1776,8 @@
             console.error('❌ Load error:', err);
             listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">
                 ❌ ${err.message}<br>
-                <span style="font-size:0.6rem; margin-top:8px; display:block;">Check console for details (F12)</span>
+                <span style="font-size:0.6rem; margin-top:8px; display:block;">Check console (F12) for details</span>
+                <button onclick="location.reload()" style="margin-top:12px; padding:6px 16px; background:var(--accent); color:#fff; border:none; border-radius:20px; cursor:pointer;">Retry</button>
             </div>`;
         }
     }
