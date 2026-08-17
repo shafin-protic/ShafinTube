@@ -450,8 +450,9 @@
     let isMuted = false;
     let autoPlayPending = false;
     let videoEndDetected = false;
-    let navigationStack = []; // Track navigation history: ['groups', 'group:name', 'playlist:name']
+    let navigationStack = ['groups'];
     let currentGroupName = null;
+    let appInitialized = false;
     
     let timerMinutes = 0;
     let timerSeconds = 0;
@@ -806,7 +807,6 @@
                     if (vidIdx >= 0) {
                         closeHistory();
                         currentPlaylist = playlist;
-                        // Navigate to the playlist view
                         navigateToPlaylist(playlist);
                         playVideo(playlist, vidIdx, false, position);
                     }
@@ -1232,7 +1232,6 @@
         if (!restore) showToast(`▶ ${title}`);
         saveState(playlist.name, videoIndex);
         
-        // Update the video list to show active state
         if (isPlaylistView && currentPlaylist) {
             renderVideos(currentPlaylist);
         }
@@ -1593,8 +1592,11 @@
             }
             if (parsed.length === 0) throw new Error('No valid playlists found');
             playlists = parsed;
-            statusBadge.textContent = `✅ ${playlists.length} playlists in ${Object.keys(groups).length} groups`;
-            showToast(`Loaded ${playlists.length} playlists in ${Object.keys(groups).length} groups`);
+            
+            // Ensure all groups are populated
+            const groupNames = Object.keys(groups);
+            statusBadge.textContent = `✅ ${playlists.length} playlists in ${groupNames.length} groups`;
+            showToast(`Loaded ${playlists.length} playlists in ${groupNames.length} groups`);
             
             try {
                 const raw = localStorage.getItem('shafin_tube_cache');
@@ -1609,9 +1611,10 @@
                 if (raw) translateCache = JSON.parse(raw);
             } catch (e) {}
             
-            // Start at groups view
+            // Start at groups view - NO AUTO-PLAY
             navigateToGroups();
             
+            // Restore settings but NOT auto-play
             const state = restoreState();
             if (state) {
                 shuffleMode = state.shuffleMode !== undefined ? state.shuffleMode : false;
@@ -1619,9 +1622,17 @@
                 translateEnabled = state.translateEnabled || false;
                 if (translateEnabled) translateBtn.classList.add('active');
                 updateModeUI();
-                // Don't auto-play on startup - just show the home page
+                // Do NOT auto-play the last video on startup
+                // Reset any playing state
+                isPlaying = false;
+                isStopped = true;
+                blankScreen.classList.add('show');
+                placeholder.style.display = 'block';
+                playerInfo.textContent = 'No video playing';
+                playerTimer.textContent = '--:-- / --:--';
             }
             loadYouTubeAPI();
+            appInitialized = true;
         } catch (err) {
             statusBadge.textContent = '❌ Failed';
             showToast('Error: ' + err.message, 4000);
