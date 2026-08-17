@@ -153,6 +153,7 @@
         .list-item .loading-spinner { width: 14px; height: 14px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .list-item .translated-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
+        .list-item .group-icon { font-size: 1.2rem; flex-shrink: 0; width: 28px; text-align: center; }
         
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
         .video-container { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden; }
@@ -359,7 +360,7 @@
                 <button class="back-btn" id="backBtn">‹ Back</button>
             </div>
             <div class="list-container" id="listContainer">
-                <div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">Loading playlists...</div>
+                <div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">Loading groups...</div>
             </div>
         </div>
 
@@ -383,7 +384,7 @@
                 </div>
                 <div class="placeholder" id="placeholder">
                     <span class="big-icon">🎬</span>
-                    <p>Select a playlist and video to start</p>
+                    <p>Select a group and playlist to start</p>
                 </div>
                 <iframe id="playerIframe" src="" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="display:none;"></iframe>
             </div>
@@ -428,12 +429,14 @@
     // ============================================================
     // STATE
     // ============================================================
+    let groups = {}; // { groupName: [playlist1, playlist2, ...] }
     let playlists = [];
     let currentPlaylist = null;
     let currentVideoIndex = -1;
     let shuffleMode = false;
     let isPlaying = false;
-    let isPlaylistView = true;
+    let isPlaylistView = false;
+    let isGroupView = true;
     let toastTimeout = null;
     let metadataCache = {};
     let translateCache = {};
@@ -445,10 +448,10 @@
     let timerInterval = null;
     let isStopped = false;
     let isMuted = false;
-    
-    // Auto-play flags - simplified
     let autoPlayPending = false;
     let videoEndDetected = false;
+    let navigationStack = []; // Track navigation history: ['groups', 'group:name', 'playlist:name']
+    let currentGroupName = null;
     
     let timerMinutes = 0;
     let timerSeconds = 0;
@@ -545,26 +548,17 @@
         return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    let lastCheckTime = 0;
-    let lastDuration = 0;
-
     function updatePlayerTimer() {
         if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && typeof ytPlayer.getDuration === 'function') {
             const current = ytPlayer.getCurrentTime();
             const duration = ytPlayer.getDuration();
             if (duration && duration > 0) {
                 playerTimer.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
-                lastDuration = duration;
-                
-                // LAYER 2: Timer-based end detection (runs every 500ms)
-                // Check if video is near the end and not already detected
                 if (current >= duration - 0.5 && isPlaying && !videoEndDetected && !autoPlayPending && !isStopped) {
-                    console.log('Auto-play triggered by timer check');
                     videoEndDetected = true;
                     autoPlayPending = true;
                     setTimeout(() => {
                         if (currentPlaylist && !isStopped) {
-                            console.log('Executing auto-play from timer fallback');
                             nextVideo();
                         }
                         autoPlayPending = false;
@@ -665,16 +659,14 @@
     }
 
     // ============================================================
-    // LAYER 3: Page Visibility API for background tab auto-play
+    // PAGE VISIBILITY API
     // ============================================================
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden && !isPlaying && currentPlaylist && !autoPlayPending && !isStopped) {
-            // User returned to tab - check if video ended
             if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && typeof ytPlayer.getDuration === 'function') {
                 const current = ytPlayer.getCurrentTime();
                 const duration = ytPlayer.getDuration();
                 if (duration > 0 && current >= duration - 0.5) {
-                    console.log('Auto-play triggered by Page Visibility API');
                     videoEndDetected = true;
                     autoPlayPending = true;
                     setTimeout(() => {
@@ -814,6 +806,8 @@
                     if (vidIdx >= 0) {
                         closeHistory();
                         currentPlaylist = playlist;
+                        // Navigate to the playlist view
+                        navigateToPlaylist(playlist);
                         playVideo(playlist, vidIdx, false, position);
                     }
                 }
@@ -860,7 +854,7 @@
         translateEnabled = !translateEnabled;
         translateBtn.classList.toggle('active', translateEnabled);
         showToast(translateEnabled ? '🌐 Translation ON' : '🌐 Translation OFF');
-        if (!isPlaylistView && currentPlaylist) {
+        if (!isGroupView && currentPlaylist) {
             renderVideos(currentPlaylist);
         }
     }
@@ -926,7 +920,6 @@
                         event.target.setVolume(0);
                     }
                 },
-                // LAYER 1: YouTube API ENDED event (primary)
                 onStateChange: (event) => {
                     const state = event.data;
                     if (state === YT.PlayerState.PLAYING) {
@@ -939,9 +932,7 @@
                         isPlaying = false;
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
-                        // Don't reset videoEndDetected here - if video was ending, keep it
                     } else if (state === YT.PlayerState.ENDED) {
-                        console.log('Auto-play triggered by YouTube ENDED event');
                         isPlaying = false;
                         playBtn.textContent = '▶';
                         radioVisualizer.classList.add('paused');
@@ -950,7 +941,6 @@
                             autoPlayPending = true;
                             setTimeout(() => {
                                 if (currentPlaylist && !isStopped) {
-                                    console.log('Executing auto-play from YouTube ENDED event');
                                     nextVideo();
                                 }
                                 autoPlayPending = false;
@@ -979,12 +969,230 @@
     }
 
     // ============================================================
+    // NAVIGATION
+    // ============================================================
+    function navigateToGroups() {
+        isGroupView = true;
+        isPlaylistView = false;
+        backBtn.classList.remove('show');
+        searchInput.placeholder = '🔍 Search groups...';
+        searchInput.value = '';
+        currentGroupName = null;
+        navigationStack = ['groups'];
+        renderGroups();
+    }
+
+    function navigateToGroup(groupName) {
+        isGroupView = false;
+        isPlaylistView = false;
+        backBtn.classList.add('show');
+        searchInput.placeholder = '🔍 Search playlists...';
+        searchInput.value = '';
+        currentGroupName = groupName;
+        navigationStack.push('group:' + groupName);
+        renderGroupPlaylists(groupName);
+    }
+
+    function navigateToPlaylist(playlist) {
+        isGroupView = false;
+        isPlaylistView = true;
+        backBtn.classList.add('show');
+        searchInput.placeholder = '🔍 Search videos...';
+        searchInput.value = '';
+        currentPlaylist = playlist;
+        navigationStack.push('playlist:' + playlist.name);
+        renderVideos(playlist);
+    }
+
+    function goBack() {
+        if (navigationStack.length <= 1) return;
+        navigationStack.pop();
+        const last = navigationStack[navigationStack.length - 1];
+        if (last === 'groups') {
+            navigateToGroups();
+        } else if (last.startsWith('group:')) {
+            const groupName = last.replace('group:', '');
+            navigateToGroup(groupName);
+        } else if (last.startsWith('playlist:')) {
+            const playlistName = last.replace('playlist:', '');
+            const playlist = playlists.find(p => p.name === playlistName);
+            if (playlist) {
+                navigateToPlaylist(playlist);
+            } else {
+                navigateToGroups();
+            }
+        }
+    }
+
+    // ============================================================
+    // RENDER FUNCTIONS
+    // ============================================================
+    function renderGroups() {
+        const search = searchInput.value.toLowerCase().trim();
+        let groupNames = Object.keys(groups).sort();
+        if (search) {
+            groupNames = groupNames.filter(g => g.toLowerCase().includes(search));
+        }
+
+        if (groupNames.length === 0) {
+            listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">No groups found</div>`;
+            return;
+        }
+
+        let html = '';
+        groupNames.forEach(groupName => {
+            const playlistsInGroup = groups[groupName] || [];
+            const totalVideos = playlistsInGroup.reduce((sum, p) => sum + p.videoIds.length, 0);
+            const icon = groupName.toLowerCase().includes('quran') ? '📖' : 
+                         groupName.toLowerCase().includes('music') ? '🎵' :
+                         groupName.toLowerCase().includes('movie') ? '🎬' :
+                         groupName.toLowerCase().includes('islam') ? '🕌' : '📁';
+            html += `
+                <div class="list-item" data-group="${escapeHtml(groupName)}" data-type="group">
+                    <span class="group-icon">${icon}</span>
+                    <div class="info">
+                        <div class="title">${escapeHtml(groupName)}</div>
+                        <div class="sub">${playlistsInGroup.length} playlists • ${totalVideos} videos</div>
+                    </div>
+                    <span class="badge">${playlistsInGroup.length}</span>
+                </div>
+            `;
+        });
+        listContainer.innerHTML = html;
+
+        listContainer.querySelectorAll('.list-item[data-type="group"]').forEach(el => {
+            el.addEventListener('click', () => {
+                const groupName = el.dataset.group;
+                navigateToGroup(groupName);
+            });
+        });
+    }
+
+    function renderGroupPlaylists(groupName) {
+        const playlistsInGroup = groups[groupName] || [];
+        const search = searchInput.value.toLowerCase().trim();
+        let filtered = playlistsInGroup;
+        if (search) {
+            filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
+        }
+
+        if (filtered.length === 0) {
+            listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">No playlists in this group</div>`;
+            return;
+        }
+
+        let html = `<div style="padding:4px 8px; font-size:0.7rem; color:var(--text2); border-bottom:1px solid var(--border); margin-bottom:4px;">
+            📂 ${escapeHtml(groupName)} (${filtered.length} playlists)
+        </div>`;
+
+        filtered.forEach((pl, idx) => {
+            const isActive = currentPlaylist === pl && isPlaylistView;
+            const cacheKey = pl.name;
+            const cachedCount = metadataCache[cacheKey] ? Object.keys(metadataCache[cacheKey]).length : 0;
+            const hasMetadata = cachedCount > 0 && cachedCount >= pl.videoIds.length;
+            html += `
+                <div class="list-item ${isActive ? 'active' : ''}" data-index="${idx}" data-type="playlist">
+                    <span class="icon">${hasMetadata ? '📋' : '📋'}</span>
+                    <div class="info">
+                        <div class="title">${escapeHtml(pl.name)}</div>
+                        <div class="sub">${pl.videoIds.length} videos ${hasMetadata ? '✅' : (cachedCount > 0 ? `(${cachedCount}/${pl.videoIds.length})` : '')}</div>
+                    </div>
+                    <span class="video-count">${pl.videoIds.length}</span>
+                </div>
+            `;
+        });
+        listContainer.innerHTML = html;
+
+        listContainer.querySelectorAll('.list-item[data-type="playlist"]').forEach(el => {
+            el.addEventListener('click', () => {
+                const idx = parseInt(el.dataset.index);
+                const pl = filtered[idx];
+                if (pl) {
+                    navigateToPlaylist(pl);
+                    const cacheKey = pl.name;
+                    if (!metadataCache[cacheKey] || Object.keys(metadataCache[cacheKey]).length < pl.videoIds.length) {
+                        fetchPlaylistMetadata(pl);
+                    }
+                }
+            });
+        });
+    }
+
+    function renderVideos(playlist) {
+        const search = searchInput.value.toLowerCase().trim();
+        const cacheKey = playlist.name;
+        const cache = metadataCache[cacheKey] || {};
+
+        let html = `<div style="padding:4px 8px; font-size:0.7rem; color:var(--text2); border-bottom:1px solid var(--border); margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
+            <span>▶ ${escapeHtml(playlist.name)} (${playlist.videoIds.length})</span>
+            <span style="font-size:0.6rem;">${Object.keys(cache).length}/${playlist.videoIds.length} loaded</span>
+        </div>`;
+
+        let videos = playlist.videoIds.map((id, idx) => ({ id, index: idx }));
+        if (search) {
+            videos = videos.filter(v => {
+                const meta = cache[v.id];
+                if (meta) {
+                    const title = translateEnabled && meta.translatedTitle ? meta.translatedTitle : meta.title;
+                    return title.toLowerCase().includes(search);
+                }
+                return false;
+            });
+        }
+
+        if (videos.length === 0 && search) {
+            html += `<div style="text-align:center; padding:20px; font-size:0.7rem; color:var(--text2);">No matching videos</div>`;
+            listContainer.innerHTML = html;
+            return;
+        }
+
+        videos.forEach((v) => {
+            const isActive = currentVideoIndex === v.index;
+            const meta = cache[v.id];
+            let title = meta ? meta.title : `Video ${v.index + 1}`;
+            let translated = false;
+            if (translateEnabled && meta && meta.translatedTitle) {
+                title = meta.translatedTitle;
+                translated = true;
+            }
+            const thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+            const author = meta ? meta.author : '';
+            const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
+
+            html += `
+                <div class="list-item ${isActive ? 'active' : ''}" data-video-index="${v.index}" data-type="video">
+                    <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
+                    <div class="info">
+                        <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)} ${translatedBadge}</div>
+                        <div class="sub">${escapeHtml(author)} • ${v.index + 1}/${playlist.videoIds.length}</div>
+                    </div>
+                    <span class="badge">${v.index + 1}</span>
+                </div>
+            `;
+        });
+
+        if (isLoadingMetadata && Object.keys(cache).length < playlist.videoIds.length) {
+            html += `<div style="text-align:center; padding:12px; font-size:0.65rem; color:var(--text2);">
+                <span class="loading-spinner" style="display:inline-block; margin-right:8px;"></span> Loading metadata...
+            </div>`;
+        }
+
+        listContainer.innerHTML = html;
+
+        listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(el => {
+            el.addEventListener('click', () => {
+                const idx = parseInt(el.dataset.videoIndex);
+                playVideo(playlist, idx);
+            });
+        });
+    }
+
+    // ============================================================
     // CORE PLAYER FUNCTIONS
     // ============================================================
     function playVideo(playlist, videoIndex, restore = false, startPosition = 0) {
         if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) return;
         
-        // Reset auto-play flags
         videoEndDetected = false;
         autoPlayPending = false;
         isStopped = false;
@@ -1023,7 +1231,11 @@
         playerInfo.textContent = `${playlist.name} • ${title}`;
         if (!restore) showToast(`▶ ${title}`);
         saveState(playlist.name, videoIndex);
-        renderVideos(playlist);
+        
+        // Update the video list to show active state
+        if (isPlaylistView && currentPlaylist) {
+            renderVideos(currentPlaylist);
+        }
 
         if (currentMode === 'radio') {
             radioVisualizer.classList.add('active');
@@ -1042,7 +1254,6 @@
             return;
         }
         
-        // Reset auto-play flags for new video
         videoEndDetected = false;
         autoPlayPending = false;
         isStopped = false;
@@ -1229,135 +1440,14 @@
         statusBadge.textContent = `✅ ${playlist.videoIds.length} videos`;
         showToast(`Loaded metadata for ${playlist.videoIds.length} videos`);
         localStorage.setItem('shafin_tube_cache', JSON.stringify({ metadataCache, timestamp: Date.now() }));
-        if (!isPlaylistView && currentPlaylist === playlist) {
+        if (isPlaylistView && currentPlaylist === playlist) {
             renderVideos(playlist);
         }
     }
 
     // ============================================================
-    // RENDER FUNCTIONS
+    // UPDATE MODE UI
     // ============================================================
-    function renderPlaylists() {
-        isPlaylistView = true;
-        backBtn.classList.remove('show');
-        searchInput.placeholder = '🔍 Search playlists...';
-        const search = searchInput.value.toLowerCase().trim();
-        let filtered = playlists;
-        if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
-
-        if (filtered.length === 0) {
-            listContainer.innerHTML = `<div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">No playlists found</div>`;
-            return;
-        }
-
-        let html = '';
-        filtered.forEach((pl, idx) => {
-            const isActive = currentPlaylist === pl && isPlaylistView;
-            const cacheKey = pl.name;
-            const cachedCount = metadataCache[cacheKey] ? Object.keys(metadataCache[cacheKey]).length : 0;
-            const hasMetadata = cachedCount > 0 && cachedCount >= pl.videoIds.length;
-            html += `
-                <div class="list-item ${isActive ? 'active' : ''}" data-index="${idx}" data-type="playlist">
-                    <span class="icon">${hasMetadata ? '📋' : '📋'}</span>
-                    <div class="info">
-                        <div class="title">${escapeHtml(pl.name)}</div>
-                        <div class="sub">${pl.videoIds.length} videos ${hasMetadata ? '✅' : (cachedCount > 0 ? `(${cachedCount}/${pl.videoIds.length})` : '')}</div>
-                    </div>
-                    <span class="video-count">${pl.videoIds.length}</span>
-                </div>
-            `;
-        });
-        listContainer.innerHTML = html;
-
-        listContainer.querySelectorAll('.list-item[data-type="playlist"]').forEach(el => {
-            el.addEventListener('click', () => {
-                const idx = parseInt(el.dataset.index);
-                const pl = filtered[idx];
-                if (pl) {
-                    currentPlaylist = pl;
-                    currentVideoIndex = -1;
-                    renderVideos(pl);
-                    const cacheKey = pl.name;
-                    if (!metadataCache[cacheKey] || Object.keys(metadataCache[cacheKey]).length < pl.videoIds.length) {
-                        fetchPlaylistMetadata(pl);
-                    }
-                }
-            });
-        });
-    }
-
-    function renderVideos(playlist) {
-        isPlaylistView = false;
-        backBtn.classList.add('show');
-        searchInput.placeholder = '🔍 Search videos...';
-        const search = searchInput.value.toLowerCase().trim();
-        const cacheKey = playlist.name;
-        const cache = metadataCache[cacheKey] || {};
-
-        let html = `<div style="padding:4px 8px; font-size:0.7rem; color:var(--text2); border-bottom:1px solid var(--border); margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
-            <span>${escapeHtml(playlist.name)} (${playlist.videoIds.length})</span>
-            <span style="font-size:0.6rem;">${Object.keys(cache).length}/${playlist.videoIds.length} loaded</span>
-        </div>`;
-
-        let videos = playlist.videoIds.map((id, idx) => ({ id, index: idx }));
-        if (search) {
-            videos = videos.filter(v => {
-                const meta = cache[v.id];
-                if (meta) {
-                    const title = translateEnabled && meta.translatedTitle ? meta.translatedTitle : meta.title;
-                    return title.toLowerCase().includes(search);
-                }
-                return false;
-            });
-        }
-
-        if (videos.length === 0 && search) {
-            html += `<div style="text-align:center; padding:20px; font-size:0.7rem; color:var(--text2);">No matching videos</div>`;
-            listContainer.innerHTML = html;
-            return;
-        }
-
-        videos.forEach((v) => {
-            const isActive = currentVideoIndex === v.index;
-            const meta = cache[v.id];
-            let title = meta ? meta.title : `Video ${v.index + 1}`;
-            let translated = false;
-            if (translateEnabled && meta && meta.translatedTitle) {
-                title = meta.translatedTitle;
-                translated = true;
-            }
-            const thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
-            const author = meta ? meta.author : '';
-            const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
-
-            html += `
-                <div class="list-item ${isActive ? 'active' : ''}" data-video-index="${v.index}" data-type="video">
-                    <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
-                    <div class="info">
-                        <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)} ${translatedBadge}</div>
-                        <div class="sub">${escapeHtml(author)} • ${v.index + 1}/${playlist.videoIds.length}</div>
-                    </div>
-                    <span class="badge">${v.index + 1}</span>
-                </div>
-            `;
-        });
-
-        if (isLoadingMetadata && Object.keys(cache).length < playlist.videoIds.length) {
-            html += `<div style="text-align:center; padding:12px; font-size:0.65rem; color:var(--text2);">
-                <span class="loading-spinner" style="display:inline-block; margin-right:8px;"></span> Loading metadata...
-            </div>`;
-        }
-
-        listContainer.innerHTML = html;
-
-        listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(el => {
-            el.addEventListener('click', () => {
-                const idx = parseInt(el.dataset.videoIndex);
-                playVideo(playlist, idx);
-            });
-        });
-    }
-
     function updateModeUI() {
         if (currentMode === 'tv') {
             tvModeOption.classList.add('active');
@@ -1401,25 +1491,6 @@
         showToast(currentMode === 'tv' ? '📺 TV Mode' : '🎧 Radio Mode');
     }
 
-    function goBackToPlaylists() {
-        isPlaylistView = true;
-        backBtn.classList.remove('show');
-        searchInput.placeholder = '🔍 Search playlists...';
-        searchInput.value = '';
-        renderPlaylists();
-    }
-
-    function refreshMetadata() {
-        if (currentPlaylist && !isPlaylistView) {
-            const cacheKey = currentPlaylist.name;
-            if (metadataCache[cacheKey]) delete metadataCache[cacheKey];
-            fetchPlaylistMetadata(currentPlaylist, true);
-            showToast('Refreshing metadata...');
-        } else {
-            showToast('Open a playlist first to refresh');
-        }
-    }
-
     // ============================================================
     // MANUAL INPUT
     // ============================================================
@@ -1439,9 +1510,13 @@
                 const videoId = match[1];
                 const tempPlaylist = { name: 'Custom Video', videoIds: [videoId] };
                 if (!playlists.find(p => p.name === 'Custom Video')) playlists.push(tempPlaylist);
+                if (!groups['Custom']) groups['Custom'] = [];
+                if (!groups['Custom'].find(p => p.name === 'Custom Video')) {
+                    groups['Custom'].push(tempPlaylist);
+                }
                 currentPlaylist = tempPlaylist;
                 currentVideoIndex = 0;
-                renderPlaylists();
+                navigateToPlaylist(tempPlaylist);
                 fetchPlaylistMetadata(tempPlaylist);
                 setTimeout(() => playVideo(tempPlaylist, 0), 500);
                 showToast(`▶ Playing: ${url}`);
@@ -1451,9 +1526,13 @@
         
         const tempPlaylist = { name: 'Custom Stream', videoIds: [url] };
         if (!playlists.find(p => p.name === 'Custom Stream')) playlists.push(tempPlaylist);
+        if (!groups['Custom']) groups['Custom'] = [];
+        if (!groups['Custom'].find(p => p.name === 'Custom Stream')) {
+            groups['Custom'].push(tempPlaylist);
+        }
         currentPlaylist = tempPlaylist;
         currentVideoIndex = 0;
-        renderPlaylists();
+        navigateToPlaylist(tempPlaylist);
         
         iframe.style.display = 'block';
         iframe.src = url;
@@ -1486,6 +1565,8 @@
             if (rows.length < 2) throw new Error('No data found');
 
             const parsed = [];
+            groups = {};
+            
             for (let i = 1; i < rows.length; i++) {
                 const fields = [];
                 let current = '', inQuotes = false;
@@ -1498,19 +1579,22 @@
                 const clean = s => s.replace(/^["']|["']$/g, '').trim();
                 const name = clean(fields[0] || '');
                 const idsRaw = clean(fields[1] || '');
-                const cover = clean(fields[2] || '');
+                const group = clean(fields[2] || 'Uncategorized');
                 const link = clean(fields[3] || '');
                 if (name && idsRaw) {
                     const videoIds = idsRaw.split(',').map(id => id.trim()).filter(id => id.length === 11);
                     if (videoIds.length > 0) {
-                        parsed.push({ name, videoIds, cover, link });
+                        const playlist = { name, videoIds, group, link };
+                        parsed.push(playlist);
+                        if (!groups[group]) groups[group] = [];
+                        groups[group].push(playlist);
                     }
                 }
             }
             if (parsed.length === 0) throw new Error('No valid playlists found');
             playlists = parsed;
-            statusBadge.textContent = `✅ ${playlists.length} playlists`;
-            showToast(`Loaded ${playlists.length} playlists`);
+            statusBadge.textContent = `✅ ${playlists.length} playlists in ${Object.keys(groups).length} groups`;
+            showToast(`Loaded ${playlists.length} playlists in ${Object.keys(groups).length} groups`);
             
             try {
                 const raw = localStorage.getItem('shafin_tube_cache');
@@ -1525,7 +1609,8 @@
                 if (raw) translateCache = JSON.parse(raw);
             } catch (e) {}
             
-            renderPlaylists();
+            // Start at groups view
+            navigateToGroups();
             
             const state = restoreState();
             if (state) {
@@ -1534,22 +1619,7 @@
                 translateEnabled = state.translateEnabled || false;
                 if (translateEnabled) translateBtn.classList.add('active');
                 updateModeUI();
-                const pl = playlists.find(p => p.name === state.playlistName);
-                if (pl && state.videoIndex >= 0 && state.videoIndex < pl.videoIds.length) {
-                    currentPlaylist = pl;
-                    currentVideoIndex = state.videoIndex;
-                    const cacheKey = pl.name;
-                    if (!metadataCache[cacheKey] || Object.keys(metadataCache[cacheKey]).length < pl.videoIds.length) {
-                        fetchPlaylistMetadata(pl);
-                    }
-                    setTimeout(() => {
-                        renderVideos(pl);
-                        const videoId = pl.videoIds[state.videoIndex];
-                        const historyEntry = history.find(h => h.videoId === videoId && h.playlistName === pl.name);
-                        const startPos = historyEntry ? historyEntry.position : 0;
-                        playVideo(pl, state.videoIndex, true, startPos);
-                    }, 500);
-                }
+                // Don't auto-play on startup - just show the home page
             }
             loadYouTubeAPI();
         } catch (err) {
@@ -1564,12 +1634,26 @@
     // EVENT LISTENERS
     // ============================================================
     searchInput.addEventListener('input', () => {
-        if (isPlaylistView) renderPlaylists();
-        else if (currentPlaylist) renderVideos(currentPlaylist);
+        if (isGroupView) {
+            renderGroups();
+        } else if (currentGroupName && !isPlaylistView) {
+            renderGroupPlaylists(currentGroupName);
+        } else if (isPlaylistView && currentPlaylist) {
+            renderVideos(currentPlaylist);
+        }
     });
 
-    backBtn.addEventListener('click', goBackToPlaylists);
-    refreshBtn.addEventListener('click', refreshMetadata);
+    backBtn.addEventListener('click', goBack);
+    refreshBtn.addEventListener('click', () => {
+        if (currentPlaylist && isPlaylistView) {
+            const cacheKey = currentPlaylist.name;
+            if (metadataCache[cacheKey]) delete metadataCache[cacheKey];
+            fetchPlaylistMetadata(currentPlaylist, true);
+            showToast('Refreshing metadata...');
+        } else {
+            showToast('Open a playlist first to refresh');
+        }
+    });
     translateBtn.addEventListener('click', toggleTranslation);
     historyBtn.addEventListener('click', openHistory);
     historyCloseBtn.addEventListener('click', closeHistory);
@@ -1616,7 +1700,7 @@
         else if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); togglePlayPause(); }
         else if (e.key === 'Escape') {
             if (historyPanel.classList.contains('open')) closeHistory();
-            else if (!isPlaylistView) goBackToPlaylists();
+            else if (!isGroupView) goBack();
         }
         else if (e.key === 's' || e.key === 'S') { toggleShuffle(); }
         else if (e.key === 'r' || e.key === 'R') { randomVideoFromStart(); }
@@ -1638,7 +1722,7 @@
 
     console.log('🟢 Shafin Tube loaded with all features.');
     console.log('✎ Edit sheet:', SHEET_EDIT_URL);
-    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mute, R random (start), F random (position), S shuffle, H history, T translate, X stop');
+    console.log('📺 Controls: ← → seek, Space play/pause, N next, B previous, M mute, R random (start), F random (position), S shuffle, H history, T translate, X stop, Escape to go back');
 </script>
 </body>
 </html>
