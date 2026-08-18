@@ -150,9 +150,7 @@
         .list-item .thumb { width: 40px; height: 22px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .list-item .info { flex: 1; min-width: 0; }
         .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
-        .list-item .title[title] { cursor: help; }
-        .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-        .list-item .duration { font-size: 0.5rem; color: var(--text2); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+        .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
         .list-item .badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
         .list-item .video-count { font-size: 0.55rem; color: var(--text2); padding-left: 6px; flex-shrink: 0; margin-left: auto; }
         .list-item .loading-spinner { width: 14px; height: 14px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
@@ -285,7 +283,16 @@
         .history-list .empty { text-align: center; padding: 40px 20px; color: var(--text2); font-size: 0.75rem; }
         .history-date-group { margin-bottom: 12px; }
         .history-date-group .date-label { font-size: 0.7rem; font-weight: 600; color: var(--text2); padding: 4px 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
-        .history-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+        .history-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            padding: 6px 8px; 
+            border-bottom: 1px solid var(--border); 
+            cursor: pointer; 
+            transition: background 0.15s; 
+            position: relative;
+        }
         .history-item:hover { background: var(--hover); }
         .history-item .thumb { width: 42px; height: 24px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .history-item .info { flex: 1; min-width: 0; }
@@ -293,6 +300,24 @@
         .history-item .sub { font-size: 0.55rem; color: var(--text2); }
         .history-item .count-badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
         .history-item .position-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
+        .history-item .delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--text2);
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 50%;
+            transition: all var(--transition);
+            flex-shrink: 0;
+            opacity: 0.5;
+            line-height: 1;
+        }
+        .history-item .delete-btn:hover {
+            color: var(--accent);
+            opacity: 1;
+            transform: scale(1.2);
+        }
         
         .history-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2999; display: none; }
         .history-overlay.open { display: block; }
@@ -967,7 +992,7 @@
     }
 
     // ============================================================
-    // RENDER FUNCTIONS - FIXED: Duration now displays
+    // RENDER FUNCTIONS - Duration removed
     // ============================================================
     function renderGroups() {
         if (!DOM.listContainer) return;
@@ -1056,7 +1081,7 @@
     }
 
     // ============================================================
-    // RENDER VIDEOS - FIXED: Duration is now properly displayed
+    // RENDER VIDEOS - Duration removed
     // ============================================================
     function renderVideos(playlist) {
         if (!DOM.listContainer) return;
@@ -1098,8 +1123,6 @@
             }
             const thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
             const author = meta ? meta.author : '';
-            // FIXED: Duration is now properly fetched and displayed
-            const duration = meta && meta.duration ? formatTime(meta.duration) : '';
             const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
 
             html += `
@@ -1107,7 +1130,7 @@
                     <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
                     <div class="info">
                         <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)} ${translatedBadge}</div>
-                        <div class="sub">${escapeHtml(author)} ${duration ? `<span class="duration">• ${duration}</span>` : ''}</div>
+                        <div class="sub">${escapeHtml(author)}</div>
                     </div>
                     <span class="badge">${v.index + 1}</span>
                 </div>
@@ -1143,6 +1166,17 @@
             entry.position = Math.round(position);
             saveHistory();
         }
+    }
+
+    // ============================================================
+    // DELETE HISTORY ITEM
+    // ============================================================
+    function deleteHistoryItem(videoId, playlistName, event) {
+        event.stopPropagation();
+        state.history = state.history.filter(h => !(h.videoId === videoId && h.playlistName === playlistName));
+        saveHistory();
+        renderHistory();
+        showToast('🗑️ History item removed');
     }
 
     // ============================================================
@@ -1423,6 +1457,9 @@
         renderHistory();
     }
 
+    // ============================================================
+    // RENDER HISTORY - With Delete Button
+    // ============================================================
     function renderHistory() {
         if (!DOM.historyList) return;
         if (state.history.length === 0) {
@@ -1451,6 +1488,7 @@
                         </div>
                         ${posStr ? `<span class="position-badge">⏱ ${posStr}</span>` : ''}
                         <span class="count-badge">${new Date(h.timestamp).toLocaleTimeString()}</span>
+                        <button class="delete-btn" data-vid="${h.videoId}" data-playlist="${escapeHtml(h.playlistName)}" title="Remove from history">✕</button>
                     </div>
                 `;
             });
@@ -1458,8 +1496,11 @@
         });
         DOM.historyList.innerHTML = html;
 
+        // Event listeners for history items (play)
         DOM.historyList.querySelectorAll('.history-item').forEach(el => {
-            el.addEventListener('click', () => {
+            el.addEventListener('click', (e) => {
+                // Don't trigger if delete button was clicked
+                if (e.target.classList.contains('delete-btn')) return;
                 const videoId = el.dataset.vid;
                 const playlistName = el.dataset.playlist;
                 const position = parseInt(el.dataset.position) || 0;
@@ -1476,6 +1517,16 @@
                         playVideo(playlist, vidIdx, false, position);
                     }
                 }
+            });
+        });
+
+        // Event listeners for delete buttons
+        DOM.historyList.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const videoId = btn.dataset.vid;
+                const playlistName = btn.dataset.playlist;
+                deleteHistoryItem(videoId, playlistName, e);
             });
         });
     }
@@ -1521,7 +1572,7 @@
     }
 
     // ============================================================
-    // METADATA FETCHING - Includes duration
+    // METADATA FETCHING - Duration removed
     // ============================================================
     async function fetchVideoMetadata(videoId) {
         try {
@@ -1532,15 +1583,13 @@
             return { 
                 title: data.title || `Video ${videoId}`, 
                 author: data.author_name || 'Unknown', 
-                thumbnail: data.thumbnail_url || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-                duration: data.duration || 0
+                thumbnail: data.thumbnail_url || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
             };
         } catch (err) {
             return { 
                 title: `Video ${videoId}`, 
                 author: 'Unknown', 
-                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-                duration: 0
+                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
             };
         }
     }
