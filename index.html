@@ -45,7 +45,6 @@
         body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: background var(--transition), color var(--transition); }
         .app { display: flex; flex-direction: column; height: 100vh; max-width: 100vw; overflow: hidden; }
         
-        /* Header */
         .header { background: var(--bg2); padding: 6px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 44px; gap: 6px; flex-wrap: nowrap; }
         .logo-area { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
@@ -66,6 +65,10 @@
         .header-btn.random-btn:hover { background: var(--bg4); }
         .header-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .header-btn.random-btn.active:hover { background: var(--accent2); }
+        .header-btn.group-shuffle-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .header-btn.group-shuffle-btn:hover { background: var(--bg4); }
+        .header-btn.group-shuffle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+        .header-btn.group-shuffle-btn.active:hover { background: var(--accent2); }
         .header-btn.history-btn { font-size: 0.85rem; }
         .header-btn.translate-btn { font-size: 0.75rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -149,6 +152,7 @@
         .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
         .list-item .title[title] { cursor: help; }
         .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
+        .list-item .duration { font-size: 0.5rem; color: var(--text2); margin-left: 4px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
         .list-item .badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
         .list-item .video-count { font-size: 0.55rem; color: var(--text2); padding-left: 6px; flex-shrink: 0; margin-left: auto; }
         .list-item .loading-spinner { width: 14px; height: 14px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
@@ -399,6 +403,7 @@
                     <button class="preset-option off" data-minutes="0">Infinite</button>
                 </div>
             </div>
+            <button class="header-btn group-shuffle-btn" id="groupShuffleBtn" title="Shuffle Inside Group">⚡</button>
             <button class="header-btn random-btn" id="randomBtn" title="Random Video (Random Position)">✨</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
             <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles">🌐</button>
@@ -485,23 +490,56 @@
     // ============================================================
     const CONFIG = {
         SHEET_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRx0WsM-o0uDBYquZ2jkvScyk_VKetZ2PQ-92qSpjx3PZIRqUyrlCP4DIDIXOcIUsXazIfJqcun7LAp/pub?gid=0&single=true&output=csv",
-        PROXY_URL: "https://api.allorigins.win/raw?url=",
-        EDIT_URL: "https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing",
-        CACHE_KEY: 'shafin_tube_cache',
-        HISTORY_KEY: 'shafin_tube_history',
-        STATE_KEY: 'shafin_tube_state',
-        TRANSLATE_KEY: 'shafin_tube_translate'
+        EDIT_URL: "https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing"
     };
 
     // ============================================================
-    // PLAYBACK MODES
+    // DOM REFS
     // ============================================================
-    const MODES = {
-        SEQUENTIAL: 0,
-        SHUFFLE: 1,
-        LOOP: 2,
-        ICONS: ['➡️', '🔀', '🔁'],
-        NAMES: ['Sequential', 'Shuffle', 'Loop']
+    const $ = (id) => document.getElementById(id);
+    
+    const DOM = {
+        listContainer: $('listContainer'),
+        searchInput: $('searchInput'),
+        statusBadge: $('statusBadge'),
+        themeToggle: $('themeToggle'),
+        editBtn: $('editBtn'),
+        backBtn: $('backBtn'),
+        refreshBtn: $('refreshBtn'),
+        translateBtn: $('translateBtn'),
+        historyBtn: $('historyBtn'),
+        historyCloseBtn: $('historyCloseBtn'),
+        historyOverlay: $('historyOverlay'),
+        historyPanel: $('historyPanel'),
+        historyList: $('historyList'),
+        iframe: $('playerIframe'),
+        placeholder: $('placeholder'),
+        blankScreen: $('blankScreen'),
+        playerInfo: $('playerInfo'),
+        playerTimer: $('playerTimer'),
+        videoIdTile: $('videoIdTile'),
+        prevBtn: $('prevBtn'),
+        nextBtn: $('nextBtn'),
+        playBtn: $('playBtn'),
+        muteBtn: $('muteBtn'),
+        shuffleBtn: $('shuffleBtn'),
+        randomBtn: $('randomBtn'),
+        groupShuffleBtn: $('groupShuffleBtn'),
+        randomVideoBtn: $('randomVideoBtn'),
+        tvModeOption: $('tvModeOption'),
+        radioModeOption: $('radioModeOption'),
+        timerPresetBtn: $('timerPresetBtn'),
+        timerPresetDropdown: $('timerPresetDropdown'),
+        timerDisplay: $('timerDisplay'),
+        manualInput: $('manualInput'),
+        manualPlayBtn: $('manualPlayBtn'),
+        radioVisualizer: $('radioVisualizer'),
+        radioTitle: $('radioTitle'),
+        radioSub: $('radioSub'),
+        toast: $('toast'),
+        timeDisplay: $('timeDisplay'),
+        dayDisplay: $('dayDisplay'),
+        videoContainer: $('videoContainer')
     };
 
     // ============================================================
@@ -511,9 +549,11 @@
         groups: {},
         playlists: [],
         groupNames: [],
-        currentPlaylist: null,
-        currentVideoIndex: -1,
-        playbackMode: MODES.SEQUENTIAL,
+        playingPlaylist: null,
+        playingVideoIndex: -1,
+        viewingPlaylist: null,
+        viewingVideoIndex: -1,
+        playbackMode: 0,
         isPlaying: false,
         isPlaylistView: false,
         isGroupView: true,
@@ -530,61 +570,13 @@
         navigationStack: ['groups'],
         currentGroupName: null,
         currentVideoId: null,
-        timerMinutes: 0,
         timerSeconds: 0,
         timerInterval: null,
         timerCountdownInterval: null,
         toastTimeout: null,
-        appInitialized: false
+        isAutoPlaying: false,
+        groupShuffleEnabled: false
     };
-
-    // ============================================================
-    // DOM CACHE
-    // ============================================================
-    const DOM = {};
-
-    function cacheDOM() {
-        DOM.listContainer = document.getElementById('listContainer');
-        DOM.searchInput = document.getElementById('searchInput');
-        DOM.statusBadge = document.getElementById('statusBadge');
-        DOM.themeToggle = document.getElementById('themeToggle');
-        DOM.editBtn = document.getElementById('editBtn');
-        DOM.backBtn = document.getElementById('backBtn');
-        DOM.refreshBtn = document.getElementById('refreshBtn');
-        DOM.translateBtn = document.getElementById('translateBtn');
-        DOM.historyBtn = document.getElementById('historyBtn');
-        DOM.historyCloseBtn = document.getElementById('historyCloseBtn');
-        DOM.historyOverlay = document.getElementById('historyOverlay');
-        DOM.historyPanel = document.getElementById('historyPanel');
-        DOM.historyList = document.getElementById('historyList');
-        DOM.iframe = document.getElementById('playerIframe');
-        DOM.placeholder = document.getElementById('placeholder');
-        DOM.blankScreen = document.getElementById('blankScreen');
-        DOM.playerInfo = document.getElementById('playerInfo');
-        DOM.playerTimer = document.getElementById('playerTimer');
-        DOM.videoIdTile = document.getElementById('videoIdTile');
-        DOM.prevBtn = document.getElementById('prevBtn');
-        DOM.nextBtn = document.getElementById('nextBtn');
-        DOM.playBtn = document.getElementById('playBtn');
-        DOM.muteBtn = document.getElementById('muteBtn');
-        DOM.shuffleBtn = document.getElementById('shuffleBtn');
-        DOM.randomBtn = document.getElementById('randomBtn');
-        DOM.randomVideoBtn = document.getElementById('randomVideoBtn');
-        DOM.tvModeOption = document.getElementById('tvModeOption');
-        DOM.radioModeOption = document.getElementById('radioModeOption');
-        DOM.timerPresetBtn = document.getElementById('timerPresetBtn');
-        DOM.timerPresetDropdown = document.getElementById('timerPresetDropdown');
-        DOM.timerDisplay = document.getElementById('timerDisplay');
-        DOM.manualInput = document.getElementById('manualInput');
-        DOM.manualPlayBtn = document.getElementById('manualPlayBtn');
-        DOM.radioVisualizer = document.getElementById('radioVisualizer');
-        DOM.radioTitle = document.getElementById('radioTitle');
-        DOM.radioSub = document.getElementById('radioSub');
-        DOM.toast = document.getElementById('toast');
-        DOM.timeDisplay = document.getElementById('timeDisplay');
-        DOM.dayDisplay = document.getElementById('dayDisplay');
-        DOM.videoContainer = document.getElementById('videoContainer');
-    }
 
     // ============================================================
     // UTILITY FUNCTIONS
@@ -616,17 +608,18 @@
     }
 
     function showToast(msg, duration = 2500, isError = false) {
-        if (DOM.toastTimeout) clearTimeout(DOM.toastTimeout);
+        if (!DOM.toast) return;
+        if (state.toastTimeout) clearTimeout(state.toastTimeout);
         DOM.toast.textContent = msg;
         DOM.toast.style.display = 'block';
         DOM.toast.style.borderColor = isError ? 'var(--accent)' : 'var(--border)';
-        DOM.toastTimeout = setTimeout(() => { DOM.toast.style.display = 'none'; }, duration);
+        state.toastTimeout = setTimeout(() => { 
+            if (DOM.toast) DOM.toast.style.display = 'none'; 
+        }, duration);
     }
 
-    // ============================================================
-    // CLOCK
-    // ============================================================
     function updateClock() {
+        if (!DOM.timeDisplay || !DOM.dayDisplay) return;
         const now = new Date();
         let hours = now.getHours();
         const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -644,31 +637,46 @@
     function toggleTheme() {
         darkMode = !darkMode;
         document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-        DOM.themeToggle.textContent = darkMode ? '🌙' : '☀️';
+        if (DOM.themeToggle) DOM.themeToggle.textContent = darkMode ? '🌙' : '☀️';
         localStorage.setItem('shafin-theme', darkMode ? 'dark' : 'light');
     }
     if (localStorage.getItem('shafin-theme') === 'light') {
         darkMode = false;
         document.documentElement.setAttribute('data-theme', 'light');
-        DOM.themeToggle.textContent = '☀️';
+        if (DOM.themeToggle) DOM.themeToggle.textContent = '☀️';
     }
-    DOM.themeToggle.addEventListener('click', toggleTheme);
+    if (DOM.themeToggle) DOM.themeToggle.addEventListener('click', toggleTheme);
 
     // ============================================================
     // PLAYBACK MODE
     // ============================================================
     function updateShuffleButton() {
-        DOM.shuffleBtn.textContent = MODES.ICONS[state.playbackMode];
+        if (!DOM.shuffleBtn) return;
+        const icons = ['➡️', '🔀', '🔁'];
+        const names = ['Sequential', 'Shuffle', 'Loop'];
+        DOM.shuffleBtn.textContent = icons[state.playbackMode];
         DOM.shuffleBtn.className = 'control-btn shuffle-btn';
         const classes = ['active-sequential', 'active-shuffle', 'active-loop'];
         DOM.shuffleBtn.classList.add(classes[state.playbackMode]);
-        DOM.shuffleBtn.title = MODES.NAMES[state.playbackMode] + ' Mode';
+        DOM.shuffleBtn.title = names[state.playbackMode] + ' Mode';
     }
 
     function cyclePlaybackMode() {
         state.playbackMode = (state.playbackMode + 1) % 3;
         updateShuffleButton();
-        showToast(`🔄 ${MODES.NAMES[state.playbackMode]} Mode`);
+        showToast(`🔄 ${['Sequential','Shuffle','Loop'][state.playbackMode]} Mode`);
+        saveState();
+    }
+
+    // ============================================================
+    // GROUP SHUFFLE TOGGLE
+    // ============================================================
+    function toggleGroupShuffle() {
+        state.groupShuffleEnabled = !state.groupShuffleEnabled;
+        if (DOM.groupShuffleBtn) {
+            DOM.groupShuffleBtn.classList.toggle('active', state.groupShuffleEnabled);
+        }
+        showToast(state.groupShuffleEnabled ? '⚡ Group Shuffle ON (across playlists)' : '⚡ Group Shuffle OFF');
         saveState();
     }
 
@@ -688,16 +696,21 @@
     }
 
     function updatePlayerTimer() {
+        if (!DOM.playerTimer) return;
         if (!state.ytPlayer || typeof state.ytPlayer.getCurrentTime !== 'function') return;
         const current = state.ytPlayer.getCurrentTime();
         const duration = state.ytPlayer.getDuration();
         if (duration && duration > 0) {
             DOM.playerTimer.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+            if (state.playingPlaylist && state.playingVideoIndex >= 0 && current > 0) {
+                const videoId = state.playingPlaylist.videoIds[state.playingVideoIndex];
+                updateHistoryPosition(state.playingPlaylist.name, videoId, current);
+            }
             if (current >= duration - 0.5 && state.isPlaying && !state.videoEndDetected && !state.autoPlayPending && !state.isStopped) {
                 state.videoEndDetected = true;
                 state.autoPlayPending = true;
                 setTimeout(() => {
-                    if (state.currentPlaylist && !state.isStopped) handleVideoEnd();
+                    if (state.playingPlaylist && !state.isStopped) handleVideoEnd();
                     state.autoPlayPending = false;
                 }, 300);
             }
@@ -705,22 +718,66 @@
     }
 
     // ============================================================
-    // VIDEO END HANDLER
+    // VIDEO END HANDLER - Supports Group Shuffle
     // ============================================================
     function handleVideoEnd() {
-        if (!state.currentPlaylist || state.currentPlaylist.videoIds.length === 0) return;
-        if (state.playbackMode === MODES.LOOP) {
-            playVideo(state.currentPlaylist, state.currentVideoIndex);
-        } else if (state.playbackMode === MODES.SHUFFLE) {
+        const playlist = state.playingPlaylist;
+        if (!playlist || playlist.videoIds.length === 0) {
+            console.log('Auto-play: No playing playlist');
+            return;
+        }
+        
+        const currentIdx = state.playingVideoIndex;
+        if (currentIdx < 0 || currentIdx >= playlist.videoIds.length) {
+            console.log('Auto-play: Invalid video index');
+            return;
+        }
+        
+        console.log(`Auto-play: Playing from "${playlist.name}", index: ${currentIdx}`);
+        console.log(`Group Shuffle: ${state.groupShuffleEnabled ? 'ON' : 'OFF'}`);
+        
+        let nextPlaylist = playlist;
+        let nextIdx;
+        
+        // If group shuffle is enabled, pick a random playlist from the same group
+        if (state.groupShuffleEnabled) {
+            const currentGroup = playlist.group;
+            // Get all playlists in the same group
+            const playlistsInGroup = state.playlists.filter(p => p.group === currentGroup);
+            
+            if (playlistsInGroup.length > 0) {
+                // Pick a random playlist
+                const randomPlaylist = playlistsInGroup[Math.floor(Math.random() * playlistsInGroup.length)];
+                nextPlaylist = randomPlaylist;
+                console.log(`Group Shuffle: Selected playlist "${randomPlaylist.name}" from group "${currentGroup}"`);
+            }
+        }
+        
+        // Determine next index within the selected playlist
+        if (state.playbackMode === 2) { // Loop
+            nextIdx = currentIdx;
+        } else if (state.playbackMode === 1) { // Shuffle
             let idx;
             do {
-                idx = Math.floor(Math.random() * state.currentPlaylist.videoIds.length);
-            } while (idx === state.currentVideoIndex && state.currentPlaylist.videoIds.length > 1);
-            playVideo(state.currentPlaylist, idx);
-        } else {
-            const nextIdx = (state.currentVideoIndex + 1) % state.currentPlaylist.videoIds.length;
-            playVideo(state.currentPlaylist, nextIdx);
+                idx = Math.floor(Math.random() * nextPlaylist.videoIds.length);
+            } while (idx === currentIdx && nextPlaylist.videoIds.length > 1);
+            nextIdx = idx;
+        } else { // Sequential
+            // If we switched to a different playlist, start from the beginning
+            if (nextPlaylist !== playlist) {
+                nextIdx = 0;
+            } else {
+                nextIdx = (currentIdx + 1) % nextPlaylist.videoIds.length;
+            }
         }
+        
+        state.isAutoPlaying = true;
+        state.viewingPlaylist = nextPlaylist;
+        state.viewingVideoIndex = nextIdx;
+        playVideo(nextPlaylist, nextIdx);
+        setTimeout(() => {
+            state.isAutoPlaying = false;
+        }, 500);
     }
 
     // ============================================================
@@ -747,10 +804,12 @@
         state.isStopped = false;
         state.videoEndDetected = false;
         state.autoPlayPending = false;
-        DOM.blankScreen.classList.remove('show');
+        if (DOM.blankScreen) DOM.blankScreen.classList.remove('show');
         state.currentVideoId = videoId;
-        DOM.videoIdTile.textContent = 'ID: ' + videoId.substring(0, 8) + '...';
-        DOM.videoIdTile.classList.add('show');
+        if (DOM.videoIdTile) {
+            DOM.videoIdTile.textContent = 'ID: ' + videoId.substring(0, 8) + '...';
+            DOM.videoIdTile.classList.add('show');
+        }
 
         const container = DOM.videoContainer;
         const playerDiv = document.createElement('div');
@@ -758,8 +817,8 @@
         playerDiv.style.cssText = 'width:100%;height:100%;position:relative;';
         const old = document.getElementById('yt-player-container');
         if (old) old.remove();
-        DOM.iframe.style.display = 'none';
-        DOM.placeholder.style.display = 'none';
+        if (DOM.iframe) DOM.iframe.style.display = 'none';
+        if (DOM.placeholder) DOM.placeholder.style.display = 'none';
         container.appendChild(playerDiv);
 
         const playerVars = { rel: 0, modestbranding: 1, controls: 1, fs: 1, iv_load_policy: 3 };
@@ -771,7 +830,7 @@
             events: {
                 onReady: (e) => {
                     state.isPlaying = true;
-                    DOM.playBtn.textContent = '⏸';
+                    if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
                     if (autoplay) e.target.playVideo();
                     startPlayerTimer();
                     if (state.isMuted && typeof e.target.setVolume === 'function') e.target.setVolume(0);
@@ -780,23 +839,23 @@
                     const s = e.data;
                     if (s === YT.PlayerState.PLAYING) {
                         state.isPlaying = true;
-                        DOM.playBtn.textContent = '⏸';
-                        DOM.radioVisualizer.classList.remove('paused');
+                        if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
+                        if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
                         state.videoEndDetected = false;
                         startPlayerTimer();
                     } else if (s === YT.PlayerState.PAUSED) {
                         state.isPlaying = false;
-                        DOM.playBtn.textContent = '▶';
-                        DOM.radioVisualizer.classList.add('paused');
+                        if (DOM.playBtn) DOM.playBtn.textContent = '▶';
+                        if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
                     } else if (s === YT.PlayerState.ENDED) {
                         state.isPlaying = false;
-                        DOM.playBtn.textContent = '▶';
-                        DOM.radioVisualizer.classList.add('paused');
-                        if (!state.videoEndDetected && state.currentPlaylist && !state.isStopped && !state.autoPlayPending) {
+                        if (DOM.playBtn) DOM.playBtn.textContent = '▶';
+                        if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
+                        if (!state.videoEndDetected && state.playingPlaylist && !state.isStopped && !state.autoPlayPending) {
                             state.videoEndDetected = true;
                             state.autoPlayPending = true;
                             setTimeout(() => {
-                                if (state.currentPlaylist && !state.isStopped) handleVideoEnd();
+                                if (state.playingPlaylist && !state.isStopped) handleVideoEnd();
                                 state.autoPlayPending = false;
                             }, 300);
                         }
@@ -810,14 +869,18 @@
     function fallbackToIframe(videoId) {
         state.isStopped = false;
         state.videoEndDetected = false;
-        DOM.blankScreen.classList.remove('show');
+        if (DOM.blankScreen) DOM.blankScreen.classList.remove('show');
         state.currentVideoId = videoId;
-        DOM.videoIdTile.textContent = 'ID: ' + videoId.substring(0, 8) + '...';
-        DOM.videoIdTile.classList.add('show');
-        DOM.iframe.style.display = (state.currentMode === 'tv') ? 'block' : 'none';
-        DOM.iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
+        if (DOM.videoIdTile) {
+            DOM.videoIdTile.textContent = 'ID: ' + videoId.substring(0, 8) + '...';
+            DOM.videoIdTile.classList.add('show');
+        }
+        if (DOM.iframe) {
+            DOM.iframe.style.display = (state.currentMode === 'tv') ? 'block' : 'none';
+            DOM.iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
+        }
         state.isPlaying = true;
-        DOM.playBtn.textContent = '⏸';
+        if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
         startPlayerTimer();
     }
 
@@ -827,9 +890,11 @@
     function navigateToGroups() {
         state.isGroupView = true;
         state.isPlaylistView = false;
-        DOM.backBtn.classList.remove('show');
-        DOM.searchInput.placeholder = '🔍 Search groups...';
-        DOM.searchInput.value = '';
+        if (DOM.backBtn) DOM.backBtn.classList.remove('show');
+        if (DOM.searchInput) {
+            DOM.searchInput.placeholder = '🔍 Search groups...';
+            DOM.searchInput.value = '';
+        }
         state.currentGroupName = null;
         state.navigationStack = ['groups'];
         renderGroups();
@@ -838,9 +903,11 @@
     function navigateToGroup(groupName) {
         state.isGroupView = false;
         state.isPlaylistView = false;
-        DOM.backBtn.classList.add('show');
-        DOM.searchInput.placeholder = '🔍 Search playlists...';
-        DOM.searchInput.value = '';
+        if (DOM.backBtn) DOM.backBtn.classList.add('show');
+        if (DOM.searchInput) {
+            DOM.searchInput.placeholder = '🔍 Search playlists...';
+            DOM.searchInput.value = '';
+        }
         state.currentGroupName = groupName;
         if (state.navigationStack[state.navigationStack.length - 1] !== 'group:' + groupName) {
             state.navigationStack.push('group:' + groupName);
@@ -851,10 +918,13 @@
     function navigateToPlaylist(playlist) {
         state.isGroupView = false;
         state.isPlaylistView = true;
-        DOM.backBtn.classList.add('show');
-        DOM.searchInput.placeholder = '🔍 Search videos...';
-        DOM.searchInput.value = '';
-        state.currentPlaylist = playlist;
+        if (DOM.backBtn) DOM.backBtn.classList.add('show');
+        if (DOM.searchInput) {
+            DOM.searchInput.placeholder = '🔍 Search videos...';
+            DOM.searchInput.value = '';
+        }
+        state.viewingPlaylist = playlist;
+        state.viewingVideoIndex = state.playingVideoIndex;
         if (state.navigationStack[state.navigationStack.length - 1] !== 'playlist:' + playlist.name) {
             state.navigationStack.push('playlist:' + playlist.name);
         }
@@ -870,8 +940,8 @@
             const groupName = last.replace('group:', '');
             state.isGroupView = false;
             state.isPlaylistView = false;
-            DOM.backBtn.classList.add('show');
-            DOM.searchInput.placeholder = '🔍 Search playlists...';
+            if (DOM.backBtn) DOM.backBtn.classList.add('show');
+            if (DOM.searchInput) DOM.searchInput.placeholder = '🔍 Search playlists...';
             state.currentGroupName = groupName;
             renderGroupPlaylists(groupName);
         } else if (last.startsWith('playlist:')) {
@@ -880,19 +950,20 @@
             if (playlist) {
                 state.isGroupView = false;
                 state.isPlaylistView = true;
-                DOM.backBtn.classList.add('show');
-                DOM.searchInput.placeholder = '🔍 Search videos...';
-                state.currentPlaylist = playlist;
+                if (DOM.backBtn) DOM.backBtn.classList.add('show');
+                if (DOM.searchInput) DOM.searchInput.placeholder = '🔍 Search videos...';
+                state.viewingPlaylist = playlist;
                 renderVideos(playlist);
             } else navigateToGroups();
         } else navigateToGroups();
     }
 
     // ============================================================
-    // RENDER FUNCTIONS
+    // RENDER FUNCTIONS - Added Duration Display
     // ============================================================
     function renderGroups() {
-        const search = DOM.searchInput.value.toLowerCase().trim();
+        if (!DOM.listContainer) return;
+        const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         let filtered = state.groupNames;
         if (search) filtered = state.groupNames.filter(g => g.toLowerCase().includes(search));
 
@@ -928,8 +999,9 @@
     }
 
     function renderGroupPlaylists(groupName) {
+        if (!DOM.listContainer) return;
         const playlistsInGroup = state.groups[groupName] || [];
-        const search = DOM.searchInput.value.toLowerCase().trim();
+        const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         let filtered = playlistsInGroup;
         if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
 
@@ -943,7 +1015,7 @@
         </div>`;
 
         filtered.forEach((pl, idx) => {
-            const isActive = state.currentPlaylist === pl && state.isPlaylistView;
+            const isActive = state.viewingPlaylist === pl && state.isPlaylistView;
             const cacheKey = pl.name;
             const cachedCount = state.metadataCache[cacheKey] ? Object.keys(state.metadataCache[cacheKey]).length : 0;
             const hasMetadata = cachedCount > 0 && cachedCount >= pl.videoIds.length;
@@ -976,7 +1048,8 @@
     }
 
     function renderVideos(playlist) {
-        const search = DOM.searchInput.value.toLowerCase().trim();
+        if (!DOM.listContainer) return;
+        const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         const cacheKey = playlist.name;
         const cache = state.metadataCache[cacheKey] || {};
 
@@ -1004,7 +1077,7 @@
         }
 
         videos.forEach((v) => {
-            const isActive = state.currentVideoIndex === v.index;
+            const isActive = state.viewingPlaylist === playlist && state.viewingVideoIndex === v.index;
             const meta = cache[v.id];
             let title = meta ? meta.title : `Video ${v.index + 1}`;
             let translated = false;
@@ -1014,6 +1087,7 @@
             }
             const thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
             const author = meta ? meta.author : '';
+            const duration = meta ? (meta.duration ? formatTime(meta.duration) : '') : '';
             const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
 
             html += `
@@ -1021,7 +1095,7 @@
                     <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
                     <div class="info">
                         <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)} ${translatedBadge}</div>
-                        <div class="sub">${escapeHtml(author)} • ${v.index + 1}/${playlist.videoIds.length}</div>
+                        <div class="sub">${escapeHtml(author)} ${duration ? `<span class="duration">• ${duration}</span>` : ''}</div>
                     </div>
                     <span class="badge">${v.index + 1}</span>
                 </div>
@@ -1039,24 +1113,45 @@
         DOM.listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(el => {
             el.addEventListener('click', () => {
                 const idx = parseInt(el.dataset.videoIndex);
+                state.playingPlaylist = playlist;
+                state.playingVideoIndex = idx;
+                state.viewingPlaylist = playlist;
+                state.viewingVideoIndex = idx;
                 playVideo(playlist, idx);
             });
         });
     }
 
     // ============================================================
+    // HISTORY POSITION UPDATE
+    // ============================================================
+    function updateHistoryPosition(playlistName, videoId, position) {
+        const entry = state.history.find(h => h.videoId === videoId && h.playlistName === playlistName);
+        if (entry) {
+            entry.position = Math.round(position);
+            saveHistory();
+        }
+    }
+
+    // ============================================================
     // CORE PLAYER FUNCTIONS
     // ============================================================
     function playVideo(playlist, videoIndex, restore = false, startPosition = 0) {
-        if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) return;
+        if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) {
+            console.log('playVideo: Invalid playlist or index');
+            return;
+        }
+        
+        state.playingPlaylist = playlist;
+        state.playingVideoIndex = videoIndex;
+        state.viewingPlaylist = playlist;
+        state.viewingVideoIndex = videoIndex;
         
         state.videoEndDetected = false;
         state.autoPlayPending = false;
         state.isStopped = false;
-        DOM.blankScreen.classList.remove('show');
+        if (DOM.blankScreen) DOM.blankScreen.classList.remove('show');
         
-        state.currentPlaylist = playlist;
-        state.currentVideoIndex = videoIndex;
         const videoId = playlist.videoIds[videoIndex];
         if (!videoId) return;
 
@@ -1069,11 +1164,14 @@
 
         if (!startPosition) {
             const historyEntry = state.history.find(h => h.videoId === videoId && h.playlistName === playlist.name);
-            if (historyEntry && historyEntry.position > 0) startPosition = historyEntry.position;
+            if (historyEntry && historyEntry.position > 0) {
+                startPosition = historyEntry.position;
+                console.log(`Resuming video at position: ${formatTime(startPosition)}`);
+            }
         }
 
         addToHistory(playlist.name, videoId, title, thumb, startPosition);
-        DOM.placeholder.style.display = 'none';
+        if (DOM.placeholder) DOM.placeholder.style.display = 'none';
 
         if (typeof YT !== 'undefined' && YT.Player) {
             createYouTubePlayer(videoId, true, startPosition);
@@ -1081,86 +1179,95 @@
             fallbackToIframe(videoId);
         }
 
-        DOM.playerInfo.textContent = `${playlist.name} • ${title}`;
+        if (DOM.playerInfo) DOM.playerInfo.textContent = `${playlist.name} • ${title}`;
         if (!restore) showToast(`▶ ${title}`);
         saveState();
         
-        if (state.isPlaylistView && state.currentPlaylist) renderVideos(state.currentPlaylist);
+        if (state.isPlaylistView && state.viewingPlaylist) {
+            renderVideos(state.viewingPlaylist);
+        }
 
         if (state.currentMode === 'radio') {
-            DOM.radioVisualizer.classList.add('active');
-            if (state.isPlaying) DOM.radioVisualizer.classList.remove('paused');
-            else DOM.radioVisualizer.classList.add('paused');
-            DOM.radioTitle.textContent = title;
-            DOM.radioSub.textContent = `${playlist.name} • Radio Mode`;
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('active');
+            if (state.isPlaying) {
+                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
+            } else {
+                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
+            }
+            if (DOM.radioTitle) DOM.radioTitle.textContent = title;
+            if (DOM.radioSub) DOM.radioSub.textContent = `${playlist.name} • Radio Mode`;
         } else {
-            DOM.radioVisualizer.classList.remove('active');
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('active');
         }
     }
 
     function nextVideo() {
-        if (!state.currentPlaylist || state.currentPlaylist.videoIds.length === 0) {
-            showToast('No playlist available', 2000, true);
+        if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
+            showToast('No playlist playing', 2000, true);
             return;
         }
         state.videoEndDetected = false;
         state.autoPlayPending = false;
         state.isStopped = false;
         
+        const playlist = state.playingPlaylist;
         let idx;
-        if (state.playbackMode === MODES.SHUFFLE) {
+        if (state.playbackMode === 1) { // Shuffle
             do {
-                idx = Math.floor(Math.random() * state.currentPlaylist.videoIds.length);
-            } while (idx === state.currentVideoIndex && state.currentPlaylist.videoIds.length > 1);
+                idx = Math.floor(Math.random() * playlist.videoIds.length);
+            } while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
         } else {
-            idx = (state.currentVideoIndex + 1) % state.currentPlaylist.videoIds.length;
+            idx = (state.playingVideoIndex + 1) % playlist.videoIds.length;
         }
-        playVideo(state.currentPlaylist, idx);
+        playVideo(playlist, idx);
     }
 
     function prevVideo() {
-        if (!state.currentPlaylist || state.currentPlaylist.videoIds.length === 0) {
-            showToast('No playlist available', 2000, true);
+        if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
+            showToast('No playlist playing', 2000, true);
             return;
         }
         state.videoEndDetected = false;
         state.autoPlayPending = false;
         state.isStopped = false;
         
+        const playlist = state.playingPlaylist;
         let idx;
-        if (state.playbackMode === MODES.SHUFFLE) {
+        if (state.playbackMode === 1) { // Shuffle
             do {
-                idx = Math.floor(Math.random() * state.currentPlaylist.videoIds.length);
-            } while (idx === state.currentVideoIndex && state.currentPlaylist.videoIds.length > 1);
+                idx = Math.floor(Math.random() * playlist.videoIds.length);
+            } while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
         } else {
-            idx = (state.currentVideoIndex - 1 + state.currentPlaylist.videoIds.length) % state.currentPlaylist.videoIds.length;
+            idx = (state.playingVideoIndex - 1 + playlist.videoIds.length) % playlist.videoIds.length;
         }
-        playVideo(state.currentPlaylist, idx);
+        playVideo(playlist, idx);
     }
 
     function randomVideoFromStart() {
-        if (!state.currentPlaylist || state.currentPlaylist.videoIds.length === 0) {
+        if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist selected', 2000, true);
             return;
         }
         state.isStopped = false;
         state.videoEndDetected = false;
         state.autoPlayPending = false;
-        const idx = Math.floor(Math.random() * state.currentPlaylist.videoIds.length);
-        playVideo(state.currentPlaylist, idx);
+        const playlist = state.playingPlaylist;
+        const idx = Math.floor(Math.random() * playlist.videoIds.length);
+        playVideo(playlist, idx);
         showToast('✨ Random video from start');
     }
 
     function randomVideoWithPosition() {
-        if (!state.currentPlaylist || state.currentPlaylist.videoIds.length === 0) {
+        if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist selected', 2000, true);
             return;
         }
         state.isStopped = false;
         state.videoEndDetected = false;
         state.autoPlayPending = false;
-        const idx = Math.floor(Math.random() * state.currentPlaylist.videoIds.length);
-        playVideo(state.currentPlaylist, idx);
+        const playlist = state.playingPlaylist;
+        const idx = Math.floor(Math.random() * playlist.videoIds.length);
+        playVideo(playlist, idx);
         setTimeout(() => {
             if (state.ytPlayer && typeof state.ytPlayer.getDuration === 'function') {
                 const duration = state.ytPlayer.getDuration();
@@ -1168,6 +1275,8 @@
                     const pos = 0.1 + Math.random() * 0.8;
                     state.ytPlayer.seekTo(duration * pos, true);
                     showToast(`✨ Random video at ${Math.round(pos * 100)}% position`);
+                    const videoId = playlist.videoIds[idx];
+                    updateHistoryPosition(playlist.name, videoId, duration * pos);
                 }
             }
         }, 1500);
@@ -1182,13 +1291,18 @@
             if (state.isPlaying) {
                 state.ytPlayer.pauseVideo();
                 state.isPlaying = false;
-                DOM.playBtn.textContent = '▶';
-                DOM.radioVisualizer.classList.add('paused');
+                if (DOM.playBtn) DOM.playBtn.textContent = '▶';
+                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
+                if (state.playingPlaylist && state.playingVideoIndex >= 0) {
+                    const videoId = state.playingPlaylist.videoIds[state.playingVideoIndex];
+                    const pos = state.ytPlayer.getCurrentTime();
+                    updateHistoryPosition(state.playingPlaylist.name, videoId, pos);
+                }
             } else {
                 state.ytPlayer.playVideo();
                 state.isPlaying = true;
-                DOM.playBtn.textContent = '⏸';
-                DOM.radioVisualizer.classList.remove('paused');
+                if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
+                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
                 state.videoEndDetected = false;
                 startPlayerTimer();
             }
@@ -1204,6 +1318,10 @@
             state.ytPlayer.seekTo(newTime, true);
             showToast(`${seconds > 0 ? '⏩' : '⏪'} ${Math.abs(seconds)}s`);
             state.videoEndDetected = false;
+            if (state.playingPlaylist && state.playingVideoIndex >= 0) {
+                const videoId = state.playingPlaylist.videoIds[state.playingVideoIndex];
+                updateHistoryPosition(state.playingPlaylist.name, videoId, newTime);
+            }
         }
     }
 
@@ -1216,20 +1334,22 @@
             state.ytPlayer.stopVideo();
         }
         state.isPlaying = false;
-        DOM.playBtn.textContent = '▶';
-        DOM.radioVisualizer.classList.add('paused');
+        if (DOM.playBtn) DOM.playBtn.textContent = '▶';
+        if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
         if (state.ytPlayer) {
             const container = document.getElementById('yt-player-container');
             if (container) container.style.display = 'none';
         }
-        DOM.iframe.style.display = 'none';
-        DOM.placeholder.style.display = 'none';
-        DOM.radioVisualizer.classList.remove('active');
-        DOM.blankScreen.classList.add('show');
-        DOM.playerInfo.textContent = 'Stopped';
-        DOM.playerTimer.textContent = '--:-- / --:--';
-        DOM.videoIdTile.classList.remove('show');
-        DOM.videoIdTile.textContent = 'ID: ---';
+        if (DOM.iframe) DOM.iframe.style.display = 'none';
+        if (DOM.placeholder) DOM.placeholder.style.display = 'none';
+        if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('active');
+        if (DOM.blankScreen) DOM.blankScreen.classList.add('show');
+        if (DOM.playerInfo) DOM.playerInfo.textContent = 'Stopped';
+        if (DOM.playerTimer) DOM.playerTimer.textContent = '--:-- / --:--';
+        if (DOM.videoIdTile) {
+            DOM.videoIdTile.classList.remove('show');
+            DOM.videoIdTile.textContent = 'ID: ---';
+        }
         state.currentVideoId = null;
         stopPlayerTimer();
         showToast('⏹ Playback stopped');
@@ -1240,8 +1360,10 @@
         if (state.ytPlayer && typeof state.ytPlayer.setVolume === 'function') {
             state.ytPlayer.setVolume(state.isMuted ? 0 : 70);
         }
-        DOM.muteBtn.textContent = state.isMuted ? '🔇' : '🔊';
-        DOM.muteBtn.classList.toggle('muted', state.isMuted);
+        if (DOM.muteBtn) {
+            DOM.muteBtn.textContent = state.isMuted ? '🔇' : '🔊';
+            DOM.muteBtn.classList.toggle('muted', state.isMuted);
+        }
         showToast(state.isMuted ? '🔇 Muted' : '🔊 Unmuted');
     }
 
@@ -1250,7 +1372,7 @@
     // ============================================================
     function loadHistory() {
         try {
-            const raw = localStorage.getItem(CONFIG.HISTORY_KEY);
+            const raw = localStorage.getItem('shafin_tube_history');
             if (raw) state.history = JSON.parse(raw);
             if (!Array.isArray(state.history)) state.history = [];
         } catch (e) { state.history = []; }
@@ -1260,19 +1382,27 @@
         try {
             const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
             state.history = state.history.filter(h => h.timestamp > sevenDaysAgo);
-            localStorage.setItem(CONFIG.HISTORY_KEY, JSON.stringify(state.history));
+            localStorage.setItem('shafin_tube_history', JSON.stringify(state.history));
         } catch (e) {}
     }
 
     function addToHistory(playlistName, videoId, title, thumbnail, position = 0) {
-        const entry = { playlistName, videoId, title, thumbnail, timestamp: Date.now(), position: Math.round(position) };
         state.history = state.history.filter(h => !(h.videoId === videoId && h.playlistName === playlistName));
+        const entry = { 
+            playlistName, 
+            videoId, 
+            title, 
+            thumbnail, 
+            timestamp: Date.now(), 
+            position: Math.round(position) 
+        };
         state.history.unshift(entry);
         saveHistory();
         renderHistory();
     }
 
     function renderHistory() {
+        if (!DOM.historyList) return;
         if (state.history.length === 0) {
             DOM.historyList.innerHTML = '<div class="empty">No history in the last 7 days</div>';
             return;
@@ -1316,7 +1446,10 @@
                     const vidIdx = playlist.videoIds.indexOf(videoId);
                     if (vidIdx >= 0) {
                         closeHistory();
-                        state.currentPlaylist = playlist;
+                        state.playingPlaylist = playlist;
+                        state.playingVideoIndex = vidIdx;
+                        state.viewingPlaylist = playlist;
+                        state.viewingVideoIndex = vidIdx;
                         navigateToPlaylist(playlist);
                         playVideo(playlist, vidIdx, false, position);
                     }
@@ -1326,14 +1459,14 @@
     }
 
     function openHistory() {
-        DOM.historyPanel.classList.add('open');
-        DOM.historyOverlay.classList.add('open');
+        if (DOM.historyPanel) DOM.historyPanel.classList.add('open');
+        if (DOM.historyOverlay) DOM.historyOverlay.classList.add('open');
         renderHistory();
     }
 
     function closeHistory() {
-        DOM.historyPanel.classList.remove('open');
-        DOM.historyOverlay.classList.remove('open');
+        if (DOM.historyPanel) DOM.historyPanel.classList.remove('open');
+        if (DOM.historyOverlay) DOM.historyOverlay.classList.remove('open');
     }
 
     // ============================================================
@@ -1351,7 +1484,7 @@
             if (data && data[0] && data[0][0] && data[0][0][0]) {
                 const translated = data[0][0][0];
                 state.translateCache[cacheKey] = translated;
-                localStorage.setItem(CONFIG.TRANSLATE_KEY, JSON.stringify(state.translateCache));
+                localStorage.setItem('shafin_tube_translate', JSON.stringify(state.translateCache));
                 return translated;
             }
             return text;
@@ -1360,13 +1493,13 @@
 
     function toggleTranslation() {
         state.translateEnabled = !state.translateEnabled;
-        DOM.translateBtn.classList.toggle('active', state.translateEnabled);
+        if (DOM.translateBtn) DOM.translateBtn.classList.toggle('active', state.translateEnabled);
         showToast(state.translateEnabled ? '🌐 Translation ON' : '🌐 Translation OFF');
-        if (!state.isGroupView && state.currentPlaylist) renderVideos(state.currentPlaylist);
+        if (state.isPlaylistView && state.viewingPlaylist) renderVideos(state.viewingPlaylist);
     }
 
     // ============================================================
-    // METADATA FETCHING
+    // METADATA FETCHING - Added duration
     // ============================================================
     async function fetchVideoMetadata(videoId) {
         try {
@@ -1374,41 +1507,60 @@
             const resp = await fetch(url);
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const data = await resp.json();
-            return { title: data.title || `Video ${videoId}`, author: data.author_name || 'Unknown', thumbnail: data.thumbnail_url || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` };
+            return { 
+                title: data.title || `Video ${videoId}`, 
+                author: data.author_name || 'Unknown', 
+                thumbnail: data.thumbnail_url || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+                duration: data.duration || 0
+            };
         } catch (err) {
-            return { title: `Video ${videoId}`, author: 'Unknown', thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` };
+            return { 
+                title: `Video ${videoId}`, 
+                author: 'Unknown', 
+                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+                duration: 0
+            };
         }
     }
 
     async function fetchPlaylistMetadata(playlist, force = false) {
         if (!playlist || playlist.videoIds.length === 0) return;
         const cacheKey = playlist.name;
-        if (!force && state.metadataCache[cacheKey] && playlist.videoIds.every(id => state.metadataCache[cacheKey][id])) return;
+        
+        if (!force && state.metadataCache[cacheKey]) {
+            const allCached = playlist.videoIds.every(id => state.metadataCache[cacheKey][id]);
+            if (allCached) return;
+        }
+        
         if (!state.metadataCache[cacheKey]) state.metadataCache[cacheKey] = {};
         state.isLoadingMetadata = true;
         showToast(`Fetching metadata for ${playlist.name}...`);
+        
         const batchSize = 5;
         let fetched = 0;
-        for (let i = 0; i < playlist.videoIds.length; i += batchSize) {
+        const total = playlist.videoIds.length;
+        
+        for (let i = 0; i < total; i += batchSize) {
             const batch = playlist.videoIds.slice(i, i + batchSize);
             const promises = batch.map(async (id) => {
                 if (state.metadataCache[cacheKey][id]) return;
                 const meta = await fetchVideoMetadata(id);
                 state.metadataCache[cacheKey][id] = meta;
                 fetched++;
-                if (fetched % 5 === 0 || fetched === playlist.videoIds.length) {
-                    DOM.statusBadge.textContent = `📥 ${fetched}/${playlist.videoIds.length}`;
+                if (fetched % 5 === 0 || fetched === total) {
+                    if (DOM.statusBadge) DOM.statusBadge.textContent = `📥 ${fetched}/${total}`;
                 }
                 await new Promise(r => setTimeout(r, 200));
             });
             await Promise.all(promises);
             await new Promise(r => setTimeout(r, 300));
         }
+        
         state.isLoadingMetadata = false;
-        DOM.statusBadge.textContent = `✅ ${playlist.videoIds.length} videos`;
-        showToast(`Loaded metadata for ${playlist.videoIds.length} videos`);
-        localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify({ metadataCache: state.metadataCache, timestamp: Date.now() }));
-        if (state.isPlaylistView && state.currentPlaylist === playlist) renderVideos(playlist);
+        if (DOM.statusBadge) DOM.statusBadge.textContent = `✅ ${total} videos`;
+        showToast(`Loaded metadata for ${total} videos`);
+        localStorage.setItem('shafin_tube_cache', JSON.stringify({ metadataCache: state.metadataCache, timestamp: Date.now() }));
+        if (state.isPlaylistView && state.viewingPlaylist === playlist) renderVideos(playlist);
     }
 
     // ============================================================
@@ -1417,19 +1569,20 @@
     function saveState() {
         try {
             const stateData = {
-                playlistName: state.currentPlaylist?.name || null,
-                videoIndex: state.currentVideoIndex,
+                playlistName: state.playingPlaylist?.name || null,
+                videoIndex: state.playingVideoIndex,
                 playbackMode: state.playbackMode,
                 currentMode: state.currentMode,
-                translateEnabled: state.translateEnabled
+                translateEnabled: state.translateEnabled,
+                groupShuffleEnabled: state.groupShuffleEnabled
             };
-            localStorage.setItem(CONFIG.STATE_KEY, JSON.stringify(stateData));
+            localStorage.setItem('shafin_tube_state', JSON.stringify(stateData));
         } catch (e) {}
     }
 
     function restoreState() {
         try {
-            const raw = localStorage.getItem(CONFIG.STATE_KEY);
+            const raw = localStorage.getItem('shafin_tube_state');
             if (!raw) return null;
             return JSON.parse(raw);
         } catch (e) { return null; }
@@ -1440,36 +1593,42 @@
     // ============================================================
     function updateModeUI() {
         if (state.currentMode === 'tv') {
-            DOM.tvModeOption.classList.add('active');
-            DOM.radioModeOption.classList.remove('active');
-            DOM.radioVisualizer.classList.remove('active');
+            if (DOM.tvModeOption) DOM.tvModeOption.classList.add('active');
+            if (DOM.radioModeOption) DOM.radioModeOption.classList.remove('active');
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('active');
             if (state.ytPlayer && !state.isStopped) {
                 const container = document.getElementById('yt-player-container');
                 if (container) container.style.display = 'block';
             }
-            if (state.isStopped) DOM.blankScreen.classList.add('show');
-            else DOM.blankScreen.classList.remove('show');
+            if (state.isStopped) {
+                if (DOM.blankScreen) DOM.blankScreen.classList.add('show');
+            } else {
+                if (DOM.blankScreen) DOM.blankScreen.classList.remove('show');
+            }
         } else {
-            DOM.radioModeOption.classList.add('active');
-            DOM.tvModeOption.classList.remove('active');
-            DOM.radioVisualizer.classList.add('active');
-            if (state.isPlaying) DOM.radioVisualizer.classList.remove('paused');
-            else DOM.radioVisualizer.classList.add('paused');
+            if (DOM.radioModeOption) DOM.radioModeOption.classList.add('active');
+            if (DOM.tvModeOption) DOM.tvModeOption.classList.remove('active');
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('active');
+            if (state.isPlaying) {
+                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
+            } else {
+                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
+            }
             if (state.ytPlayer) {
                 const container = document.getElementById('yt-player-container');
                 if (container) container.style.display = 'none';
             }
-            if (state.currentPlaylist && state.currentVideoIndex >= 0) {
-                const cacheKey = state.currentPlaylist.name;
+            if (state.playingPlaylist && state.playingVideoIndex >= 0) {
+                const cacheKey = state.playingPlaylist.name;
                 const cache = state.metadataCache[cacheKey] || {};
-                const videoId = state.currentPlaylist.videoIds[state.currentVideoIndex];
+                const videoId = state.playingPlaylist.videoIds[state.playingVideoIndex];
                 const meta = cache[videoId];
-                let title = meta ? meta.title : `Video ${state.currentVideoIndex + 1}`;
+                let title = meta ? meta.title : `Video ${state.playingVideoIndex + 1}`;
                 if (state.translateEnabled && meta && meta.translatedTitle) title = meta.translatedTitle;
-                DOM.radioTitle.textContent = title;
-                DOM.radioSub.textContent = `${state.currentPlaylist.name} • Radio Mode`;
+                if (DOM.radioTitle) DOM.radioTitle.textContent = title;
+                if (DOM.radioSub) DOM.radioSub.textContent = `${state.playingPlaylist.name} • Radio Mode`;
             }
-            DOM.blankScreen.classList.remove('show');
+            if (DOM.blankScreen) DOM.blankScreen.classList.remove('show');
         }
         saveState();
     }
@@ -1490,23 +1649,29 @@
             state.timerCountdownInterval = null;
         }
         if (minutes === 0) {
-            DOM.timerDisplay.textContent = '∞';
-            DOM.timerDisplay.classList.remove('active');
-            DOM.timerPresetBtn.textContent = '⏱️ Inf';
+            if (DOM.timerDisplay) {
+                DOM.timerDisplay.textContent = '∞';
+                DOM.timerDisplay.classList.remove('active');
+            }
+            if (DOM.timerPresetBtn) DOM.timerPresetBtn.textContent = '⏱️ Inf';
             return;
         }
         state.timerSeconds = minutes * 60;
-        DOM.timerDisplay.classList.add('active');
-        DOM.timerPresetBtn.textContent = `⏱️ ${minutes}m`;
-        DOM.timerPresetBtn.classList.add('active');
-        updateCountdownDisplay();
+        if (DOM.timerDisplay) {
+            DOM.timerDisplay.classList.add('active');
+            DOM.timerDisplay.textContent = `${minutes}:00`;
+        }
+        if (DOM.timerPresetBtn) {
+            DOM.timerPresetBtn.textContent = `⏱️ ${minutes}m`;
+            DOM.timerPresetBtn.classList.add('active');
+        }
         state.timerCountdownInterval = setInterval(() => {
             state.timerSeconds--;
             if (state.timerSeconds <= 0) {
                 clearInterval(state.timerCountdownInterval);
                 state.timerCountdownInterval = null;
-                DOM.timerDisplay.textContent = '0:00';
-                if (state.currentPlaylist && state.currentPlaylist.videoIds.length > 0 && !state.autoPlayPending) {
+                if (DOM.timerDisplay) DOM.timerDisplay.textContent = '0:00';
+                if (state.playingPlaylist && state.playingPlaylist.videoIds.length > 0 && !state.autoPlayPending) {
                     state.autoPlayPending = true;
                     randomVideoWithPosition();
                     showToast('⏱️ Timer: Random video at random position');
@@ -1516,15 +1681,11 @@
                     }, 1000);
                 }
             } else {
-                updateCountdownDisplay();
+                const mins = Math.floor(state.timerSeconds / 60);
+                const secs = state.timerSeconds % 60;
+                if (DOM.timerDisplay) DOM.timerDisplay.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
             }
         }, 1000);
-    }
-
-    function updateCountdownDisplay() {
-        const mins = Math.floor(state.timerSeconds / 60);
-        const secs = state.timerSeconds % 60;
-        DOM.timerDisplay.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
     }
 
     // ============================================================
@@ -1534,8 +1695,10 @@
         if (!state.currentVideoId) { showToast('No video playing', 1500, true); return; }
         navigator.clipboard.writeText(state.currentVideoId).then(() => {
             showToast('📋 Video ID copied: ' + state.currentVideoId);
-            DOM.videoIdTile.style.borderColor = 'var(--accent)';
-            setTimeout(() => DOM.videoIdTile.style.borderColor = 'var(--border)', 1500);
+            if (DOM.videoIdTile) DOM.videoIdTile.style.borderColor = 'var(--accent)';
+            setTimeout(() => {
+                if (DOM.videoIdTile) DOM.videoIdTile.style.borderColor = 'var(--border)';
+            }, 1500);
         }).catch(() => {
             const textArea = document.createElement('textarea');
             textArea.value = state.currentVideoId;
@@ -1551,172 +1714,121 @@
     // LOAD FROM GOOGLE SHEET
     // ============================================================
     async function loadFromSheet() {
-        DOM.statusBadge.textContent = '⏳ Loading...';
-        DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">
-            <span class="loading-spinner" style="display:inline-block;margin-right:8px;"></span> Loading groups...
-        </div>`;
+        if (DOM.statusBadge) DOM.statusBadge.textContent = '⏳ Loading...';
+        if (DOM.listContainer) {
+            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">
+                <span class="loading-spinner" style="display:inline-block;margin-right:8px;"></span> Loading groups...
+            </div>`;
+        }
         
         try {
-            let csv = null;
-            let fetchError = null;
+            console.log('📡 Fetching CSV...');
+            const resp = await fetch(CONFIG.SHEET_URL);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             
-            // Try direct fetch first
-            try {
-                const resp = await fetch(CONFIG.SHEET_URL);
-                if (resp.ok) {
-                    csv = await resp.text();
-                    console.log('✅ Direct fetch successful');
-                } else {
-                    throw new Error(`HTTP ${resp.status}`);
-                }
-            } catch (err) {
-                fetchError = err;
-                console.warn('⚠️ Direct fetch failed, trying proxy...');
-                try {
-                    const proxyUrl = CONFIG.PROXY_URL + encodeURIComponent(CONFIG.SHEET_URL);
-                    const resp = await fetch(proxyUrl);
-                    if (resp.ok) {
-                        csv = await resp.text();
-                        console.log('✅ CORS proxy successful');
-                    } else {
-                        throw new Error(`HTTP ${resp.status}`);
-                    }
-                } catch (err2) {
-                    throw new Error('Failed to load data. Please check your sheet is published.');
-                }
-            }
+            const csv = await resp.text();
+            console.log('📄 CSV loaded, length:', csv.length);
             
-            if (!csv || csv.length < 100) throw new Error('CSV data is empty or too small');
-            
-            // Parse CSV
-            const cleanCSV = csv.replace(/^\uFEFF/, '');
-            const rows = cleanCSV.split(/\r?\n/).filter(r => r.trim());
-            console.log(`📊 Found ${rows.length} rows`);
+            const rows = csv.split(/\r?\n/).filter(r => r.trim());
+            console.log('📊 Found', rows.length, 'rows');
             
             if (rows.length < 2) throw new Error('CSV has no data rows');
             
-            // Reset data
             state.groups = {};
             state.playlists = [];
             state.groupNames = [];
             let validPlaylists = 0;
-            let totalVideos = 0;
             
-            // Parse each row
             for (let i = 1; i < rows.length; i++) {
                 const fields = parseCSVLine(rows[i]);
-                if (fields.length < 1) continue;
+                if (fields.length < 2) continue;
                 
-                // Check if it's a single column (video URLs) or multi-column format
-                const isSingleColumn = fields.length === 1 && fields[0].includes('youtube.com/watch');
+                const name = fields[0]?.trim() || '';
+                const idsRaw = fields[1]?.trim() || '';
+                const group = fields[2]?.trim() || 'Uncategorized';
+                const link = fields[3]?.trim() || '';
                 
-                if (isSingleColumn) {
-                    // Single column format: each row is a video URL
-                    const url = fields[0].trim();
-                    const videoId = extractVideoId(url);
-                    if (videoId) {
-                        // Use the folder name as playlist name (from the text file name or default)
-                        const playlistName = "YouTube Videos";
-                        const group = "Videos";
-                        
-                        // Find or create playlist
-                        let playlist = state.playlists.find(p => p.name === playlistName);
-                        if (!playlist) {
-                            playlist = { name: playlistName, videoIds: [], group: group, link: '' };
-                            state.playlists.push(playlist);
-                            if (!state.groups[group]) state.groups[group] = [];
-                            state.groups[group].push(playlist);
-                        }
-                        playlist.videoIds.push(videoId);
-                        totalVideos++;
-                        validPlaylists = Math.max(validPlaylists, state.playlists.length);
-                    }
-                } else {
-                    // Multi-column format: Playlist Name, Video IDs, Group, Link
-                    const name = fields[0] ? fields[0].trim() : '';
-                    const idsRaw = fields[1] ? fields[1].trim() : '';
-                    const group = fields[2] ? fields[2].trim() : 'Uncategorized';
-                    const link = fields[3] ? fields[3].trim() : '';
-                    
-                    if (!name || !idsRaw) continue;
-                    
-                    const videoIds = idsRaw.split(',').map(id => id.trim()).filter(id => id.length === 11);
-                    if (videoIds.length === 0) continue;
-                    
-                    const playlist = { name, videoIds, group, link };
-                    state.playlists.push(playlist);
-                    totalVideos += videoIds.length;
-                    validPlaylists++;
-                    
-                    if (!state.groups[group]) state.groups[group] = [];
-                    state.groups[group].push(playlist);
+                if (!name || !idsRaw) continue;
+                
+                const videoIds = idsRaw.split(',').map(id => id.trim()).filter(id => id.length === 11);
+                if (videoIds.length === 0) {
+                    console.warn(`⚠️ No valid video IDs for: "${name}"`);
+                    continue;
                 }
+                
+                const playlist = { name, videoIds, group, link };
+                state.playlists.push(playlist);
+                validPlaylists++;
+                
+                if (!state.groups[group]) state.groups[group] = [];
+                state.groups[group].push(playlist);
             }
             
-            // Get sorted group names
             state.groupNames = Object.keys(state.groups).sort();
             
-            console.log(`✅ Loaded ${validPlaylists} playlists with ${totalVideos} videos in ${state.groupNames.length} groups`);
+            console.log(`✅ Loaded ${validPlaylists} playlists in ${state.groupNames.length} groups`);
             
-            if (validPlaylists === 0) throw new Error('No valid playlists found. Check your CSV format.');
+            if (validPlaylists === 0) {
+                throw new Error('No valid playlists found. Check your CSV format.');
+            }
             
-            DOM.statusBadge.textContent = `✅ ${validPlaylists} playlists in ${state.groupNames.length} groups`;
+            if (DOM.statusBadge) DOM.statusBadge.textContent = `✅ ${validPlaylists} playlists`;
             showToast(`Loaded ${validPlaylists} playlists in ${state.groupNames.length} groups`);
             
-            // Load cached metadata
             try {
-                const raw = localStorage.getItem(CONFIG.CACHE_KEY);
+                const raw = localStorage.getItem('shafin_tube_cache');
                 if (raw) {
                     const data = JSON.parse(raw);
                     if (data.metadataCache) state.metadataCache = data.metadataCache;
                 }
             } catch (e) {}
             
-            try {
-                const raw = localStorage.getItem(CONFIG.TRANSLATE_KEY);
-                if (raw) state.translateCache = JSON.parse(raw);
-            } catch (e) {}
-            
-            // Start at groups view
             navigateToGroups();
             
-            // Restore settings
             const savedState = restoreState();
             if (savedState) {
-                state.playbackMode = savedState.playbackMode !== undefined ? savedState.playbackMode : MODES.SEQUENTIAL;
+                state.playbackMode = savedState.playbackMode !== undefined ? savedState.playbackMode : 0;
                 state.currentMode = savedState.currentMode || 'tv';
                 state.translateEnabled = savedState.translateEnabled || false;
-                if (state.translateEnabled) DOM.translateBtn.classList.add('active');
+                state.groupShuffleEnabled = savedState.groupShuffleEnabled || false;
+                if (state.groupShuffleEnabled && DOM.groupShuffleBtn) {
+                    DOM.groupShuffleBtn.classList.add('active');
+                }
+                if (state.translateEnabled && DOM.translateBtn) DOM.translateBtn.classList.add('active');
                 updateShuffleButton();
                 updateModeUI();
             }
             
-            // Reset player state (no auto-play)
             state.isPlaying = false;
             state.isStopped = true;
-            DOM.blankScreen.classList.add('show');
-            DOM.playerInfo.textContent = 'No video playing';
-            DOM.playerTimer.textContent = '--:-- / --:--';
-            DOM.videoIdTile.classList.remove('show');
-            DOM.videoIdTile.textContent = 'ID: ---';
+            if (DOM.blankScreen) DOM.blankScreen.classList.add('show');
+            if (DOM.playerInfo) DOM.playerInfo.textContent = 'No video playing';
+            if (DOM.playerTimer) DOM.playerTimer.textContent = '--:-- / --:--';
+            if (DOM.videoIdTile) {
+                DOM.videoIdTile.classList.remove('show');
+                DOM.videoIdTile.textContent = 'ID: ---';
+            }
             state.currentVideoId = null;
             
             loadYouTubeAPI();
-            state.appInitialized = true;
             
         } catch (err) {
-            DOM.statusBadge.textContent = '❌ Failed';
+            if (DOM.statusBadge) DOM.statusBadge.textContent = '❌ Failed';
             showToast('Error: ' + err.message, 4000, true);
             console.error('❌ Load error:', err);
-            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">
-                ❌ ${err.message}<br>
-                <span style="font-size:0.6rem;margin-top:8px;display:block;">Check console (F12) for details</span>
-                <button onclick="location.reload()" style="margin-top:12px;padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;">Retry</button>
-            </div>`;
+            if (DOM.listContainer) {
+                DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">
+                    ❌ ${err.message}<br>
+                    <span style="font-size:0.6rem;margin-top:8px;display:block;">Check console (F12) for details</span>
+                    <button onclick="location.reload()" style="margin-top:12px;padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;">Retry</button>
+                </div>`;
+            }
         }
     }
-    
-    // Helper to extract video ID from YouTube URL
+
+    // ============================================================
+    // MANUAL INPUT
+    // ============================================================
     function extractVideoId(url) {
         if (!url) return null;
         const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
@@ -1724,17 +1836,15 @@
         return match ? match[1] : null;
     }
 
-    // ============================================================
-    // MANUAL INPUT
-    // ============================================================
     function playManualInput() {
+        if (!DOM.manualInput) return;
         const url = DOM.manualInput.value.trim();
         if (!url) { showToast('Please enter a URL', 2000, true); return; }
         
         state.isStopped = false;
         state.videoEndDetected = false;
         state.autoPlayPending = false;
-        DOM.blankScreen.classList.remove('show');
+        if (DOM.blankScreen) DOM.blankScreen.classList.remove('show');
         
         const videoId = extractVideoId(url);
         if (videoId) {
@@ -1747,8 +1857,10 @@
                 }
                 if (!state.groupNames.includes('Custom')) state.groupNames.push('Custom');
             }
-            state.currentPlaylist = tempPlaylist;
-            state.currentVideoIndex = 0;
+            state.playingPlaylist = tempPlaylist;
+            state.playingVideoIndex = 0;
+            state.viewingPlaylist = tempPlaylist;
+            state.viewingVideoIndex = 0;
             navigateToPlaylist(tempPlaylist);
             fetchPlaylistMetadata(tempPlaylist);
             setTimeout(() => playVideo(tempPlaylist, 0), 500);
@@ -1756,7 +1868,6 @@
             return;
         }
         
-        // Fallback: direct iframe
         const tempPlaylist = { name: 'Custom Stream', videoIds: [url] };
         if (!state.playlists.find(p => p.name === 'Custom Stream')) {
             state.playlists.push(tempPlaylist);
@@ -1766,15 +1877,19 @@
             }
             if (!state.groupNames.includes('Custom')) state.groupNames.push('Custom');
         }
-        state.currentPlaylist = tempPlaylist;
-        state.currentVideoIndex = 0;
+        state.playingPlaylist = tempPlaylist;
+        state.playingVideoIndex = 0;
+        state.viewingPlaylist = tempPlaylist;
+        state.viewingVideoIndex = 0;
         navigateToPlaylist(tempPlaylist);
-        DOM.iframe.style.display = 'block';
-        DOM.iframe.src = url;
-        DOM.placeholder.style.display = 'none';
+        if (DOM.iframe) {
+            DOM.iframe.style.display = 'block';
+            DOM.iframe.src = url;
+        }
+        if (DOM.placeholder) DOM.placeholder.style.display = 'none';
         state.isPlaying = true;
-        DOM.playBtn.textContent = '⏸';
-        DOM.playerInfo.textContent = `Custom Stream`;
+        if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
+        if (DOM.playerInfo) DOM.playerInfo.textContent = `Custom Stream`;
         showToast(`▶ Playing custom stream`);
         saveState();
     }
@@ -1783,75 +1898,88 @@
     // INITIALIZATION
     // ============================================================
     function init() {
-        cacheDOM();
+        console.log('🔄 Initializing Shafin Tube...');
+        
         loadHistory();
+        console.log('✅ History loaded');
+        
         updateShuffleButton();
         updateModeUI();
         setTimerPreset(0);
+        console.log('✅ UI updated');
+        
+        console.log('📡 Loading from sheet...');
         loadFromSheet();
         
-        // Event listeners
-        DOM.searchInput.addEventListener('input', () => {
-            if (state.isGroupView) renderGroups();
-            else if (state.currentGroupName && !state.isPlaylistView) renderGroupPlaylists(state.currentGroupName);
-            else if (state.isPlaylistView && state.currentPlaylist) renderVideos(state.currentPlaylist);
-        });
+        if (DOM.searchInput) {
+            DOM.searchInput.addEventListener('input', () => {
+                if (state.isGroupView) renderGroups();
+                else if (state.currentGroupName && !state.isPlaylistView) renderGroupPlaylists(state.currentGroupName);
+                else if (state.isPlaylistView && state.viewingPlaylist) renderVideos(state.viewingPlaylist);
+            });
+        }
 
-        DOM.backBtn.addEventListener('click', goBack);
-        DOM.refreshBtn.addEventListener('click', () => {
-            if (state.currentPlaylist && state.isPlaylistView) {
-                const cacheKey = state.currentPlaylist.name;
-                if (state.metadataCache[cacheKey]) delete state.metadataCache[cacheKey];
-                fetchPlaylistMetadata(state.currentPlaylist, true);
-                showToast('Refreshing metadata...');
-            } else {
-                showToast('Open a playlist first to refresh', 1500, true);
-            }
-        });
+        if (DOM.backBtn) DOM.backBtn.addEventListener('click', goBack);
+        if (DOM.refreshBtn) {
+            DOM.refreshBtn.addEventListener('click', () => {
+                if (state.viewingPlaylist && state.isPlaylistView) {
+                    const cacheKey = state.viewingPlaylist.name;
+                    if (state.metadataCache[cacheKey]) delete state.metadataCache[cacheKey];
+                    fetchPlaylistMetadata(state.viewingPlaylist, true);
+                    showToast('Refreshing metadata...');
+                } else {
+                    showToast('Open a playlist first to refresh', 1500, true);
+                }
+            });
+        }
         
-        DOM.translateBtn.addEventListener('click', toggleTranslation);
-        DOM.historyBtn.addEventListener('click', openHistory);
-        DOM.historyCloseBtn.addEventListener('click', closeHistory);
-        DOM.historyOverlay.addEventListener('click', closeHistory);
-        DOM.randomBtn.addEventListener('click', randomVideoWithPosition);
-        DOM.randomVideoBtn.addEventListener('click', randomVideoFromStart);
-        DOM.muteBtn.addEventListener('click', toggleMute);
+        if (DOM.translateBtn) DOM.translateBtn.addEventListener('click', toggleTranslation);
+        if (DOM.groupShuffleBtn) DOM.groupShuffleBtn.addEventListener('click', toggleGroupShuffle);
+        if (DOM.historyBtn) DOM.historyBtn.addEventListener('click', openHistory);
+        if (DOM.historyCloseBtn) DOM.historyCloseBtn.addEventListener('click', closeHistory);
+        if (DOM.historyOverlay) DOM.historyOverlay.addEventListener('click', closeHistory);
+        if (DOM.randomBtn) DOM.randomBtn.addEventListener('click', randomVideoWithPosition);
+        if (DOM.randomVideoBtn) DOM.randomVideoBtn.addEventListener('click', randomVideoFromStart);
+        if (DOM.muteBtn) DOM.muteBtn.addEventListener('click', toggleMute);
 
-        DOM.prevBtn.addEventListener('click', prevVideo);
-        DOM.nextBtn.addEventListener('click', nextVideo);
-        DOM.playBtn.addEventListener('click', togglePlayPause);
-        DOM.shuffleBtn.addEventListener('click', cyclePlaybackMode);
+        if (DOM.prevBtn) DOM.prevBtn.addEventListener('click', prevVideo);
+        if (DOM.nextBtn) DOM.nextBtn.addEventListener('click', nextVideo);
+        if (DOM.playBtn) DOM.playBtn.addEventListener('click', togglePlayPause);
+        if (DOM.shuffleBtn) DOM.shuffleBtn.addEventListener('click', cyclePlaybackMode);
 
-        DOM.tvModeOption.addEventListener('click', () => setMode('tv'));
-        DOM.radioModeOption.addEventListener('click', () => setMode('radio'));
+        if (DOM.tvModeOption) DOM.tvModeOption.addEventListener('click', () => setMode('tv'));
+        if (DOM.radioModeOption) DOM.radioModeOption.addEventListener('click', () => setMode('radio'));
 
-        DOM.timerPresetBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            DOM.timerPresetDropdown.classList.toggle('open');
-        });
+        if (DOM.timerPresetBtn) {
+            DOM.timerPresetBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.toggle('open');
+            });
+        }
 
         document.querySelectorAll('.preset-option').forEach(opt => {
             opt.addEventListener('click', (e) => {
                 e.stopPropagation();
                 setTimerPreset(parseInt(opt.dataset.minutes));
-                DOM.timerPresetDropdown.classList.remove('open');
+                if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.remove('open');
             });
         });
 
         document.addEventListener('click', () => {
-            DOM.timerPresetDropdown.classList.remove('open');
+            if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.remove('open');
         });
 
-        DOM.manualPlayBtn.addEventListener('click', playManualInput);
-        DOM.manualInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') playManualInput();
-        });
+        if (DOM.manualPlayBtn) DOM.manualPlayBtn.addEventListener('click', playManualInput);
+        if (DOM.manualInput) {
+            DOM.manualInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') playManualInput();
+            });
+        }
 
-        DOM.videoIdTile.addEventListener('click', copyVideoId);
+        if (DOM.videoIdTile) DOM.videoIdTile.addEventListener('click', copyVideoId);
 
-        // Page Visibility API for background auto-play
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && !state.isPlaying && state.currentPlaylist && !state.autoPlayPending && !state.isStopped) {
+            if (!document.hidden && !state.isPlaying && state.playingPlaylist && !state.autoPlayPending && !state.isStopped) {
                 if (state.ytPlayer && typeof state.ytPlayer.getCurrentTime === 'function') {
                     const current = state.ytPlayer.getCurrentTime();
                     const duration = state.ytPlayer.getDuration();
@@ -1859,7 +1987,7 @@
                         state.videoEndDetected = true;
                         state.autoPlayPending = true;
                         setTimeout(() => {
-                            if (state.currentPlaylist && !state.isStopped) handleVideoEnd();
+                            if (state.playingPlaylist && !state.isStopped) handleVideoEnd();
                             state.autoPlayPending = false;
                         }, 300);
                     }
@@ -1867,7 +1995,6 @@
             }
         });
 
-        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT') return;
             
@@ -1875,7 +2002,7 @@
             else if (e.key === 'ArrowRight') { e.preventDefault(); seekVideo(10); }
             else if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); togglePlayPause(); }
             else if (e.key === 'Escape') {
-                if (DOM.historyPanel.classList.contains('open')) closeHistory();
+                if (DOM.historyPanel && DOM.historyPanel.classList.contains('open')) closeHistory();
                 else if (!state.isGroupView) goBack();
             }
             else if (e.key === 's' || e.key === 'S') { cyclePlaybackMode(); }
@@ -1888,14 +2015,18 @@
             else if (e.key === 'x' || e.key === 'X') { stopPlayback(); }
             else if (e.key === 'f' || e.key === 'F') { randomVideoWithPosition(); }
             else if (e.key === 'c' || e.key === 'C') { copyVideoId(); }
+            else if (e.key === 'g' || e.key === 'G') { toggleGroupShuffle(); }
         });
 
-        console.log('🟢 Shafin Tube loaded.');
+        console.log('🟢 Shafin Tube initialized successfully!');
         console.log('✎ Edit sheet:', CONFIG.EDIT_URL);
     }
 
-    // Start the app
-    document.addEventListener('DOMContentLoaded', init);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 </script>
 </body>
 </html>
