@@ -681,6 +681,25 @@
     }
 
     // ============================================================
+    // GET RANDOM PLAYLIST FROM GROUP (Helper Function)
+    // ============================================================
+    function getRandomPlaylistFromGroup(groupName, excludePlaylist = null) {
+        const playlistsInGroup = state.playlists.filter(p => p.group === groupName);
+        if (playlistsInGroup.length === 0) return null;
+        if (playlistsInGroup.length === 1) return playlistsInGroup[0];
+        
+        let randomPlaylist;
+        let attempts = 0;
+        do {
+            randomPlaylist = playlistsInGroup[Math.floor(Math.random() * playlistsInGroup.length)];
+            attempts++;
+            // If only one playlist, break out to avoid infinite loop
+            if (playlistsInGroup.length === 1) break;
+        } while (randomPlaylist === excludePlaylist && attempts < 20);
+        return randomPlaylist;
+    }
+
+    // ============================================================
     // TIMER
     // ============================================================
     function startPlayerTimer() {
@@ -742,12 +761,8 @@
         // If group shuffle is enabled, pick a random playlist from the same group
         if (state.groupShuffleEnabled) {
             const currentGroup = playlist.group;
-            // Get all playlists in the same group
-            const playlistsInGroup = state.playlists.filter(p => p.group === currentGroup);
-            
-            if (playlistsInGroup.length > 0) {
-                // Pick a random playlist
-                const randomPlaylist = playlistsInGroup[Math.floor(Math.random() * playlistsInGroup.length)];
+            const randomPlaylist = getRandomPlaylistFromGroup(currentGroup, playlist);
+            if (randomPlaylist) {
                 nextPlaylist = randomPlaylist;
                 console.log(`Group Shuffle: Selected playlist "${randomPlaylist.name}" from group "${currentGroup}"`);
             }
@@ -1134,7 +1149,7 @@
     }
 
     // ============================================================
-    // CORE PLAYER FUNCTIONS
+    // CORE PLAYER FUNCTIONS - FIXED: Group Shuffle works globally
     // ============================================================
     function playVideo(playlist, videoIndex, restore = false, startPosition = 0) {
         if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) {
@@ -1201,6 +1216,7 @@
         }
     }
 
+    // FIXED: Next Video - Group Shuffle works here too
     function nextVideo() {
         if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist playing', 2000, true);
@@ -1210,18 +1226,36 @@
         state.autoPlayPending = false;
         state.isStopped = false;
         
-        const playlist = state.playingPlaylist;
+        let playlist = state.playingPlaylist;
         let idx;
+        
+        // If group shuffle is enabled, pick a random playlist from the same group
+        if (state.groupShuffleEnabled) {
+            const currentGroup = playlist.group;
+            const randomPlaylist = getRandomPlaylistFromGroup(currentGroup, playlist);
+            if (randomPlaylist && randomPlaylist !== playlist) {
+                playlist = randomPlaylist;
+                console.log(`Group Shuffle (Next): Selected playlist "${randomPlaylist.name}" from group "${currentGroup}"`);
+            }
+        }
+        
+        // Determine next index within the selected playlist
         if (state.playbackMode === 1) { // Shuffle
             do {
                 idx = Math.floor(Math.random() * playlist.videoIds.length);
             } while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
         } else {
-            idx = (state.playingVideoIndex + 1) % playlist.videoIds.length;
+            // If we switched to a different playlist, start from the beginning
+            if (playlist !== state.playingPlaylist) {
+                idx = 0;
+            } else {
+                idx = (state.playingVideoIndex + 1) % playlist.videoIds.length;
+            }
         }
         playVideo(playlist, idx);
     }
 
+    // FIXED: Previous Video - Group Shuffle works here too
     function prevVideo() {
         if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist playing', 2000, true);
@@ -1231,14 +1265,31 @@
         state.autoPlayPending = false;
         state.isStopped = false;
         
-        const playlist = state.playingPlaylist;
+        let playlist = state.playingPlaylist;
         let idx;
+        
+        // If group shuffle is enabled, pick a random playlist from the same group
+        if (state.groupShuffleEnabled) {
+            const currentGroup = playlist.group;
+            const randomPlaylist = getRandomPlaylistFromGroup(currentGroup, playlist);
+            if (randomPlaylist && randomPlaylist !== playlist) {
+                playlist = randomPlaylist;
+                console.log(`Group Shuffle (Prev): Selected playlist "${randomPlaylist.name}" from group "${currentGroup}"`);
+            }
+        }
+        
+        // Determine previous index within the selected playlist
         if (state.playbackMode === 1) { // Shuffle
             do {
                 idx = Math.floor(Math.random() * playlist.videoIds.length);
             } while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
         } else {
-            idx = (state.playingVideoIndex - 1 + playlist.videoIds.length) % playlist.videoIds.length;
+            // If we switched to a different playlist, go to the end
+            if (playlist !== state.playingPlaylist) {
+                idx = playlist.videoIds.length - 1;
+            } else {
+                idx = (state.playingVideoIndex - 1 + playlist.videoIds.length) % playlist.videoIds.length;
+            }
         }
         playVideo(playlist, idx);
     }
