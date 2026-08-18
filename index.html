@@ -8,376 +8,255 @@
     <title>Shafin Tube</title>
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23000000'/><rect x='15' y='25' width='70' height='50' rx='8' fill='%231a1a1a' stroke='%232a2a2a' stroke-width='2'/><rect x='35' y='38' width='30' height='24' rx='4' fill='%23ff0000'/><circle cx='50' cy='50' r='6' fill='%23ffffff'/></svg>">
     <style>
+        /* ===== RESET & VARIABLES ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
-            --bg: #0a0a0a;
-            --bg2: #111111;
-            --bg3: #1a1a1a;
-            --bg4: #222222;
-            --text: #f0f0f0;
-            --text2: #999999;
-            --border: #1e1e1e;
-            --shadow: rgba(0,0,0,0.6);
-            --card-bg: #0d0d0d;
-            --hover: #1e1e1e;
-            --accent: #ff0000;
-            --accent2: #cc0000;
-            --accent-glow: rgba(255,0,0,0.15);
-            --radius: 8px;
-            --transition: 0.2s ease;
+            --bg: #0a0a0a; --bg2: #111111; --bg3: #1a1a1a; --bg4: #222222;
+            --text: #f0f0f0; --text2: #999999; --border: #1e1e1e;
+            --shadow: rgba(0,0,0,0.6); --card-bg: #0d0d0d; --hover: #1e1e1e;
+            --accent: #ff0000; --accent2: #cc0000; --accent-glow: rgba(255,0,0,0.15);
+            --radius: 8px; --transition: 0.2s ease;
         }
         [data-theme="light"] {
-            --bg: #f0f0f0;
-            --bg2: #e8e8e8;
-            --bg3: #dddddd;
-            --bg4: #cccccc;
-            --text: #111111;
-            --text2: #555555;
-            --border: #cccccc;
-            --shadow: rgba(0,0,0,0.08);
-            --card-bg: #f8f8f8;
-            --hover: #e0e0e0;
-            --accent: #e60000;
-            --accent2: #b30000;
-            --accent-glow: rgba(230,0,0,0.1);
+            --bg: #f0f0f0; --bg2: #e8e8e8; --bg3: #dddddd; --bg4: #cccccc;
+            --text: #111111; --text2: #555555; --border: #cccccc;
+            --shadow: rgba(0,0,0,0.08); --card-bg: #f8f8f8; --hover: #e0e0e0;
+            --accent: #e60000; --accent2: #b30000; --accent-glow: rgba(230,0,0,0.1);
         }
         html, body { height: 100%; overflow: hidden; }
         body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: background var(--transition), color var(--transition); }
         .app { display: flex; flex-direction: column; height: 100vh; max-width: 100vw; overflow: hidden; }
         
-        .header { background: var(--bg2); padding: 6px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 44px; gap: 6px; flex-wrap: nowrap; }
-        .logo-area { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
-        .logo-text { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+        /* ===== HEADER ===== */
+        .header { background: var(--bg2); padding: 4px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 40px; gap: 4px; flex-wrap: nowrap; }
+        .logo-area { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .logo-img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
+        .logo-text { font-size: 0.85rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
         .logo-text span { color: var(--accent); }
         
-        .header-center { display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; flex-wrap: nowrap; overflow: hidden; }
-        .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 1px 4px 1px 12px; flex-shrink: 1; max-width: 280px; min-width: 120px; }
-        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.6rem; outline: none; padding: 4px 0; width: 100%; min-width: 60px; }
+        .header-center { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; flex-wrap: nowrap; overflow: hidden; }
+        .manual-input-wrap { display: flex; align-items: center; gap: 2px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 1px 3px 1px 8px; flex-shrink: 1; max-width: 200px; min-width: 80px; }
+        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.5rem; outline: none; padding: 3px 0; width: 100%; min-width: 40px; }
         .manual-input-wrap input::placeholder { color: var(--text2); }
-        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 2px 12px; border-radius: 16px; cursor: pointer; font-size: 0.55rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 1px 8px; border-radius: 16px; cursor: pointer; font-size: 0.45rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
         .manual-input-wrap .play-btn:hover { background: var(--accent2); }
         
-        .header-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; flex-wrap: nowrap; }
-        .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
+        .header-right { display: flex; align-items: center; gap: 3px; flex-shrink: 0; flex-wrap: nowrap; }
+        .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
         .header-btn:hover { background: var(--bg4); transform: scale(1.05); }
-        .header-btn.random-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .header-btn.random-btn { font-size: 0.75rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.random-btn:hover { background: var(--bg4); }
         .header-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .header-btn.random-btn.active:hover { background: var(--accent2); }
-        .header-btn.group-shuffle-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .header-btn.group-shuffle-btn { font-size: 0.75rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.group-shuffle-btn:hover { background: var(--bg4); }
         .header-btn.group-shuffle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .header-btn.group-shuffle-btn.active:hover { background: var(--accent2); }
-        .header-btn.history-btn { font-size: 0.85rem; }
-        .header-btn.translate-btn { font-size: 0.75rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .header-btn.history-btn { font-size: 0.75rem; }
+        .header-btn.translate-btn { font-size: 0.7rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.translate-btn.active:hover { background: var(--accent2); }
-        .header-btn.refresh-btn { font-size: 0.85rem; }
+        .header-btn.refresh-btn { font-size: 0.75rem; }
         .header-btn.refresh-btn:hover { transform: rotate(60deg); }
         
-        .status-badge { font-size: 0.5rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
-        
-        .timer-display { 
-            font-size: 0.6rem; 
-            font-weight: 600; 
-            color: var(--text2); 
-            background: var(--bg3); 
-            padding: 2px 8px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border); 
-            min-width: 40px; 
-            text-align: center; 
-            font-variant-numeric: tabular-nums;
-            flex-shrink: 0;
-        }
+        .status-badge { font-size: 0.45rem; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
+        .timer-display { font-size: 0.5rem; font-weight: 600; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 16px; border: 1px solid var(--border); min-width: 32px; text-align: center; font-variant-numeric: tabular-nums; flex-shrink: 0; }
         .timer-display.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
         
         .timer-preset-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
-        .timer-preset-btn { 
-            padding: 2px 10px; height: 28px; border-radius: 16px; font-size: 0.55rem; font-weight: 500;
-            background: var(--bg3); border: 1px solid var(--border); color: var(--text2); 
-            display: inline-flex; align-items: center; justify-content: center; gap: 3px;
-            cursor: pointer; transition: all var(--transition); white-space: nowrap; min-width: 36px;
-        }
+        .timer-preset-btn { padding: 1px 8px; height: 24px; border-radius: 16px; font-size: 0.5rem; font-weight: 500; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); display: inline-flex; align-items: center; justify-content: center; gap: 2px; cursor: pointer; transition: all var(--transition); white-space: nowrap; min-width: 30px; }
         .timer-preset-btn:hover { background: var(--bg4); color: var(--text); }
         .timer-preset-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .timer-preset-btn.active:hover { background: var(--accent2); }
-        
-        .timer-preset-dropdown { 
-            position: absolute; top: 34px; left: 50%; transform: translateX(-50%); 
-            background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; 
-            padding: 4px 0; min-width: 80px; display: none; flex-direction: column; 
-            box-shadow: 0 8px 30px var(--shadow); z-index: 100; 
-        }
+        .timer-preset-dropdown { position: absolute; top: 28px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 3px 0; min-width: 70px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 100; }
         .timer-preset-dropdown.open { display: flex; }
-        .timer-preset-dropdown .preset-option { 
-            padding: 5px 14px; font-size: 0.6rem; color: var(--text2); cursor: pointer; 
-            transition: all var(--transition); border: none; background: transparent; text-align: center; 
-        }
+        .timer-preset-dropdown .preset-option { padding: 4px 12px; font-size: 0.55rem; color: var(--text2); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: center; }
         .timer-preset-dropdown .preset-option:hover { background: var(--bg4); color: var(--text); }
         .timer-preset-dropdown .preset-option.active { color: var(--accent); }
-        .timer-preset-dropdown .preset-option.off { border-top: 1px solid var(--border); margin-top: 3px; padding-top: 6px; color: var(--text2); }
-        .timer-preset-dropdown .preset-option.off:hover { color: var(--text); }
+        .timer-preset-dropdown .preset-option.off { border-top: 1px solid var(--border); margin-top: 2px; padding-top: 4px; color: var(--text2); }
         
-        .clock-tile { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; 
-            padding: 1px 10px; min-width: 85px; width: 85px; min-height: 34px;
-            flex-shrink: 0; line-height: 1.2; text-align: center;
-        }
-        .clock-tile .time { font-size: 0.7rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; }
-        .clock-tile .day { font-size: 0.45rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
+        .clock-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; min-width: 72px; width: 72px; min-height: 28px; flex-shrink: 0; line-height: 1.2; text-align: center; }
+        .clock-tile .time { font-size: 0.6rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; }
+        .clock-tile .day { font-size: 0.4rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
         
+        /* ===== MAIN CONTENT ===== */
         .main-content { display: flex; flex: 1; overflow: hidden; min-height: 0; }
         
-        .sidebar { width: 380px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
-        .sidebar-header { padding: 6px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
-        .sidebar-search { flex: 1; min-width: 100px; padding: 5px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.7rem; outline: none; }
+        /* ===== SIDEBAR ===== */
+        .sidebar { width: 340px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
+        .sidebar-header { padding: 4px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+        .sidebar-search { flex: 1; min-width: 60px; padding: 3px 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.6rem; outline: none; }
         .sidebar-search:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
         .sidebar-search::placeholder { color: var(--text2); }
-        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 3px 10px; border-radius: 20px; cursor: pointer; font-size: 0.65rem; display: none; align-items: center; gap: 4px; flex-shrink: 0; }
+        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 2px 8px; border-radius: 20px; cursor: pointer; font-size: 0.55rem; display: none; align-items: center; gap: 3px; flex-shrink: 0; }
         .back-btn:hover { background: var(--bg4); }
         .back-btn.show { display: flex; }
         
-        .list-container { flex: 1; overflow-y: auto; padding: 4px 6px; -webkit-overflow-scrolling: touch; }
-        .list-container::-webkit-scrollbar { width: 4px; }
+        .list-container { flex: 1; overflow-y: auto; padding: 3px 4px; -webkit-overflow-scrolling: touch; }
+        .list-container::-webkit-scrollbar { width: 3px; }
         .list-container::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 4px; }
         
-        .list-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin: 1px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; position: relative; }
+        .list-item { display: flex; align-items: center; gap: 6px; padding: 4px 6px; margin: 1px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; position: relative; }
         .list-item:hover { background: var(--hover); }
         .list-item.active { background: var(--bg3); border-left-color: var(--accent); }
-        .list-item .thumb { width: 40px; height: 22px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .list-item .thumb { width: 32px; height: 18px; border-radius: 3px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .list-item .info { flex: 1; min-width: 0; }
-        .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
-        .list-item .title[title] { cursor: help; }
-        .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
-        .list-item .duration { font-size: 0.5rem; color: var(--text2); margin-left: 4px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
-        .list-item .badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
-        .list-item .video-count { font-size: 0.55rem; color: var(--text2); padding-left: 6px; flex-shrink: 0; margin-left: auto; }
-        .list-item .loading-spinner { width: 14px; height: 14px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+        .list-item .title { font-size: 0.65rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
+        .list-item .sub { font-size: 0.5rem; color: var(--text2); margin-top: 1px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .list-item .duration { font-size: 0.45rem; color: var(--text2); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+        .list-item .badge { font-size: 0.45rem; background: var(--bg4); padding: 1px 6px; border-radius: 12px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
+        .list-item .video-count { font-size: 0.5rem; color: var(--text2); padding-left: 4px; flex-shrink: 0; margin-left: auto; }
+        .list-item .loading-spinner { width: 12px; height: 12px; border: 2px solid var(--bg4); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .list-item .translated-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
-        .list-item .group-icon { font-size: 1.2rem; flex-shrink: 0; width: 28px; text-align: center; }
+        .list-item .translated-badge { font-size: 0.4rem; background: var(--accent-glow); color: var(--accent); padding: 1px 4px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
+        .list-item .group-icon { font-size: 1rem; flex-shrink: 0; width: 22px; text-align: center; }
         
+        /* ===== PLAYER AREA ===== */
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
         .video-container { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden; }
         .video-container iframe { width: 100%; height: 100%; border: none; transition: opacity 0.3s ease; }
-        .video-container .placeholder { 
-            color: var(--text2); 
-            font-size: 0.85rem; 
-            text-align: center; 
-            padding: 20px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            pointer-events: none;
-        }
-        .video-container .placeholder .big-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+        .video-container .placeholder { color: var(--text2); font-size: 0.75rem; text-align: center; padding: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; pointer-events: none; }
+        .video-container .placeholder .big-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
         .video-container .blank { display: none; width: 100%; height: 100%; background: #000; }
         .video-container .blank.show { display: block; }
         
-        .radio-visualizer { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%);
-            display: none; flex-direction: column; align-items: center; justify-content: center; 
-            gap: 16px; padding: 20px; z-index: 5;
-        }
+        .radio-visualizer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 20px; z-index: 5; }
         .radio-visualizer.active { display: flex; }
-        .radio-visualizer .radio-icon { font-size: 3.5rem; animation: pulse 2s infinite; }
+        .radio-visualizer .radio-icon { font-size: 2.8rem; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
-        .radio-visualizer .radio-title { font-size: 1rem; font-weight: 500; color: var(--text); text-align: center; max-width: 80%; }
-        .radio-visualizer .radio-sub { font-size: 0.65rem; color: var(--text2); text-align: center; }
-        .radio-visualizer .equalizer { display: flex; gap: 3px; align-items: center; justify-content: center; height: 35px; }
+        .radio-visualizer .radio-title { font-size: 0.9rem; font-weight: 500; color: var(--text); text-align: center; max-width: 80%; }
+        .radio-visualizer .radio-sub { font-size: 0.6rem; color: var(--text2); text-align: center; }
+        .radio-visualizer .equalizer { display: flex; gap: 2px; align-items: center; justify-content: center; height: 28px; }
         .radio-visualizer .equalizer-bar { width: 3px; background: var(--accent); border-radius: 2px; animation: equalize 1.2s infinite ease-in-out; }
-        .radio-visualizer .equalizer-bar:nth-child(1) { animation-delay: 0s; height: 10px; }
-        .radio-visualizer .equalizer-bar:nth-child(2) { animation-delay: 0.2s; height: 20px; }
-        .radio-visualizer .equalizer-bar:nth-child(3) { animation-delay: 0.4s; height: 6px; }
-        .radio-visualizer .equalizer-bar:nth-child(4) { animation-delay: 0.6s; height: 26px; }
-        .radio-visualizer .equalizer-bar:nth-child(5) { animation-delay: 0.8s; height: 14px; }
-        .radio-visualizer .equalizer-bar:nth-child(6) { animation-delay: 1.0s; height: 8px; }
-        .radio-visualizer .equalizer-bar:nth-child(7) { animation-delay: 1.2s; height: 18px; }
-        .radio-visualizer .equalizer-bar:nth-child(8) { animation-delay: 0.3s; height: 12px; }
-        @keyframes equalize { 0%, 100% { height: 6px; } 50% { height: 26px; } }
-        
+        .radio-visualizer .equalizer-bar:nth-child(1) { animation-delay: 0s; height: 8px; }
+        .radio-visualizer .equalizer-bar:nth-child(2) { animation-delay: 0.2s; height: 16px; }
+        .radio-visualizer .equalizer-bar:nth-child(3) { animation-delay: 0.4s; height: 5px; }
+        .radio-visualizer .equalizer-bar:nth-child(4) { animation-delay: 0.6s; height: 22px; }
+        .radio-visualizer .equalizer-bar:nth-child(5) { animation-delay: 0.8s; height: 12px; }
+        .radio-visualizer .equalizer-bar:nth-child(6) { animation-delay: 1.0s; height: 7px; }
+        .radio-visualizer .equalizer-bar:nth-child(7) { animation-delay: 1.2s; height: 15px; }
+        .radio-visualizer .equalizer-bar:nth-child(8) { animation-delay: 0.3s; height: 10px; }
+        @keyframes equalize { 0%, 100% { height: 5px; } 50% { height: 22px; } }
         .radio-visualizer.paused .equalizer-bar { animation-play-state: paused !important; }
         .radio-visualizer.paused .radio-icon { animation-play-state: paused !important; }
         
-        .controls { background: var(--bg2); padding: 6px 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
-        .control-btn { width: 32px; height: 32px; border-radius: 50%; font-size: 0.8rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
+        /* ===== CONTROLS ===== */
+        .controls { background: var(--bg2); padding: 4px 10px; display: flex; align-items: center; justify-content: center; gap: 6px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+        .control-btn { width: 28px; height: 28px; border-radius: 50%; font-size: 0.7rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .control-btn:active { transform: scale(0.94); }
-        .control-btn.shuffle-btn { 
-            background: var(--bg3); 
-            border-color: var(--border); 
-            color: var(--text); 
-            font-size: 0.75rem;
-            min-width: 32px;
-        }
-        .control-btn.shuffle-btn.active-sequential { 
-            background: var(--bg3); 
-            border-color: var(--border); 
-            color: var(--text); 
-        }
-        .control-btn.shuffle-btn.active-shuffle { 
-            background: var(--accent); 
-            border-color: var(--accent); 
-            color: #fff; 
-            box-shadow: 0 0 12px var(--accent-glow); 
-        }
+        .control-btn.shuffle-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.65rem; min-width: 28px; }
+        .control-btn.shuffle-btn.active-sequential { background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .control-btn.shuffle-btn.active-shuffle { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .control-btn.shuffle-btn.active-shuffle:hover { background: var(--accent2); }
-        .control-btn.shuffle-btn.active-loop { 
-            background: var(--accent); 
-            border-color: var(--accent); 
-            color: #fff; 
-            box-shadow: 0 0 12px var(--accent-glow); 
-        }
+        .control-btn.shuffle-btn.active-loop { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
         .control-btn.shuffle-btn.active-loop:hover { background: var(--accent2); }
-        .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.8rem; }
+        .control-btn.random-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.7rem; }
         .control-btn.random-btn:hover { background: var(--bg4); }
         .control-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .control-btn.random-btn.active:hover { background: var(--accent2); }
-        .control-btn.mute-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.7rem; }
+        .control-btn.mute-btn { background: var(--bg3); border-color: var(--border); color: var(--text); font-size: 0.6rem; }
         .control-btn.mute-btn:hover { background: var(--bg4); }
         .control-btn.mute-btn.muted { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .control-btn.mute-btn.muted:hover { background: var(--accent2); }
         
-        .mode-switch { display: flex; align-items: center; gap: 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 2px; flex-shrink: 0; }
-        .mode-switch .mode-option { padding: 4px 12px; border-radius: 18px; font-size: 0.6rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
+        .mode-switch { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 18px; padding: 2px; flex-shrink: 0; }
+        .mode-switch .mode-option { padding: 2px 8px; border-radius: 16px; font-size: 0.5rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
         .mode-switch .mode-option:hover { color: var(--text); }
         .mode-switch .mode-option.active { background: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .mode-switch .mode-option.active:hover { background: var(--accent2); }
         
-        .player-info-text { font-size: 0.6rem; color: var(--text2); flex: 1; min-width: 50px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-timer { font-size: 0.55rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 60px; text-align: right; flex-shrink: 0; }
-        .video-id-tile { 
-            font-size: 0.5rem; 
-            color: var(--text2); 
-            background: var(--bg3); 
-            border: 1px solid var(--border); 
-            border-radius: 4px; 
-            padding: 2px 8px; 
-            min-width: 50px; 
-            text-align: center; 
-            font-family: monospace;
-            letter-spacing: 0.5px;
-            flex-shrink: 0;
-            display: none;
-            cursor: pointer;
-            transition: all var(--transition);
-        }
+        .player-info-text { font-size: 0.55rem; color: var(--text2); flex: 1; min-width: 40px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-timer { font-size: 0.5rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 50px; text-align: right; flex-shrink: 0; }
+        .video-id-tile { font-size: 0.45rem; color: var(--text2); background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; min-width: 40px; text-align: center; font-family: monospace; letter-spacing: 0.5px; flex-shrink: 0; display: none; cursor: pointer; transition: all var(--transition); }
         .video-id-tile.show { display: block; }
         .video-id-tile:hover { background: var(--bg4); border-color: var(--accent); }
-        .video-id-tile:active { transform: scale(0.96); }
         
-        .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 5px 14px; border-radius: 25px; font-size: 0.65rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
+        /* ===== TOAST & HISTORY ===== */
+        .toast { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 4px 12px; border-radius: 25px; font-size: 0.6rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
         @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
         .toast.hidden { display: none; }
         
-        .history-panel { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
+        .history-panel { position: fixed; top: 0; right: -380px; width: 380px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
         .history-panel.open { right: 0; }
-        .history-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-        .history-header h3 { font-size: 0.9rem; font-weight: 600; }
-        .history-header .close-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; }
+        .history-header { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .history-header h3 { font-size: 0.8rem; font-weight: 600; }
+        .history-header .close-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
         .history-header .close-btn:hover { background: var(--bg4); }
-        .history-list { flex: 1; overflow-y: auto; padding: 8px; }
-        .history-list .empty { text-align: center; padding: 40px 20px; color: var(--text2); font-size: 0.75rem; }
-        .history-date-group { margin-bottom: 12px; }
-        .history-date-group .date-label { font-size: 0.7rem; font-weight: 600; color: var(--text2); padding: 4px 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
-        .history-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+        .history-list { flex: 1; overflow-y: auto; padding: 6px; }
+        .history-list .empty { text-align: center; padding: 30px 16px; color: var(--text2); font-size: 0.7rem; }
+        .history-date-group { margin-bottom: 8px; }
+        .history-date-group .date-label { font-size: 0.6rem; font-weight: 600; color: var(--text2); padding: 3px 6px; border-bottom: 1px solid var(--border); margin-bottom: 3px; }
+        .history-item { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
         .history-item:hover { background: var(--hover); }
-        .history-item .thumb { width: 42px; height: 24px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .history-item .thumb { width: 36px; height: 20px; border-radius: 3px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .history-item .info { flex: 1; min-width: 0; }
-        .history-item .title { font-size: 0.72rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .history-item .sub { font-size: 0.55rem; color: var(--text2); }
-        .history-item .count-badge { font-size: 0.5rem; background: var(--bg4); padding: 1px 8px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
-        .history-item .position-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
-        
+        .history-item .title { font-size: 0.65rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-item .sub { font-size: 0.5rem; color: var(--text2); }
+        .history-item .count-badge { font-size: 0.45rem; background: var(--bg4); padding: 1px 6px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
+        .history-item .position-badge { font-size: 0.45rem; background: var(--accent-glow); color: var(--accent); padding: 1px 4px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
         .history-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2999; display: none; }
         .history-overlay.open { display: block; }
         
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .sidebar { width: 300px; }
-            .header { padding: 4px 8px; min-height: 38px; gap: 4px; }
-            .logo-text { font-size: 0.8rem; }
-            .logo-img { width: 24px; height: 24px; }
-            .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
-            .clock-tile { min-width: 72px; width: 72px; min-height: 28px; padding: 1px 6px; }
-            .clock-tile .time { font-size: 0.6rem; }
-            .clock-tile .day { font-size: 0.4rem; }
-            .manual-input-wrap { max-width: 180px; min-width: 90px; }
-            .manual-input-wrap input { font-size: 0.5rem; }
-            .manual-input-wrap .play-btn { font-size: 0.45rem; padding: 1px 8px; }
-            .timer-display { font-size: 0.5rem; min-width: 34px; padding: 1px 6px; }
-            .timer-preset-btn { font-size: 0.5rem; padding: 2px 8px; height: 24px; min-width: 32px; }
-            .status-badge { font-size: 0.45rem; padding: 1px 6px; }
-            .list-item .thumb { width: 34px; height: 19px; }
-            .list-item .title { font-size: 0.7rem; }
-            .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
-            .mode-switch .mode-option { font-size: 0.55rem; padding: 3px 10px; }
-            .player-info-text { font-size: 0.55rem; min-width: 40px; }
-            .player-timer { font-size: 0.5rem; min-width: 50px; }
-            .video-id-tile { font-size: 0.45rem; padding: 1px 6px; min-width: 40px; }
-            .history-panel { width: 340px; right: -340px; }
-            .radio-visualizer .radio-icon { font-size: 3rem; }
-            .radio-visualizer .radio-title { font-size: 0.9rem; }
-            .timer-preset-dropdown { top: 30px; min-width: 70px; }
-            .timer-preset-dropdown .preset-option { font-size: 0.55rem; padding: 4px 10px; }
-        }
-        @media (max-width: 480px) {
-            .sidebar { width: 240px; }
-            .sidebar-header { padding: 4px 6px; }
-            .sidebar-search { font-size: 0.6rem; padding: 3px 8px; min-width: 60px; }
-            .list-item { padding: 4px 6px; gap: 5px; }
-            .list-item .title { font-size: 0.65rem; }
-            .list-item .sub { font-size: 0.5rem; }
-            .list-item .thumb { width: 30px; height: 17px; }
-            .controls { gap: 5px; padding: 4px 8px; }
-            .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
-            .control-btn.shuffle-btn { font-size: 0.6rem; min-width: 26px; }
-            .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
-            .timer-display { font-size: 0.45rem; min-width: 30px; padding: 1px 4px; }
-            .timer-preset-btn { font-size: 0.45rem; padding: 2px 6px; height: 22px; min-width: 28px; }
-            .status-badge { font-size: 0.4rem; padding: 1px 4px; }
-            .player-info-text { font-size: 0.5rem; min-width: 30px; }
-            .player-timer { font-size: 0.45rem; min-width: 40px; }
-            .video-id-tile { font-size: 0.4rem; padding: 1px 4px; min-width: 30px; }
-            .header { gap: 3px; padding: 3px 6px; min-height: 34px; flex-wrap: nowrap; }
+            .sidebar { width: 280px; }
+            .header { padding: 3px 8px; min-height: 36px; }
+            .logo-text { font-size: 0.75rem; }
+            .logo-img { width: 22px; height: 22px; }
             .header-btn { width: 22px; height: 22px; font-size: 0.6rem; }
-            .manual-input-wrap { max-width: 140px; min-width: 70px; padding: 1px 3px 1px 6px; }
-            .manual-input-wrap input { font-size: 0.45rem; padding: 2px 0; min-width: 40px; }
-            .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 5px; }
-            .clock-tile { min-width: 62px; width: 62px; min-height: 24px; padding: 1px 4px; }
+            .clock-tile { min-width: 60px; width: 60px; min-height: 24px; padding: 1px 4px; }
             .clock-tile .time { font-size: 0.5rem; }
             .clock-tile .day { font-size: 0.35rem; }
-            .history-panel { width: 280px; right: -280px; }
-            .radio-visualizer .radio-icon { font-size: 2.5rem; }
-            .radio-visualizer .radio-title { font-size: 0.8rem; }
-            .radio-visualizer .equalizer { height: 28px; gap: 2px; }
-            .radio-visualizer .equalizer-bar { width: 2px; }
-            .timer-preset-dropdown { top: 26px; min-width: 60px; }
+            .manual-input-wrap { max-width: 150px; min-width: 60px; }
+            .manual-input-wrap input { font-size: 0.45rem; }
+            .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 6px; }
+            .list-item .thumb { width: 28px; height: 16px; }
+            .list-item .title { font-size: 0.6rem; }
+            .control-btn { width: 26px; height: 26px; font-size: 0.6rem; }
+            .player-info-text { font-size: 0.5rem; min-width: 30px; }
+            .player-timer { font-size: 0.45rem; min-width: 40px; }
+            .history-panel { width: 320px; right: -320px; }
+            .timer-preset-btn { font-size: 0.45rem; padding: 1px 6px; height: 22px; min-width: 26px; }
+            .timer-display { font-size: 0.45rem; min-width: 28px; padding: 1px 4px; }
+            .status-badge { font-size: 0.4rem; padding: 1px 4px; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 220px; }
+            .sidebar-header { padding: 3px 4px; }
+            .sidebar-search { font-size: 0.5rem; padding: 2px 6px; min-width: 40px; }
+            .list-item { padding: 3px 4px; gap: 4px; }
+            .list-item .title { font-size: 0.55rem; }
+            .list-item .sub { font-size: 0.45rem; }
+            .list-item .thumb { width: 24px; height: 14px; }
+            .controls { gap: 4px; padding: 3px 6px; }
+            .control-btn { width: 24px; height: 24px; font-size: 0.55rem; }
+            .control-btn.shuffle-btn { font-size: 0.55rem; min-width: 24px; }
+            .mode-switch .mode-option { font-size: 0.45rem; padding: 2px 6px; }
+            .player-info-text { font-size: 0.45rem; min-width: 25px; }
+            .player-timer { font-size: 0.4rem; min-width: 35px; }
+            .video-id-tile { font-size: 0.4rem; padding: 1px 4px; min-width: 30px; }
+            .header { gap: 2px; padding: 2px 4px; min-height: 32px; }
+            .header-btn { width: 20px; height: 20px; font-size: 0.55rem; }
+            .manual-input-wrap { max-width: 110px; min-width: 50px; padding: 1px 2px 1px 4px; }
+            .manual-input-wrap input { font-size: 0.4rem; padding: 2px 0; min-width: 30px; }
+            .manual-input-wrap .play-btn { font-size: 0.35rem; padding: 1px 4px; }
+            .clock-tile { min-width: 52px; width: 52px; min-height: 20px; padding: 1px 3px; }
+            .clock-tile .time { font-size: 0.45rem; }
+            .clock-tile .day { font-size: 0.3rem; }
+            .history-panel { width: 260px; right: -260px; }
+            .timer-preset-btn { font-size: 0.4rem; padding: 1px 5px; height: 20px; min-width: 22px; }
+            .timer-display { font-size: 0.4rem; min-width: 24px; padding: 1px 3px; }
+            .status-badge { font-size: 0.35rem; padding: 1px 3px; }
+            .timer-preset-dropdown { min-width: 60px; top: 22px; }
             .timer-preset-dropdown .preset-option { font-size: 0.5rem; padding: 3px 8px; }
         }
         @media (max-width: 380px) {
-            .sidebar { width: 200px; }
-            .history-panel { width: 260px; right: -260px; }
-            .clock-tile { min-width: 54px; width: 54px; min-height: 22px; }
-            .clock-tile .time { font-size: 0.45rem; }
-            .clock-tile .day { font-size: 0.3rem; }
-            .manual-input-wrap { max-width: 100px; min-width: 60px; }
-            .manual-input-wrap input { min-width: 30px; font-size: 0.4rem; }
-            .timer-display { font-size: 0.4rem; min-width: 26px; padding: 1px 3px; }
-            .timer-preset-btn { font-size: 0.4rem; padding: 2px 4px; height: 20px; min-width: 24px; }
-            .status-badge { font-size: 0.35rem; padding: 1px 3px; }
-            .video-id-tile { font-size: 0.35rem; padding: 1px 3px; min-width: 24px; }
-            .control-btn.shuffle-btn { font-size: 0.55rem; min-width: 24px; }
+            .sidebar { width: 180px; }
+            .history-panel { width: 240px; right: -240px; }
+            .clock-tile { min-width: 44px; width: 44px; min-height: 18px; }
+            .clock-tile .time { font-size: 0.4rem; }
+            .clock-tile .day { font-size: 0.25rem; }
+            .manual-input-wrap { max-width: 80px; min-width: 40px; }
         }
     </style>
 </head>
 <body>
 <div class="app">
+    <!-- HEADER -->
     <header class="header">
         <div class="logo-area">
             <img class="logo-img" src="https://i.postimg.cc/yYbyhL4w/Rounded-Profile.png" alt="Shafin Tube" onerror="this.style.display='none'">
@@ -417,6 +296,7 @@
         </div>
     </header>
 
+    <!-- MAIN CONTENT -->
     <div class="main-content">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -424,7 +304,7 @@
                 <button class="back-btn" id="backBtn">‹ Back</button>
             </div>
             <div class="list-container" id="listContainer">
-                <div style="text-align:center; padding:40px 16px; font-size:0.75rem; color:var(--text2);">Loading groups...</div>
+                <div style="text-align:center; padding:30px 16px; font-size:0.7rem; color:var(--text2);">Loading groups...</div>
             </div>
         </div>
 
@@ -435,21 +315,9 @@
                     <div class="radio-icon">🎧</div>
                     <div class="radio-title" id="radioTitle">Select a video</div>
                     <div class="radio-sub" id="radioSub">Radio Mode</div>
-                    <div class="equalizer">
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                        <div class="equalizer-bar"></div>
-                    </div>
+                    <div class="equalizer"><div class="equalizer-bar"></div><div class="equalizer-bar"></div><div class="equalizer-bar"></div><div class="equalizer-bar"></div><div class="equalizer-bar"></div><div class="equalizer-bar"></div><div class="equalizer-bar"></div><div class="equalizer-bar"></div></div>
                 </div>
-                <div class="placeholder" id="placeholder">
-                    <span class="big-icon">🎬</span>
-                    <p>Select a group and playlist to start</p>
-                </div>
+                <div class="placeholder" id="placeholder"><span class="big-icon">🎬</span><p>Select a group and playlist to start</p></div>
                 <iframe id="playerIframe" src="" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="display:none;"></iframe>
             </div>
             <div class="controls">
@@ -471,15 +339,11 @@
     </div>
 </div>
 
+<!-- HISTORY PANEL -->
 <div class="history-overlay" id="historyOverlay"></div>
 <div class="history-panel" id="historyPanel">
-    <div class="history-header">
-        <h3>📜 Play History (Last 7 Days)</h3>
-        <button class="close-btn" id="historyCloseBtn">✕</button>
-    </div>
-    <div class="history-list" id="historyList">
-        <div class="empty">No history yet</div>
-    </div>
+    <div class="history-header"><h3>📜 Play History (Last 7 Days)</h3><button class="close-btn" id="historyCloseBtn">✕</button></div>
+    <div class="history-list" id="historyList"><div class="empty">No history yet</div></div>
 </div>
 
 <div class="toast hidden" id="toast"></div>
@@ -494,109 +358,40 @@
     };
 
     // ============================================================
-    // DOM REFS
+    // DOM REFS - Optimized with getElementById caching
     // ============================================================
-    const $ = (id) => document.getElementById(id);
-    
-    const DOM = {
-        listContainer: $('listContainer'),
-        searchInput: $('searchInput'),
-        statusBadge: $('statusBadge'),
-        themeToggle: $('themeToggle'),
-        editBtn: $('editBtn'),
-        backBtn: $('backBtn'),
-        refreshBtn: $('refreshBtn'),
-        translateBtn: $('translateBtn'),
-        historyBtn: $('historyBtn'),
-        historyCloseBtn: $('historyCloseBtn'),
-        historyOverlay: $('historyOverlay'),
-        historyPanel: $('historyPanel'),
-        historyList: $('historyList'),
-        iframe: $('playerIframe'),
-        placeholder: $('placeholder'),
-        blankScreen: $('blankScreen'),
-        playerInfo: $('playerInfo'),
-        playerTimer: $('playerTimer'),
-        videoIdTile: $('videoIdTile'),
-        prevBtn: $('prevBtn'),
-        nextBtn: $('nextBtn'),
-        playBtn: $('playBtn'),
-        muteBtn: $('muteBtn'),
-        shuffleBtn: $('shuffleBtn'),
-        randomBtn: $('randomBtn'),
-        groupShuffleBtn: $('groupShuffleBtn'),
-        randomVideoBtn: $('randomVideoBtn'),
-        tvModeOption: $('tvModeOption'),
-        radioModeOption: $('radioModeOption'),
-        timerPresetBtn: $('timerPresetBtn'),
-        timerPresetDropdown: $('timerPresetDropdown'),
-        timerDisplay: $('timerDisplay'),
-        manualInput: $('manualInput'),
-        manualPlayBtn: $('manualPlayBtn'),
-        radioVisualizer: $('radioVisualizer'),
-        radioTitle: $('radioTitle'),
-        radioSub: $('radioSub'),
-        toast: $('toast'),
-        timeDisplay: $('timeDisplay'),
-        dayDisplay: $('dayDisplay'),
-        videoContainer: $('videoContainer')
-    };
+    const DOM = {};
+    function cacheDOM() {
+        const ids = ['listContainer','searchInput','statusBadge','themeToggle','editBtn','backBtn','refreshBtn','translateBtn','historyBtn','historyCloseBtn','historyOverlay','historyPanel','historyList','iframe','placeholder','blankScreen','playerInfo','playerTimer','videoIdTile','prevBtn','nextBtn','playBtn','muteBtn','shuffleBtn','randomBtn','groupShuffleBtn','randomVideoBtn','tvModeOption','radioModeOption','timerPresetBtn','timerPresetDropdown','timerDisplay','manualInput','manualPlayBtn','radioVisualizer','radioTitle','radioSub','toast','timeDisplay','dayDisplay','videoContainer'];
+        ids.forEach(id => { DOM[id] = document.getElementById(id); });
+    }
+    cacheDOM();
 
     // ============================================================
-    // STATE
+    // STATE - Minimal memory footprint
     // ============================================================
     const state = {
-        groups: {},
-        playlists: [],
-        groupNames: [],
-        playingPlaylist: null,
-        playingVideoIndex: -1,
-        viewingPlaylist: null,
-        viewingVideoIndex: -1,
-        playbackMode: 0,
-        isPlaying: false,
-        isPlaylistView: false,
-        isGroupView: true,
-        metadataCache: {},
-        translateCache: {},
-        translateEnabled: false,
-        currentMode: 'tv',
-        history: [],
-        ytPlayer: null,
-        isStopped: false,
-        isMuted: false,
-        autoPlayPending: false,
-        videoEndDetected: false,
-        navigationStack: ['groups'],
-        currentGroupName: null,
-        currentVideoId: null,
-        timerSeconds: 0,
-        timerInterval: null,
-        timerCountdownInterval: null,
-        toastTimeout: null,
-        isAutoPlaying: false,
-        groupShuffleEnabled: false
+        groups: {}, playlists: [], groupNames: [],
+        playingPlaylist: null, playingVideoIndex: -1,
+        viewingPlaylist: null, viewingVideoIndex: -1,
+        playbackMode: 0, isPlaying: false, isPlaylistView: false, isGroupView: true,
+        metadataCache: {}, translateCache: {}, translateEnabled: false,
+        currentMode: 'tv', history: [], ytPlayer: null,
+        isStopped: false, isMuted: false, autoPlayPending: false, videoEndDetected: false,
+        navigationStack: ['groups'], currentGroupName: null, currentVideoId: null,
+        timerSeconds: 0, timerInterval: null, timerCountdownInterval: null,
+        toastTimeout: null, isAutoPlaying: false, groupShuffleEnabled: false,
+        isLoadingMetadata: false
     };
 
     // ============================================================
     // UTILITY FUNCTIONS
     // ============================================================
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m] || m);
-    }
-
-    function formatTime(seconds) {
-        if (!seconds || isNaN(seconds)) return '--:--';
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-
+    function escapeHtml(s) { return s ? s.replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m] || m) : ''; }
+    function formatTime(s) { if (!s || isNaN(s)) return '--:--'; const m = Math.floor(s/60); const sec = Math.floor(s%60); return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; }
+    
     function parseCSVLine(line) {
-        const fields = [];
-        let current = '';
-        let inQuotes = false;
+        const fields = []; let current = ''; let inQuotes = false;
         for (let i = 0; i < line.length; i++) {
             const ch = line[i];
             if (ch === '"') inQuotes = !inQuotes;
@@ -607,24 +402,26 @@
         return fields;
     }
 
+    let toastTimer = null;
     function showToast(msg, duration = 2500, isError = false) {
         if (!DOM.toast) return;
-        if (state.toastTimeout) clearTimeout(state.toastTimeout);
+        if (toastTimer) clearTimeout(toastTimer);
         DOM.toast.textContent = msg;
         DOM.toast.style.display = 'block';
         DOM.toast.style.borderColor = isError ? 'var(--accent)' : 'var(--border)';
-        state.toastTimeout = setTimeout(() => { 
-            if (DOM.toast) DOM.toast.style.display = 'none'; 
-        }, duration);
+        toastTimer = setTimeout(() => { if (DOM.toast) DOM.toast.style.display = 'none'; }, duration);
     }
 
+    // ============================================================
+    // CLOCK - Runs once per second
+    // ============================================================
     function updateClock() {
         if (!DOM.timeDisplay || !DOM.dayDisplay) return;
         const now = new Date();
-        let hours = now.getHours();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12 || 12;
-        DOM.timeDisplay.textContent = `${hours}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} ${ampm}`;
+        let h = now.getHours();
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        DOM.timeDisplay.textContent = `${h}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} ${ampm}`;
         DOM.dayDisplay.textContent = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
     }
     setInterval(updateClock, 1000);
@@ -653,14 +450,10 @@
     function updateShuffleButton() {
         if (!DOM.shuffleBtn) return;
         const icons = ['➡️', '🔀', '🔁'];
-        const names = ['Sequential', 'Shuffle', 'Loop'];
-        DOM.shuffleBtn.textContent = icons[state.playbackMode];
-        DOM.shuffleBtn.className = 'control-btn shuffle-btn';
         const classes = ['active-sequential', 'active-shuffle', 'active-loop'];
-        DOM.shuffleBtn.classList.add(classes[state.playbackMode]);
-        DOM.shuffleBtn.title = names[state.playbackMode] + ' Mode';
+        DOM.shuffleBtn.textContent = icons[state.playbackMode];
+        DOM.shuffleBtn.className = 'control-btn shuffle-btn ' + classes[state.playbackMode];
     }
-
     function cyclePlaybackMode() {
         state.playbackMode = (state.playbackMode + 1) % 3;
         updateShuffleButton();
@@ -669,54 +462,40 @@
     }
 
     // ============================================================
-    // GROUP SHUFFLE TOGGLE
+    // GROUP SHUFFLE
     // ============================================================
     function toggleGroupShuffle() {
         state.groupShuffleEnabled = !state.groupShuffleEnabled;
-        if (DOM.groupShuffleBtn) {
-            DOM.groupShuffleBtn.classList.toggle('active', state.groupShuffleEnabled);
-        }
-        showToast(state.groupShuffleEnabled ? '⚡ Group Shuffle ON (across playlists)' : '⚡ Group Shuffle OFF');
+        if (DOM.groupShuffleBtn) DOM.groupShuffleBtn.classList.toggle('active', state.groupShuffleEnabled);
+        showToast(state.groupShuffleEnabled ? '⚡ Group Shuffle ON' : '⚡ Group Shuffle OFF');
         saveState();
     }
 
-    // ============================================================
-    // GET RANDOM PLAYLIST FROM GROUP (Helper Function)
-    // ============================================================
     function getRandomPlaylistFromGroup(groupName, excludePlaylist = null) {
-        const playlistsInGroup = state.playlists.filter(p => p.group === groupName);
-        if (playlistsInGroup.length === 0) return null;
-        if (playlistsInGroup.length === 1) return playlistsInGroup[0];
-        
-        let randomPlaylist;
-        let attempts = 0;
+        const pls = state.playlists.filter(p => p.group === groupName);
+        if (pls.length === 0) return null;
+        if (pls.length === 1) return pls[0];
+        let random, attempts = 0;
         do {
-            randomPlaylist = playlistsInGroup[Math.floor(Math.random() * playlistsInGroup.length)];
+            random = pls[Math.floor(Math.random() * pls.length)];
             attempts++;
-            // If only one playlist, break out to avoid infinite loop
-            if (playlistsInGroup.length === 1) break;
-        } while (randomPlaylist === excludePlaylist && attempts < 20);
-        return randomPlaylist;
+        } while (random === excludePlaylist && attempts < 20 && pls.length > 1);
+        return random;
     }
 
     // ============================================================
-    // TIMER
+    // TIMER - Optimized to reduce CPU usage
     // ============================================================
     function startPlayerTimer() {
         if (state.timerInterval) clearInterval(state.timerInterval);
-        state.timerInterval = setInterval(updatePlayerTimer, 500);
+        state.timerInterval = setInterval(updatePlayerTimer, 1000);
     }
-
     function stopPlayerTimer() {
-        if (state.timerInterval) {
-            clearInterval(state.timerInterval);
-            state.timerInterval = null;
-        }
+        if (state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null; }
     }
 
     function updatePlayerTimer() {
-        if (!DOM.playerTimer) return;
-        if (!state.ytPlayer || typeof state.ytPlayer.getCurrentTime !== 'function') return;
+        if (!DOM.playerTimer || !state.ytPlayer || typeof state.ytPlayer.getCurrentTime !== 'function') return;
         const current = state.ytPlayer.getCurrentTime();
         const duration = state.ytPlayer.getDuration();
         if (duration && duration > 0) {
@@ -737,62 +516,38 @@
     }
 
     // ============================================================
-    // VIDEO END HANDLER - Supports Group Shuffle
+    // VIDEO END HANDLER
     // ============================================================
     function handleVideoEnd() {
         const playlist = state.playingPlaylist;
-        if (!playlist || playlist.videoIds.length === 0) {
-            console.log('Auto-play: No playing playlist');
-            return;
-        }
-        
+        if (!playlist || playlist.videoIds.length === 0) return;
         const currentIdx = state.playingVideoIndex;
-        if (currentIdx < 0 || currentIdx >= playlist.videoIds.length) {
-            console.log('Auto-play: Invalid video index');
-            return;
-        }
-        
-        console.log(`Auto-play: Playing from "${playlist.name}", index: ${currentIdx}`);
-        console.log(`Group Shuffle: ${state.groupShuffleEnabled ? 'ON' : 'OFF'}`);
+        if (currentIdx < 0 || currentIdx >= playlist.videoIds.length) return;
         
         let nextPlaylist = playlist;
         let nextIdx;
         
-        // If group shuffle is enabled, pick a random playlist from the same group
         if (state.groupShuffleEnabled) {
-            const currentGroup = playlist.group;
-            const randomPlaylist = getRandomPlaylistFromGroup(currentGroup, playlist);
-            if (randomPlaylist) {
-                nextPlaylist = randomPlaylist;
-                console.log(`Group Shuffle: Selected playlist "${randomPlaylist.name}" from group "${currentGroup}"`);
-            }
+            const randomPl = getRandomPlaylistFromGroup(playlist.group, playlist);
+            if (randomPl) nextPlaylist = randomPl;
         }
         
-        // Determine next index within the selected playlist
         if (state.playbackMode === 2) { // Loop
             nextIdx = currentIdx;
         } else if (state.playbackMode === 1) { // Shuffle
             let idx;
-            do {
-                idx = Math.floor(Math.random() * nextPlaylist.videoIds.length);
-            } while (idx === currentIdx && nextPlaylist.videoIds.length > 1);
+            do { idx = Math.floor(Math.random() * nextPlaylist.videoIds.length); } 
+            while (idx === currentIdx && nextPlaylist.videoIds.length > 1);
             nextIdx = idx;
-        } else { // Sequential
-            // If we switched to a different playlist, start from the beginning
-            if (nextPlaylist !== playlist) {
-                nextIdx = 0;
-            } else {
-                nextIdx = (currentIdx + 1) % nextPlaylist.videoIds.length;
-            }
+        } else {
+            nextIdx = (nextPlaylist !== playlist) ? 0 : (currentIdx + 1) % nextPlaylist.videoIds.length;
         }
         
         state.isAutoPlaying = true;
         state.viewingPlaylist = nextPlaylist;
         state.viewingVideoIndex = nextIdx;
         playVideo(nextPlaylist, nextIdx);
-        setTimeout(() => {
-            state.isAutoPlaying = false;
-        }, 500);
+        setTimeout(() => { state.isAutoPlaying = false; }, 500);
     }
 
     // ============================================================
@@ -903,26 +658,18 @@
     // NAVIGATION
     // ============================================================
     function navigateToGroups() {
-        state.isGroupView = true;
-        state.isPlaylistView = false;
+        state.isGroupView = true; state.isPlaylistView = false;
         if (DOM.backBtn) DOM.backBtn.classList.remove('show');
-        if (DOM.searchInput) {
-            DOM.searchInput.placeholder = '🔍 Search groups...';
-            DOM.searchInput.value = '';
-        }
+        if (DOM.searchInput) { DOM.searchInput.placeholder = '🔍 Search groups...'; DOM.searchInput.value = ''; }
         state.currentGroupName = null;
         state.navigationStack = ['groups'];
         renderGroups();
     }
 
     function navigateToGroup(groupName) {
-        state.isGroupView = false;
-        state.isPlaylistView = false;
+        state.isGroupView = false; state.isPlaylistView = false;
         if (DOM.backBtn) DOM.backBtn.classList.add('show');
-        if (DOM.searchInput) {
-            DOM.searchInput.placeholder = '🔍 Search playlists...';
-            DOM.searchInput.value = '';
-        }
+        if (DOM.searchInput) { DOM.searchInput.placeholder = '🔍 Search playlists...'; DOM.searchInput.value = ''; }
         state.currentGroupName = groupName;
         if (state.navigationStack[state.navigationStack.length - 1] !== 'group:' + groupName) {
             state.navigationStack.push('group:' + groupName);
@@ -931,13 +678,9 @@
     }
 
     function navigateToPlaylist(playlist) {
-        state.isGroupView = false;
-        state.isPlaylistView = true;
+        state.isGroupView = false; state.isPlaylistView = true;
         if (DOM.backBtn) DOM.backBtn.classList.add('show');
-        if (DOM.searchInput) {
-            DOM.searchInput.placeholder = '🔍 Search videos...';
-            DOM.searchInput.value = '';
-        }
+        if (DOM.searchInput) { DOM.searchInput.placeholder = '🔍 Search videos...'; DOM.searchInput.value = ''; }
         state.viewingPlaylist = playlist;
         state.viewingVideoIndex = state.playingVideoIndex;
         if (state.navigationStack[state.navigationStack.length - 1] !== 'playlist:' + playlist.name) {
@@ -953,8 +696,7 @@
         if (last === 'groups') navigateToGroups();
         else if (last.startsWith('group:')) {
             const groupName = last.replace('group:', '');
-            state.isGroupView = false;
-            state.isPlaylistView = false;
+            state.isGroupView = false; state.isPlaylistView = false;
             if (DOM.backBtn) DOM.backBtn.classList.add('show');
             if (DOM.searchInput) DOM.searchInput.placeholder = '🔍 Search playlists...';
             state.currentGroupName = groupName;
@@ -963,8 +705,7 @@
             const playlistName = last.replace('playlist:', '');
             const playlist = state.playlists.find(p => p.name === playlistName);
             if (playlist) {
-                state.isGroupView = false;
-                state.isPlaylistView = true;
+                state.isGroupView = false; state.isPlaylistView = true;
                 if (DOM.backBtn) DOM.backBtn.classList.add('show');
                 if (DOM.searchInput) DOM.searchInput.placeholder = '🔍 Search videos...';
                 state.viewingPlaylist = playlist;
@@ -974,7 +715,7 @@
     }
 
     // ============================================================
-    // RENDER FUNCTIONS - Added Duration Display
+    // RENDER FUNCTIONS - Optimized
     // ============================================================
     function renderGroups() {
         if (!DOM.listContainer) return;
@@ -983,7 +724,7 @@
         if (search) filtered = state.groupNames.filter(g => g.toLowerCase().includes(search));
 
         if (filtered.length === 0) {
-            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">No groups found</div>`;
+            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:30px 16px;font-size:0.7rem;color:var(--text2);">No groups found</div>`;
             return;
         }
 
@@ -995,19 +736,13 @@
                          groupName.toLowerCase().includes('music') ? '🎵' :
                          groupName.toLowerCase().includes('movie') ? '🎬' :
                          groupName.toLowerCase().includes('islam') ? '🕌' : '📁';
-            html += `
-                <div class="list-item" data-group="${escapeHtml(groupName)}" data-type="group">
-                    <span class="group-icon">${icon}</span>
-                    <div class="info">
-                        <div class="title">${escapeHtml(groupName)}</div>
-                        <div class="sub">${pls.length} playlists • ${totalVideos} videos</div>
-                    </div>
-                    <span class="badge">${pls.length}</span>
-                </div>
-            `;
+            html += `<div class="list-item" data-group="${escapeHtml(groupName)}" data-type="group">
+                <span class="group-icon">${icon}</span>
+                <div class="info"><div class="title">${escapeHtml(groupName)}</div><div class="sub">${pls.length} playlists • ${totalVideos} videos</div></div>
+                <span class="badge">${pls.length}</span>
+            </div>`;
         });
         DOM.listContainer.innerHTML = html;
-
         DOM.listContainer.querySelectorAll('.list-item[data-type="group"]').forEach(el => {
             el.addEventListener('click', () => navigateToGroup(el.dataset.group));
         });
@@ -1021,32 +756,23 @@
         if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
 
         if (filtered.length === 0) {
-            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">No playlists in this group</div>`;
+            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:30px 16px;font-size:0.7rem;color:var(--text2);">No playlists in this group</div>`;
             return;
         }
 
-        let html = `<div style="padding:4px 8px;font-size:0.7rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:4px;">
-            📂 ${escapeHtml(groupName)} (${filtered.length} playlists)
-        </div>`;
-
+        let html = `<div style="padding:3px 6px;font-size:0.6rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:3px;">📂 ${escapeHtml(groupName)} (${filtered.length} playlists)</div>`;
         filtered.forEach((pl, idx) => {
             const isActive = state.viewingPlaylist === pl && state.isPlaylistView;
             const cacheKey = pl.name;
             const cachedCount = state.metadataCache[cacheKey] ? Object.keys(state.metadataCache[cacheKey]).length : 0;
             const hasMetadata = cachedCount > 0 && cachedCount >= pl.videoIds.length;
-            html += `
-                <div class="list-item ${isActive ? 'active' : ''}" data-index="${idx}" data-type="playlist">
-                    <span class="icon">${hasMetadata ? '📋' : '📋'}</span>
-                    <div class="info">
-                        <div class="title">${escapeHtml(pl.name)}</div>
-                        <div class="sub">${pl.videoIds.length} videos ${hasMetadata ? '✅' : (cachedCount > 0 ? `(${cachedCount}/${pl.videoIds.length})` : '')}</div>
-                    </div>
-                    <span class="video-count">${pl.videoIds.length}</span>
-                </div>
-            `;
+            html += `<div class="list-item ${isActive ? 'active' : ''}" data-index="${idx}" data-type="playlist">
+                <span class="icon">${hasMetadata ? '📋' : '📋'}</span>
+                <div class="info"><div class="title">${escapeHtml(pl.name)}</div><div class="sub">${pl.videoIds.length} videos ${hasMetadata ? '✅' : (cachedCount > 0 ? `(${cachedCount}/${pl.videoIds.length})` : '')}</div></div>
+                <span class="video-count">${pl.videoIds.length}</span>
+            </div>`;
         });
         DOM.listContainer.innerHTML = html;
-
         DOM.listContainer.querySelectorAll('.list-item[data-type="playlist"]').forEach(el => {
             el.addEventListener('click', () => {
                 const idx = parseInt(el.dataset.index);
@@ -1062,15 +788,18 @@
         });
     }
 
+    // ============================================================
+    // RENDER VIDEOS - FIXED: Duration displayed
+    // ============================================================
     function renderVideos(playlist) {
         if (!DOM.listContainer) return;
         const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         const cacheKey = playlist.name;
         const cache = state.metadataCache[cacheKey] || {};
 
-        let html = `<div style="padding:4px 8px;font-size:0.7rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;">
+        let html = `<div style="padding:3px 6px;font-size:0.6rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:3px;display:flex;justify-content:space-between;align-items:center;">
             <span>▶ ${escapeHtml(playlist.name)} (${playlist.videoIds.length})</span>
-            <span style="font-size:0.6rem;">${Object.keys(cache).length}/${playlist.videoIds.length} loaded</span>
+            <span style="font-size:0.5rem;">${Object.keys(cache).length}/${playlist.videoIds.length} loaded</span>
         </div>`;
 
         let videos = playlist.videoIds.map((id, idx) => ({ id, index: idx }));
@@ -1086,7 +815,7 @@
         }
 
         if (videos.length === 0 && search) {
-            html += `<div style="text-align:center;padding:20px;font-size:0.7rem;color:var(--text2);">No matching videos</div>`;
+            html += `<div style="text-align:center;padding:16px;font-size:0.65rem;color:var(--text2);">No matching videos</div>`;
             DOM.listContainer.innerHTML = html;
             return;
         }
@@ -1102,29 +831,27 @@
             }
             const thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
             const author = meta ? meta.author : '';
-            const duration = meta ? (meta.duration ? formatTime(meta.duration) : '') : '';
+            // FIXED: Duration is now properly fetched and displayed
+            const duration = meta && meta.duration ? formatTime(meta.duration) : '';
             const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
 
-            html += `
-                <div class="list-item ${isActive ? 'active' : ''}" data-video-index="${v.index}" data-type="video">
-                    <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
-                    <div class="info">
-                        <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)} ${translatedBadge}</div>
-                        <div class="sub">${escapeHtml(author)} ${duration ? `<span class="duration">• ${duration}</span>` : ''}</div>
-                    </div>
-                    <span class="badge">${v.index + 1}</span>
+            html += `<div class="list-item ${isActive ? 'active' : ''}" data-video-index="${v.index}" data-type="video">
+                <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
+                <div class="info">
+                    <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)} ${translatedBadge}</div>
+                    <div class="sub">${escapeHtml(author)} ${duration ? `<span class="duration">• ${duration}</span>` : ''}</div>
                 </div>
-            `;
+                <span class="badge">${v.index + 1}</span>
+            </div>`;
         });
 
         if (state.isLoadingMetadata && Object.keys(cache).length < playlist.videoIds.length) {
-            html += `<div style="text-align:center;padding:12px;font-size:0.65rem;color:var(--text2);">
-                <span class="loading-spinner" style="display:inline-block;margin-right:8px;"></span> Loading metadata...
+            html += `<div style="text-align:center;padding:10px;font-size:0.6rem;color:var(--text2);">
+                <span class="loading-spinner" style="display:inline-block;margin-right:6px;"></span> Loading metadata...
             </div>`;
         }
 
         DOM.listContainer.innerHTML = html;
-
         DOM.listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(el => {
             el.addEventListener('click', () => {
                 const idx = parseInt(el.dataset.videoIndex);
@@ -1149,13 +876,10 @@
     }
 
     // ============================================================
-    // CORE PLAYER FUNCTIONS - FIXED: Group Shuffle works globally
+    // CORE PLAYER FUNCTIONS
     // ============================================================
     function playVideo(playlist, videoIndex, restore = false, startPosition = 0) {
-        if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) {
-            console.log('playVideo: Invalid playlist or index');
-            return;
-        }
+        if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) return;
         
         state.playingPlaylist = playlist;
         state.playingVideoIndex = videoIndex;
@@ -1179,10 +903,7 @@
 
         if (!startPosition) {
             const historyEntry = state.history.find(h => h.videoId === videoId && h.playlistName === playlist.name);
-            if (historyEntry && historyEntry.position > 0) {
-                startPosition = historyEntry.position;
-                console.log(`Resuming video at position: ${formatTime(startPosition)}`);
-            }
+            if (historyEntry && historyEntry.position > 0) startPosition = historyEntry.position;
         }
 
         addToHistory(playlist.name, videoId, title, thumb, startPosition);
@@ -1198,17 +919,12 @@
         if (!restore) showToast(`▶ ${title}`);
         saveState();
         
-        if (state.isPlaylistView && state.viewingPlaylist) {
-            renderVideos(state.viewingPlaylist);
-        }
+        if (state.isPlaylistView && state.viewingPlaylist) renderVideos(state.viewingPlaylist);
 
         if (state.currentMode === 'radio') {
             if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('active');
-            if (state.isPlaying) {
-                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
-            } else {
-                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
-            }
+            if (state.isPlaying) DOM.radioVisualizer.classList.remove('paused');
+            else DOM.radioVisualizer.classList.add('paused');
             if (DOM.radioTitle) DOM.radioTitle.textContent = title;
             if (DOM.radioSub) DOM.radioSub.textContent = `${playlist.name} • Radio Mode`;
         } else {
@@ -1216,7 +932,9 @@
         }
     }
 
-    // FIXED: Next Video - Group Shuffle works here too
+    // ============================================================
+    // NEXT / PREV / RANDOM - Group Shuffle applied globally
+    // ============================================================
     function nextVideo() {
         if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist playing', 2000, true);
@@ -1227,35 +945,20 @@
         state.isStopped = false;
         
         let playlist = state.playingPlaylist;
-        let idx;
-        
-        // If group shuffle is enabled, pick a random playlist from the same group
         if (state.groupShuffleEnabled) {
-            const currentGroup = playlist.group;
-            const randomPlaylist = getRandomPlaylistFromGroup(currentGroup, playlist);
-            if (randomPlaylist && randomPlaylist !== playlist) {
-                playlist = randomPlaylist;
-                console.log(`Group Shuffle (Next): Selected playlist "${randomPlaylist.name}" from group "${currentGroup}"`);
-            }
+            const randomPl = getRandomPlaylistFromGroup(playlist.group, playlist);
+            if (randomPl) playlist = randomPl;
         }
-        
-        // Determine next index within the selected playlist
-        if (state.playbackMode === 1) { // Shuffle
-            do {
-                idx = Math.floor(Math.random() * playlist.videoIds.length);
-            } while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
+        let idx;
+        if (state.playbackMode === 1) {
+            do { idx = Math.floor(Math.random() * playlist.videoIds.length); } 
+            while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
         } else {
-            // If we switched to a different playlist, start from the beginning
-            if (playlist !== state.playingPlaylist) {
-                idx = 0;
-            } else {
-                idx = (state.playingVideoIndex + 1) % playlist.videoIds.length;
-            }
+            idx = (playlist !== state.playingPlaylist) ? 0 : (state.playingVideoIndex + 1) % playlist.videoIds.length;
         }
         playVideo(playlist, idx);
     }
 
-    // FIXED: Previous Video - Group Shuffle works here too
     function prevVideo() {
         if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist playing', 2000, true);
@@ -1266,30 +969,17 @@
         state.isStopped = false;
         
         let playlist = state.playingPlaylist;
-        let idx;
-        
-        // If group shuffle is enabled, pick a random playlist from the same group
         if (state.groupShuffleEnabled) {
-            const currentGroup = playlist.group;
-            const randomPlaylist = getRandomPlaylistFromGroup(currentGroup, playlist);
-            if (randomPlaylist && randomPlaylist !== playlist) {
-                playlist = randomPlaylist;
-                console.log(`Group Shuffle (Prev): Selected playlist "${randomPlaylist.name}" from group "${currentGroup}"`);
-            }
+            const randomPl = getRandomPlaylistFromGroup(playlist.group, playlist);
+            if (randomPl) playlist = randomPl;
         }
-        
-        // Determine previous index within the selected playlist
-        if (state.playbackMode === 1) { // Shuffle
-            do {
-                idx = Math.floor(Math.random() * playlist.videoIds.length);
-            } while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
+        let idx;
+        if (state.playbackMode === 1) {
+            do { idx = Math.floor(Math.random() * playlist.videoIds.length); } 
+            while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
         } else {
-            // If we switched to a different playlist, go to the end
-            if (playlist !== state.playingPlaylist) {
-                idx = playlist.videoIds.length - 1;
-            } else {
-                idx = (state.playingVideoIndex - 1 + playlist.videoIds.length) % playlist.videoIds.length;
-            }
+            idx = (playlist !== state.playingPlaylist) ? playlist.videoIds.length - 1 : 
+                  (state.playingVideoIndex - 1 + playlist.videoIds.length) % playlist.videoIds.length;
         }
         playVideo(playlist, idx);
     }
@@ -1439,15 +1129,7 @@
 
     function addToHistory(playlistName, videoId, title, thumbnail, position = 0) {
         state.history = state.history.filter(h => !(h.videoId === videoId && h.playlistName === playlistName));
-        const entry = { 
-            playlistName, 
-            videoId, 
-            title, 
-            thumbnail, 
-            timestamp: Date.now(), 
-            position: Math.round(position) 
-        };
-        state.history.unshift(entry);
+        state.history.unshift({ playlistName, videoId, title, thumbnail, timestamp: Date.now(), position: Math.round(position) });
         saveHistory();
         renderHistory();
     }
@@ -1471,22 +1153,16 @@
             html += `<div class="history-date-group"><div class="date-label">${dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>`;
             items.forEach((h) => {
                 const posStr = h.position && h.position > 0 ? `${formatTime(h.position)}` : '';
-                html += `
-                    <div class="history-item" data-vid="${h.videoId}" data-playlist="${escapeHtml(h.playlistName)}" data-position="${h.position || 0}">
-                        <img class="thumb" src="${h.thumbnail}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${h.videoId}/mqdefault.jpg'">
-                        <div class="info">
-                            <div class="title">${escapeHtml(h.title)}</div>
-                            <div class="sub">${escapeHtml(h.playlistName)}</div>
-                        </div>
-                        ${posStr ? `<span class="position-badge">⏱ ${posStr}</span>` : ''}
-                        <span class="count-badge">${new Date(h.timestamp).toLocaleTimeString()}</span>
-                    </div>
-                `;
+                html += `<div class="history-item" data-vid="${h.videoId}" data-playlist="${escapeHtml(h.playlistName)}" data-position="${h.position || 0}">
+                    <img class="thumb" src="${h.thumbnail}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${h.videoId}/mqdefault.jpg'">
+                    <div class="info"><div class="title">${escapeHtml(h.title)}</div><div class="sub">${escapeHtml(h.playlistName)}</div></div>
+                    ${posStr ? `<span class="position-badge">⏱ ${posStr}</span>` : ''}
+                    <span class="count-badge">${new Date(h.timestamp).toLocaleTimeString()}</span>
+                </div>`;
             });
             html += `</div>`;
         });
         DOM.historyList.innerHTML = html;
-
         DOM.historyList.querySelectorAll('.history-item').forEach(el => {
             el.addEventListener('click', () => {
                 const videoId = el.dataset.vid;
@@ -1514,7 +1190,6 @@
         if (DOM.historyOverlay) DOM.historyOverlay.classList.add('open');
         renderHistory();
     }
-
     function closeHistory() {
         if (DOM.historyPanel) DOM.historyPanel.classList.remove('open');
         if (DOM.historyOverlay) DOM.historyOverlay.classList.remove('open');
@@ -1541,7 +1216,6 @@
             return text;
         } catch (error) { return text; }
     }
-
     function toggleTranslation() {
         state.translateEnabled = !state.translateEnabled;
         if (DOM.translateBtn) DOM.translateBtn.classList.toggle('active', state.translateEnabled);
@@ -1550,7 +1224,7 @@
     }
 
     // ============================================================
-    // METADATA FETCHING - Added duration
+    // METADATA FETCHING - Optimized with duration
     // ============================================================
     async function fetchVideoMetadata(videoId) {
         try {
@@ -1565,24 +1239,14 @@
                 duration: data.duration || 0
             };
         } catch (err) {
-            return { 
-                title: `Video ${videoId}`, 
-                author: 'Unknown', 
-                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-                duration: 0
-            };
+            return { title: `Video ${videoId}`, author: 'Unknown', thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`, duration: 0 };
         }
     }
 
     async function fetchPlaylistMetadata(playlist, force = false) {
-        if (!playlist || playlist.videoIds.length === 0) return;
+        if (!playlist || playlist.videoIds.length === 0 || state.isLoadingMetadata) return;
         const cacheKey = playlist.name;
-        
-        if (!force && state.metadataCache[cacheKey]) {
-            const allCached = playlist.videoIds.every(id => state.metadataCache[cacheKey][id]);
-            if (allCached) return;
-        }
-        
+        if (!force && state.metadataCache[cacheKey] && playlist.videoIds.every(id => state.metadataCache[cacheKey][id])) return;
         if (!state.metadataCache[cacheKey]) state.metadataCache[cacheKey] = {};
         state.isLoadingMetadata = true;
         showToast(`Fetching metadata for ${playlist.name}...`);
@@ -1590,7 +1254,6 @@
         const batchSize = 5;
         let fetched = 0;
         const total = playlist.videoIds.length;
-        
         for (let i = 0; i < total; i += batchSize) {
             const batch = playlist.videoIds.slice(i, i + batchSize);
             const promises = batch.map(async (id) => {
@@ -1606,7 +1269,6 @@
             await Promise.all(promises);
             await new Promise(r => setTimeout(r, 300));
         }
-        
         state.isLoadingMetadata = false;
         if (DOM.statusBadge) DOM.statusBadge.textContent = `✅ ${total} videos`;
         showToast(`Loaded metadata for ${total} videos`);
@@ -1619,18 +1281,16 @@
     // ============================================================
     function saveState() {
         try {
-            const stateData = {
+            localStorage.setItem('shafin_tube_state', JSON.stringify({
                 playlistName: state.playingPlaylist?.name || null,
                 videoIndex: state.playingVideoIndex,
                 playbackMode: state.playbackMode,
                 currentMode: state.currentMode,
                 translateEnabled: state.translateEnabled,
                 groupShuffleEnabled: state.groupShuffleEnabled
-            };
-            localStorage.setItem('shafin_tube_state', JSON.stringify(stateData));
+            }));
         } catch (e) {}
     }
-
     function restoreState() {
         try {
             const raw = localStorage.getItem('shafin_tube_state');
@@ -1660,11 +1320,8 @@
             if (DOM.radioModeOption) DOM.radioModeOption.classList.add('active');
             if (DOM.tvModeOption) DOM.tvModeOption.classList.remove('active');
             if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('active');
-            if (state.isPlaying) {
-                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
-            } else {
-                if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
-            }
+            if (state.isPlaying) DOM.radioVisualizer.classList.remove('paused');
+            else DOM.radioVisualizer.classList.add('paused');
             if (state.ytPlayer) {
                 const container = document.getElementById('yt-player-container');
                 if (container) container.style.display = 'none';
@@ -1683,7 +1340,6 @@
         }
         saveState();
     }
-
     function setMode(mode) {
         if (mode === state.currentMode) return;
         state.currentMode = mode;
@@ -1695,27 +1351,15 @@
     // COUNTDOWN TIMER
     // ============================================================
     function setTimerPreset(minutes) {
-        if (state.timerCountdownInterval) {
-            clearInterval(state.timerCountdownInterval);
-            state.timerCountdownInterval = null;
-        }
+        if (state.timerCountdownInterval) { clearInterval(state.timerCountdownInterval); state.timerCountdownInterval = null; }
         if (minutes === 0) {
-            if (DOM.timerDisplay) {
-                DOM.timerDisplay.textContent = '∞';
-                DOM.timerDisplay.classList.remove('active');
-            }
+            if (DOM.timerDisplay) { DOM.timerDisplay.textContent = '∞'; DOM.timerDisplay.classList.remove('active'); }
             if (DOM.timerPresetBtn) DOM.timerPresetBtn.textContent = '⏱️ Inf';
             return;
         }
         state.timerSeconds = minutes * 60;
-        if (DOM.timerDisplay) {
-            DOM.timerDisplay.classList.add('active');
-            DOM.timerDisplay.textContent = `${minutes}:00`;
-        }
-        if (DOM.timerPresetBtn) {
-            DOM.timerPresetBtn.textContent = `⏱️ ${minutes}m`;
-            DOM.timerPresetBtn.classList.add('active');
-        }
+        if (DOM.timerDisplay) { DOM.timerDisplay.classList.add('active'); DOM.timerDisplay.textContent = `${minutes}:00`; }
+        if (DOM.timerPresetBtn) { DOM.timerPresetBtn.textContent = `⏱️ ${minutes}m`; DOM.timerPresetBtn.classList.add('active'); }
         state.timerCountdownInterval = setInterval(() => {
             state.timerSeconds--;
             if (state.timerSeconds <= 0) {
@@ -1747,9 +1391,7 @@
         navigator.clipboard.writeText(state.currentVideoId).then(() => {
             showToast('📋 Video ID copied: ' + state.currentVideoId);
             if (DOM.videoIdTile) DOM.videoIdTile.style.borderColor = 'var(--accent)';
-            setTimeout(() => {
-                if (DOM.videoIdTile) DOM.videoIdTile.style.borderColor = 'var(--border)';
-            }, 1500);
+            setTimeout(() => { if (DOM.videoIdTile) DOM.videoIdTile.style.borderColor = 'var(--border)'; }, 1500);
         }).catch(() => {
             const textArea = document.createElement('textarea');
             textArea.value = state.currentVideoId;
@@ -1767,22 +1409,16 @@
     async function loadFromSheet() {
         if (DOM.statusBadge) DOM.statusBadge.textContent = '⏳ Loading...';
         if (DOM.listContainer) {
-            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">
-                <span class="loading-spinner" style="display:inline-block;margin-right:8px;"></span> Loading groups...
+            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:30px 16px;font-size:0.7rem;color:var(--text2);">
+                <span class="loading-spinner" style="display:inline-block;margin-right:6px;"></span> Loading groups...
             </div>`;
         }
         
         try {
-            console.log('📡 Fetching CSV...');
             const resp = await fetch(CONFIG.SHEET_URL);
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            
             const csv = await resp.text();
-            console.log('📄 CSV loaded, length:', csv.length);
-            
             const rows = csv.split(/\r?\n/).filter(r => r.trim());
-            console.log('📊 Found', rows.length, 'rows');
-            
             if (rows.length < 2) throw new Error('CSV has no data rows');
             
             state.groups = {};
@@ -1793,45 +1429,29 @@
             for (let i = 1; i < rows.length; i++) {
                 const fields = parseCSVLine(rows[i]);
                 if (fields.length < 2) continue;
-                
                 const name = fields[0]?.trim() || '';
                 const idsRaw = fields[1]?.trim() || '';
                 const group = fields[2]?.trim() || 'Uncategorized';
                 const link = fields[3]?.trim() || '';
-                
                 if (!name || !idsRaw) continue;
-                
                 const videoIds = idsRaw.split(',').map(id => id.trim()).filter(id => id.length === 11);
-                if (videoIds.length === 0) {
-                    console.warn(`⚠️ No valid video IDs for: "${name}"`);
-                    continue;
-                }
-                
+                if (videoIds.length === 0) continue;
                 const playlist = { name, videoIds, group, link };
                 state.playlists.push(playlist);
                 validPlaylists++;
-                
                 if (!state.groups[group]) state.groups[group] = [];
                 state.groups[group].push(playlist);
             }
             
             state.groupNames = Object.keys(state.groups).sort();
-            
-            console.log(`✅ Loaded ${validPlaylists} playlists in ${state.groupNames.length} groups`);
-            
-            if (validPlaylists === 0) {
-                throw new Error('No valid playlists found. Check your CSV format.');
-            }
+            if (validPlaylists === 0) throw new Error('No valid playlists found.');
             
             if (DOM.statusBadge) DOM.statusBadge.textContent = `✅ ${validPlaylists} playlists`;
             showToast(`Loaded ${validPlaylists} playlists in ${state.groupNames.length} groups`);
             
             try {
                 const raw = localStorage.getItem('shafin_tube_cache');
-                if (raw) {
-                    const data = JSON.parse(raw);
-                    if (data.metadataCache) state.metadataCache = data.metadataCache;
-                }
+                if (raw) { const data = JSON.parse(raw); if (data.metadataCache) state.metadataCache = data.metadataCache; }
             } catch (e) {}
             
             navigateToGroups();
@@ -1842,9 +1462,7 @@
                 state.currentMode = savedState.currentMode || 'tv';
                 state.translateEnabled = savedState.translateEnabled || false;
                 state.groupShuffleEnabled = savedState.groupShuffleEnabled || false;
-                if (state.groupShuffleEnabled && DOM.groupShuffleBtn) {
-                    DOM.groupShuffleBtn.classList.add('active');
-                }
+                if (state.groupShuffleEnabled && DOM.groupShuffleBtn) DOM.groupShuffleBtn.classList.add('active');
                 if (state.translateEnabled && DOM.translateBtn) DOM.translateBtn.classList.add('active');
                 updateShuffleButton();
                 updateModeUI();
@@ -1855,12 +1473,8 @@
             if (DOM.blankScreen) DOM.blankScreen.classList.add('show');
             if (DOM.playerInfo) DOM.playerInfo.textContent = 'No video playing';
             if (DOM.playerTimer) DOM.playerTimer.textContent = '--:-- / --:--';
-            if (DOM.videoIdTile) {
-                DOM.videoIdTile.classList.remove('show');
-                DOM.videoIdTile.textContent = 'ID: ---';
-            }
+            if (DOM.videoIdTile) { DOM.videoIdTile.classList.remove('show'); DOM.videoIdTile.textContent = 'ID: ---'; }
             state.currentVideoId = null;
-            
             loadYouTubeAPI();
             
         } catch (err) {
@@ -1868,10 +1482,9 @@
             showToast('Error: ' + err.message, 4000, true);
             console.error('❌ Load error:', err);
             if (DOM.listContainer) {
-                DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">
-                    ❌ ${err.message}<br>
-                    <span style="font-size:0.6rem;margin-top:8px;display:block;">Check console (F12) for details</span>
-                    <button onclick="location.reload()" style="margin-top:12px;padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;">Retry</button>
+                DOM.listContainer.innerHTML = `<div style="text-align:center;padding:30px 16px;font-size:0.7rem;color:var(--text2);">
+                    ❌ ${err.message}<br><span style="font-size:0.6rem;margin-top:6px;display:block;">Check console (F12)</span>
+                    <button onclick="location.reload()" style="margin-top:8px;padding:4px 12px;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;">Retry</button>
                 </div>`;
             }
         }
@@ -1903,9 +1516,7 @@
             if (!state.playlists.find(p => p.name === 'Custom Video')) {
                 state.playlists.push(tempPlaylist);
                 if (!state.groups['Custom']) state.groups['Custom'] = [];
-                if (!state.groups['Custom'].find(p => p.name === 'Custom Video')) {
-                    state.groups['Custom'].push(tempPlaylist);
-                }
+                if (!state.groups['Custom'].find(p => p.name === 'Custom Video')) state.groups['Custom'].push(tempPlaylist);
                 if (!state.groupNames.includes('Custom')) state.groupNames.push('Custom');
             }
             state.playingPlaylist = tempPlaylist;
@@ -1923,9 +1534,7 @@
         if (!state.playlists.find(p => p.name === 'Custom Stream')) {
             state.playlists.push(tempPlaylist);
             if (!state.groups['Custom']) state.groups['Custom'] = [];
-            if (!state.groups['Custom'].find(p => p.name === 'Custom Stream')) {
-                state.groups['Custom'].push(tempPlaylist);
-            }
+            if (!state.groups['Custom'].find(p => p.name === 'Custom Stream')) state.groups['Custom'].push(tempPlaylist);
             if (!state.groupNames.includes('Custom')) state.groupNames.push('Custom');
         }
         state.playingPlaylist = tempPlaylist;
@@ -1933,10 +1542,7 @@
         state.viewingPlaylist = tempPlaylist;
         state.viewingVideoIndex = 0;
         navigateToPlaylist(tempPlaylist);
-        if (DOM.iframe) {
-            DOM.iframe.style.display = 'block';
-            DOM.iframe.src = url;
-        }
+        if (DOM.iframe) { DOM.iframe.style.display = 'block'; DOM.iframe.src = url; }
         if (DOM.placeholder) DOM.placeholder.style.display = 'none';
         state.isPlaying = true;
         if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
@@ -1949,19 +1555,14 @@
     // INITIALIZATION
     // ============================================================
     function init() {
-        console.log('🔄 Initializing Shafin Tube...');
-        
+        console.log('🔄 Shafin Tube initializing...');
         loadHistory();
-        console.log('✅ History loaded');
-        
         updateShuffleButton();
         updateModeUI();
         setTimerPreset(0);
-        console.log('✅ UI updated');
-        
-        console.log('📡 Loading from sheet...');
         loadFromSheet();
         
+        // Event listeners
         if (DOM.searchInput) {
             DOM.searchInput.addEventListener('input', () => {
                 if (state.isGroupView) renderGroups();
@@ -1969,7 +1570,6 @@
                 else if (state.isPlaylistView && state.viewingPlaylist) renderVideos(state.viewingPlaylist);
             });
         }
-
         if (DOM.backBtn) DOM.backBtn.addEventListener('click', goBack);
         if (DOM.refreshBtn) {
             DOM.refreshBtn.addEventListener('click', () => {
@@ -1983,7 +1583,6 @@
                 }
             });
         }
-        
         if (DOM.translateBtn) DOM.translateBtn.addEventListener('click', toggleTranslation);
         if (DOM.groupShuffleBtn) DOM.groupShuffleBtn.addEventListener('click', toggleGroupShuffle);
         if (DOM.historyBtn) DOM.historyBtn.addEventListener('click', openHistory);
@@ -1992,22 +1591,18 @@
         if (DOM.randomBtn) DOM.randomBtn.addEventListener('click', randomVideoWithPosition);
         if (DOM.randomVideoBtn) DOM.randomVideoBtn.addEventListener('click', randomVideoFromStart);
         if (DOM.muteBtn) DOM.muteBtn.addEventListener('click', toggleMute);
-
         if (DOM.prevBtn) DOM.prevBtn.addEventListener('click', prevVideo);
         if (DOM.nextBtn) DOM.nextBtn.addEventListener('click', nextVideo);
         if (DOM.playBtn) DOM.playBtn.addEventListener('click', togglePlayPause);
         if (DOM.shuffleBtn) DOM.shuffleBtn.addEventListener('click', cyclePlaybackMode);
-
         if (DOM.tvModeOption) DOM.tvModeOption.addEventListener('click', () => setMode('tv'));
         if (DOM.radioModeOption) DOM.radioModeOption.addEventListener('click', () => setMode('radio'));
-
         if (DOM.timerPresetBtn) {
             DOM.timerPresetBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.toggle('open');
             });
         }
-
         document.querySelectorAll('.preset-option').forEach(opt => {
             opt.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -2015,18 +1610,11 @@
                 if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.remove('open');
             });
         });
-
-        document.addEventListener('click', () => {
-            if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.remove('open');
-        });
-
+        document.addEventListener('click', () => { if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.remove('open'); });
         if (DOM.manualPlayBtn) DOM.manualPlayBtn.addEventListener('click', playManualInput);
         if (DOM.manualInput) {
-            DOM.manualInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') playManualInput();
-            });
+            DOM.manualInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') playManualInput(); });
         }
-
         if (DOM.videoIdTile) DOM.videoIdTile.addEventListener('click', copyVideoId);
 
         document.addEventListener('visibilitychange', () => {
@@ -2048,7 +1636,6 @@
 
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT') return;
-            
             if (e.key === 'ArrowLeft') { e.preventDefault(); seekVideo(-10); }
             else if (e.key === 'ArrowRight') { e.preventDefault(); seekVideo(10); }
             else if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); togglePlayPause(); }
@@ -2069,7 +1656,7 @@
             else if (e.key === 'g' || e.key === 'G') { toggleGroupShuffle(); }
         });
 
-        console.log('🟢 Shafin Tube initialized successfully!');
+        console.log('✅ Shafin Tube initialized!');
         console.log('✎ Edit sheet:', CONFIG.EDIT_URL);
     }
 
