@@ -133,6 +133,23 @@
         
         .sidebar { width: 380px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
         .sidebar-header { padding: 6px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+        .sidebar-header .home-btn {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+        .sidebar-header .home-btn:hover { background: var(--bg4); transform: scale(1.05); }
+        .sidebar-header .home-btn:active { transform: scale(0.94); }
         .sidebar-search { flex: 1; min-width: 100px; padding: 5px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.7rem; outline: none; }
         .sidebar-search:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
         .sidebar-search::placeholder { color: var(--text2); }
@@ -349,6 +366,7 @@
             .radio-visualizer .radio-title { font-size: 0.9rem; }
             .timer-preset-dropdown { top: 30px; min-width: 70px; }
             .timer-preset-dropdown .preset-option { font-size: 0.55rem; padding: 4px 10px; }
+            .sidebar-header .home-btn { width: 24px; height: 24px; font-size: 0.7rem; }
         }
         @media (max-width: 480px) {
             .sidebar { width: 240px; }
@@ -383,6 +401,7 @@
             .radio-visualizer .equalizer-bar { width: 2px; }
             .timer-preset-dropdown { top: 26px; min-width: 60px; }
             .timer-preset-dropdown .preset-option { font-size: 0.5rem; padding: 3px 8px; }
+            .sidebar-header .home-btn { width: 22px; height: 22px; font-size: 0.6rem; }
         }
         @media (max-width: 380px) {
             .sidebar { width: 200px; }
@@ -397,6 +416,7 @@
             .status-badge { font-size: 0.35rem; padding: 1px 3px; }
             .video-id-tile { font-size: 0.35rem; padding: 1px 3px; min-width: 24px; }
             .control-btn.shuffle-btn { font-size: 0.55rem; min-width: 24px; }
+            .sidebar-header .home-btn { width: 20px; height: 20px; font-size: 0.55rem; }
         }
     </style>
 </head>
@@ -444,6 +464,7 @@
     <div class="main-content">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
+                <button class="home-btn" id="homeBtn" title="Go to Groups">🏠</button>
                 <input class="sidebar-search" id="searchInput" type="text" placeholder="🔍 Search...">
                 <button class="back-btn" id="backBtn">‹ Back</button>
             </div>
@@ -528,6 +549,7 @@
         statusBadge: $('statusBadge'),
         themeToggle: $('themeToggle'),
         editBtn: $('editBtn'),
+        homeBtn: $('homeBtn'),
         backBtn: $('backBtn'),
         refreshBtn: $('refreshBtn'),
         translateBtn: $('translateBtn'),
@@ -1975,6 +1997,21 @@
         console.log('📡 Loading from sheet...');
         loadFromSheet();
         
+        // Home button handler
+        if (DOM.homeBtn) {
+            DOM.homeBtn.addEventListener('click', () => {
+                // Close history if open
+                if (DOM.historyPanel && DOM.historyPanel.classList.contains('open')) {
+                    closeHistory();
+                }
+                // Navigate to groups
+                navigateToGroups();
+                showToast('🏠 Returned to Groups');
+                // Clear search input
+                if (DOM.searchInput) DOM.searchInput.value = '';
+            });
+        }
+        
         if (DOM.searchInput) {
             DOM.searchInput.addEventListener('input', () => {
                 if (state.isGroupView) renderGroups();
@@ -2080,10 +2117,15 @@
             else if (e.key === 'f' || e.key === 'F') { randomVideoWithPosition(); }
             else if (e.key === 'c' || e.key === 'C') { copyVideoId(); }
             else if (e.key === 'g' || e.key === 'G') { toggleGroupShuffle(); }
+            else if (e.key === 'Home') { 
+                e.preventDefault(); 
+                if (DOM.homeBtn) DOM.homeBtn.click(); 
+            }
         });
 
         console.log('🟢 Shafin Tube initialized successfully!');
         console.log('✎ Edit sheet:', CONFIG.EDIT_URL);
+        console.log('🏠 Home button added - click to go to Groups');
     }
 
     if (document.readyState === 'loading') {
