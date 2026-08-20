@@ -8,9 +8,6 @@
     <title>Shafin Tube</title>
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23000000'/><rect x='15' y='25' width='70' height='50' rx='8' fill='%231a1a1a' stroke='%232a2a2a' stroke-width='2'/><rect x='35' y='38' width='30' height='24' rx='4' fill='%23ff0000'/><circle cx='50' cy='50' r='6' fill='%23ffffff'/></svg>">
     <style>
-        /* ============================================================
-           BASE STYLES - Clean & Optimized
-           ============================================================ */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
             --bg: #0a0a0a; --bg2: #111111; --bg3: #1a1a1a; --bg4: #222222;
@@ -30,7 +27,6 @@
         body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: background var(--transition), color var(--transition); }
         .app { display: flex; flex-direction: column; height: 100vh; max-width: 100vw; overflow: hidden; }
         
-        /* HEADER */
         .header { background: var(--bg2); padding: 6px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 44px; gap: 6px; flex-wrap: nowrap; }
         .logo-area { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
@@ -50,17 +46,14 @@
         .header-btn.random-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.random-btn:hover { background: var(--bg4); }
         .header-btn.random-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .header-btn.random-btn.active:hover { background: var(--accent2); }
         .header-btn.group-shuffle-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.group-shuffle-btn:hover { background: var(--bg4); }
         .header-btn.group-shuffle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .header-btn.group-shuffle-btn.active:hover { background: var(--accent2); }
         .header-btn.history-btn { font-size: 0.85rem; }
         .header-btn.translate-btn { font-size: 0.75rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.more-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.more-btn:hover { background: var(--bg4); }
-        .header-btn.more-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         
         .status-badge { font-size: 0.5rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
         .timer-display { font-size: 0.6rem; font-weight: 600; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 16px; border: 1px solid var(--border); min-width: 40px; text-align: center; font-variant-numeric: tabular-nums; flex-shrink: 0; }
@@ -82,10 +75,8 @@
         .clock-tile .time { font-size: 0.7rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; }
         .clock-tile .day { font-size: 0.45rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
         
-        /* MAIN CONTENT */
         .main-content { display: flex; flex: 1; overflow: hidden; min-height: 0; }
         
-        /* SIDEBAR */
         .sidebar { width: 380px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
         .sidebar-header { padding: 6px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
         .sidebar-header .home-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); flex-shrink: 0; }
@@ -105,7 +96,7 @@
         .list-item:hover { background: var(--hover); }
         .list-item.active { background: var(--bg3); border-left-color: var(--accent); }
         .list-item .thumb { width: 40px; height: 22px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
-        .list-item .thumb.live-tv { border-radius: 50%; width: 28px; height: 28px; border: 2px solid var(--accent); }
+        .list-item .thumb.live-tv { border-radius: 50%; width: 28px; height: 28px; border: 2px solid var(--accent); object-fit: cover; }
         .list-item .info { flex: 1; min-width: 0; }
         .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
         .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
@@ -116,7 +107,6 @@
         .list-item .translated-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
         .list-item .group-icon { font-size: 1.2rem; flex-shrink: 0; width: 28px; text-align: center; }
         
-        /* PLAYER AREA */
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
         .video-container { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden; }
         .video-container iframe { width: 100%; height: 100%; border: none; transition: opacity 0.3s ease; }
@@ -125,13 +115,11 @@
         .video-container .blank { display: none; width: 100%; height: 100%; background: #000; }
         .video-container .blank.show { display: block; }
         
-        /* PROGRESS BAR */
         .progress-container { width: 100%; height: 4px; background: var(--bg3); cursor: pointer; position: relative; flex-shrink: 0; }
         .progress-container .progress-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.2s ease; }
         .progress-container .progress-buffer { height: 100%; width: 0%; background: var(--bg4); position: absolute; top: 0; left: 0; pointer-events: none; }
         .progress-container:hover { height: 6px; }
         
-        /* RADIO VISUALIZER */
         .radio-visualizer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 20px; z-index: 5; }
         .radio-visualizer.active { display: flex; }
         .radio-visualizer .radio-icon { font-size: 3.5rem; animation: pulse 2s infinite; }
@@ -152,7 +140,6 @@
         .radio-visualizer.paused .equalizer-bar { animation-play-state: paused !important; }
         .radio-visualizer.paused .radio-icon { animation-play-state: paused !important; }
         
-        /* CONTROLS */
         .controls { background: var(--bg2); padding: 6px 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
         .control-btn { width: 32px; height: 32px; border-radius: 50%; font-size: 0.8rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
@@ -177,12 +164,10 @@
         .video-id-tile:hover { background: var(--bg4); border-color: var(--accent); }
         .video-id-tile:active { transform: scale(0.96); }
         
-        /* TOAST */
         .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 5px 14px; border-radius: 25px; font-size: 0.65rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
         @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
         .toast.hidden { display: none; }
         
-        /* HISTORY PANEL */
         .history-panel { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
         .history-panel.open { right: 0; }
         .history-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
@@ -207,7 +192,6 @@
         .history-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2999; display: none; }
         .history-overlay.open { display: block; }
         
-        /* KEYBOARD SHORTCUTS HELP */
         .shortcuts-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 5000; display: none; align-items: center; justify-content: center; }
         .shortcuts-overlay.open { display: flex; }
         .shortcuts-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
@@ -217,16 +201,13 @@
         .shortcuts-panel .shortcut-item .key { background: var(--bg3); padding: 0 8px; border-radius: 4px; font-family: monospace; color: var(--accent); }
         .shortcuts-panel .close-shortcuts { margin-top: 16px; padding: 8px 24px; background: var(--accent); color: #fff; border: none; border-radius: 20px; cursor: pointer; font-size: 0.8rem; width: 100%; }
         
-        /* MORE MENU DROPDOWN */
         .more-dropdown { position: absolute; top: 38px; right: 0; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 4px 0; min-width: 200px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 200; }
         .more-dropdown.open { display: flex; }
         .more-dropdown .more-item { padding: 8px 16px; font-size: 0.7rem; color: var(--text); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: left; display: flex; align-items: center; gap: 10px; }
         .more-dropdown .more-item:hover { background: var(--bg4); }
         .more-dropdown .more-item .more-icon { font-size: 0.9rem; }
-        .more-dropdown .more-item.danger { color: var(--accent); }
         .more-dropdown .more-divider { height: 1px; background: var(--border); margin: 4px 8px; }
         
-        /* ABOUT MODAL */
         .about-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 6000; display: none; align-items: center; justify-content: center; }
         .about-overlay.open { display: flex; }
         .about-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 30px; max-width: 420px; width: 90%; text-align: center; }
@@ -241,9 +222,6 @@
         .about-panel .close-about { margin-top: 16px; padding: 8px 24px; background: var(--accent); color: #fff; border: none; border-radius: 20px; cursor: pointer; font-size: 0.8rem; }
         .about-panel .close-about:hover { background: var(--accent2); }
         
-        /* ============================================================
-           MOBILE RESPONSIVE
-           ============================================================ */
         @media (max-width: 768px) {
             .sidebar { width: 300px; }
             .header { padding: 4px 8px; min-height: 38px; gap: 4px; }
@@ -321,9 +299,6 @@
             .more-dropdown { min-width: 160px; }
         }
         
-        /* ============================================================
-           MOBILE NAV
-           ============================================================ */
         .mobile-bottom-nav {
             display: none; position: fixed; left: 0; right: 0; bottom: 0; height: var(--mobile-nav-h);
             padding: 6px 8px max(6px, env(safe-area-inset-bottom)); box-sizing: border-box;
@@ -391,7 +366,6 @@
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
             <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles">🌐</button>
             
-            <!-- More Button with Dropdown -->
             <div style="position:relative;display:inline-block;">
                 <button class="header-btn more-btn" id="moreBtn" title="More options">⋮</button>
                 <div class="more-dropdown" id="moreDropdown">
@@ -449,7 +423,6 @@
                 </div>
                 <iframe id="playerIframe" src="" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="display:none;"></iframe>
             </div>
-            <!-- Progress Bar -->
             <div class="progress-container" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
                 <div class="progress-buffer" id="progressBuffer"></div>
@@ -472,7 +445,6 @@
     </div>
 </div>
 
-<!-- Keyboard Shortcuts Overlay -->
 <div class="shortcuts-overlay" id="shortcutsOverlay">
     <div class="shortcuts-panel">
         <h2>⌨️ Keyboard Shortcuts</h2>
@@ -498,7 +470,6 @@
     </div>
 </div>
 
-<!-- About Modal -->
 <div class="about-overlay" id="aboutOverlay">
     <div class="about-panel">
         <div class="about-logo">🎬</div>
@@ -516,7 +487,6 @@
     </div>
 </div>
 
-<!-- Mobile Navigation -->
 <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile navigation">
     <button class="mobile-nav-btn active" id="mobileHomeBtn"><span class="nav-icon">🏠</span><span>Home</span></button>
     <button class="mobile-nav-btn" id="mobileSearchBtn"><span class="nav-icon">🔎</span><span>Search</span></button>
@@ -567,15 +537,12 @@
     const $ = (id) => document.getElementById(id);
     
     const DOM = {
-        mainContent: document.querySelector('.main-content'),
         listContainer: $('listContainer'),
         searchInput: $('searchInput'),
         statusBadge: $('statusBadge'),
         themeToggle: $('themeToggle'),
-        editBtn: $('editBtn'),
         homeBtn: $('homeBtn'),
         backBtn: $('backBtn'),
-        refreshBtn: $('refreshBtn'),
         translateBtn: $('translateBtn'),
         historyBtn: $('historyBtn'),
         historyCloseBtn: $('historyCloseBtn'),
@@ -611,7 +578,6 @@
         videoContainer: $('videoContainer'),
         progressContainer: $('progressContainer'),
         progressBar: $('progressBar'),
-        progressBuffer: $('progressBuffer'),
         shortcutsOverlay: $('shortcutsOverlay'),
         closeShortcuts: $('closeShortcuts'),
         aboutOverlay: $('aboutOverlay'),
@@ -661,7 +627,9 @@
         isLoadingMetadata: false,
         isSeeking: false,
         videoEndedManually: false,
-        channelLogoCache: {} // Cache for channel logos
+        channelLogoCache: {},
+        channelLogoPromises: {},
+        isFetchingLogos: false
     };
 
     // ============================================================
@@ -676,7 +644,7 @@
         if (!seconds || isNaN(seconds)) return '--:--';
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
-        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
     }
 
     function parseCSVLine(line) {
@@ -693,13 +661,14 @@
         return fields;
     }
 
-    function showToast(msg, duration = 2500, isError = false) {
+    function showToast(msg, duration, isError) {
+        duration = duration || 2500;
         if (!DOM.toast) return;
         if (state.toastTimeout) clearTimeout(state.toastTimeout);
         DOM.toast.textContent = msg;
         DOM.toast.style.display = 'block';
         DOM.toast.style.borderColor = isError ? 'var(--accent)' : 'var(--border)';
-        state.toastTimeout = setTimeout(() => { 
+        state.toastTimeout = setTimeout(function() { 
             if (DOM.toast) DOM.toast.style.display = 'none'; 
         }, duration);
     }
@@ -710,7 +679,7 @@
         let hours = now.getHours();
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12 || 12;
-        DOM.timeDisplay.textContent = `${hours}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} ${ampm}`;
+        DOM.timeDisplay.textContent = hours + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0') + ' ' + ampm;
         DOM.dayDisplay.textContent = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
     }
     setInterval(updateClock, 1000);
@@ -744,7 +713,7 @@
         DOM.moreDropdown.classList.remove('open');
     }
 
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', function(e) {
         if (DOM.moreDropdown && !DOM.moreDropdown.contains(e.target) && e.target !== DOM.moreBtn) {
             closeMoreDropdown();
         }
@@ -768,18 +737,16 @@
     function updateShuffleButton() {
         if (!DOM.shuffleBtn) return;
         const icons = ['➡️', '🔀', '🔁'];
-        const names = ['Sequential', 'Shuffle', 'Loop'];
         DOM.shuffleBtn.textContent = icons[state.playbackMode];
         DOM.shuffleBtn.className = 'control-btn shuffle-btn';
         const classes = ['active-sequential', 'active-shuffle', 'active-loop'];
         DOM.shuffleBtn.classList.add(classes[state.playbackMode]);
-        DOM.shuffleBtn.title = names[state.playbackMode] + ' Mode';
     }
 
     function cyclePlaybackMode() {
         state.playbackMode = (state.playbackMode + 1) % 3;
         updateShuffleButton();
-        showToast(`🔄 ${['Sequential','Shuffle','Loop'][state.playbackMode]} Mode`);
+        showToast('🔄 ' + ['Sequential','Shuffle','Loop'][state.playbackMode] + ' Mode');
         saveState();
     }
 
@@ -795,8 +762,9 @@
         saveState();
     }
 
-    function getRandomPlaylistFromGroup(groupName, excludePlaylist = null) {
-        const playlistsInGroup = state.playlists.filter(p => p.group === groupName);
+    function getRandomPlaylistFromGroup(groupName, excludePlaylist) {
+        excludePlaylist = excludePlaylist || null;
+        const playlistsInGroup = state.playlists.filter(function(p) { return p.group === groupName; });
         if (playlistsInGroup.length === 0) return null;
         if (playlistsInGroup.length === 1) return playlistsInGroup[0];
         
@@ -805,54 +773,27 @@
         do {
             randomPlaylist = playlistsInGroup[Math.floor(Math.random() * playlistsInGroup.length)];
             attempts++;
-            if (playlistsInGroup.length === 1) break;
-        } while (randomPlaylist === excludePlaylist && attempts < 20);
+        } while (randomPlaylist === excludePlaylist && attempts < 20 && playlistsInGroup.length > 1);
         return randomPlaylist;
     }
 
     // ============================================================
-    // CHANNEL LOGO FETCHER for Live TV
+    // CHANNEL LOGO - For Live TV (Improved)
     // ============================================================
-    async function fetchChannelLogo(videoId) {
-        if (state.channelLogoCache[videoId]) return state.channelLogoCache[videoId];
-        
-        try {
-            // First try to get channel info from oembed
-            const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
-            const resp = await fetch(url);
-            if (!resp.ok) throw new Error('Failed to fetch');
-            const data = await resp.json();
-            
-            // Try to get channel ID from author_url
-            if (data.author_url) {
-                const channelId = data.author_url.split('/').pop();
-                if (channelId) {
-                    // Use YouTube's channel avatar API
-                    const avatarUrl = `https://yt3.ggpht.com/ytc/...`; // This would need a proper API
-                    // Fallback: use a colored logo with channel name initial
-                    const initial = data.author_name ? data.author_name.charAt(0).toUpperCase() : '?';
-                    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#FF8A5C', '#A29BFE'];
-                    const colorIndex = channelId.length % colors.length;
-                    const color = colors[colorIndex];
-                    // Create a data URI for a colored circle with initial
-                    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-                        <circle cx="20" cy="20" r="18" fill="${color}"/>
-                        <text x="20" y="26" font-family="Arial" font-size="18" font-weight="bold" fill="white" text-anchor="middle">${initial}</text>
-                    </svg>`;
-                    const encoded = btoa(svg);
-                    const logoUrl = `data:image/svg+xml;base64,${encoded}`;
-                    state.channelLogoCache[videoId] = logoUrl;
-                    return logoUrl;
-                }
-            }
-        } catch (e) {
-            console.log('Could not fetch channel logo for:', videoId);
-        }
-        
-        // Fallback to generic channel icon
-        state.channelLogoCache[videoId] = null;
-        return null;
+    function generateChannelLogo(channelName, videoId) {
+        const initial = channelName ? channelName.charAt(0).toUpperCase() : '?';
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#FF8A5C', '#A29BFE', '#FD79A8', '#00B894', '#FDCB6E', '#E17055'];
+        const colorIndex = (videoId || initial).length % colors.length;
+        const color = colors[colorIndex];
+        const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">' +
+            '<circle cx="20" cy="20" r="18" fill="' + color + '"/>' +
+            '<text x="20" y="26" font-family="Arial" font-size="18" font-weight="bold" fill="white" text-anchor="middle">' + initial + '</text>' +
+            '</svg>';
+        return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
     }
+
+    // Keep one promise per video ID. Multiple render/metadata calls can ask
+    // for the same logo, but only one network request will be made.
 
     // ============================================================
     // VIDEO END HANDLER
@@ -883,9 +824,11 @@
             nextIdx = currentIdx;
         } else if (state.playbackMode === 1) {
             let idx;
+            let attempts = 0;
             do {
                 idx = Math.floor(Math.random() * nextPlaylist.videoIds.length);
-            } while (idx === currentIdx && nextPlaylist.videoIds.length > 1);
+                attempts++;
+            } while (idx === currentIdx && nextPlaylist.videoIds.length > 1 && attempts < 20);
             nextIdx = idx;
         } else {
             if (nextPlaylist !== playlist) {
@@ -899,7 +842,7 @@
         state.viewingPlaylist = nextPlaylist;
         state.viewingVideoIndex = nextIdx;
         playVideo(nextPlaylist, nextIdx);
-        setTimeout(() => { state.isAutoPlaying = false; }, 500);
+        setTimeout(function() { state.isAutoPlaying = false; }, 500);
     }
 
     // ============================================================
@@ -922,39 +865,39 @@
         
         let isDragging = false;
         
-        DOM.progressContainer.addEventListener('mousedown', (e) => {
+        DOM.progressContainer.addEventListener('mousedown', function(e) {
             if (!state.ytPlayer || typeof state.ytPlayer.seekTo !== 'function') return;
             isDragging = true;
             state.isSeeking = true;
             seekFromEvent(e);
         });
         
-        document.addEventListener('mousemove', (e) => {
+        document.addEventListener('mousemove', function(e) {
             if (!isDragging) return;
             seekFromEvent(e);
         });
         
-        document.addEventListener('mouseup', () => {
+        document.addEventListener('mouseup', function() {
             if (isDragging) {
                 isDragging = false;
-                setTimeout(() => { state.isSeeking = false; }, 300);
+                setTimeout(function() { state.isSeeking = false; }, 300);
             }
         });
         
-        DOM.progressContainer.addEventListener('touchstart', (e) => {
+        DOM.progressContainer.addEventListener('touchstart', function(e) {
             if (!state.ytPlayer || typeof state.ytPlayer.seekTo !== 'function') return;
             state.isSeeking = true;
             seekFromTouch(e);
         });
         
-        DOM.progressContainer.addEventListener('touchmove', (e) => {
+        DOM.progressContainer.addEventListener('touchmove', function(e) {
             e.preventDefault();
             if (!state.ytPlayer) return;
             seekFromTouch(e);
         });
         
-        DOM.progressContainer.addEventListener('touchend', () => {
-            setTimeout(() => { state.isSeeking = false; }, 300);
+        DOM.progressContainer.addEventListener('touchend', function() {
+            setTimeout(function() { state.isSeeking = false; }, 300);
         });
     }
 
@@ -1009,9 +952,12 @@
         }
     }
 
-    function createYouTubePlayer(videoId, autoplay = true, startPosition = 0) {
+    function createYouTubePlayer(videoId, autoplay, startPosition) {
+        autoplay = (autoplay !== undefined) ? autoplay : true;
+        startPosition = startPosition || 0;
+        
         if (typeof YT === 'undefined' || !YT.Player) {
-            setTimeout(() => createYouTubePlayer(videoId, autoplay, startPosition), 500);
+            setTimeout(function() { createYouTubePlayer(videoId, autoplay, startPosition); }, 500);
             return;
         }
         if (state.ytPlayer && typeof state.ytPlayer.destroy === 'function') {
@@ -1050,14 +996,14 @@
         state.ytPlayer = new YT.Player('yt-player-container', {
             height: '100%', width: '100%', videoId: videoId, playerVars: playerVars,
             events: {
-                onReady: (e) => {
+                onReady: function(e) {
                     state.isPlaying = true;
                     if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
                     if (autoplay) e.target.playVideo();
                     startPlayerTimer();
                     if (state.isMuted && typeof e.target.setVolume === 'function') e.target.setVolume(0);
                 },
-                onStateChange: (e) => {
+                onStateChange: function(e) {
                     const s = e.data;
                     if (s === YT.PlayerState.PLAYING) {
                         state.isPlaying = true;
@@ -1077,14 +1023,14 @@
                         if (!state.videoEndedManually && !state.autoPlayPending && !state.isStopped) {
                             state.videoEndDetected = true;
                             state.autoPlayPending = true;
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 if (state.playingPlaylist && !state.isStopped) handleVideoEnd();
                                 state.autoPlayPending = false;
                             }, 500);
                         }
                     }
                 },
-                onError: () => showToast('Error playing video', 3000, true)
+                onError: function() { showToast('Error playing video', 3000, true); }
             }
         });
     }
@@ -1101,7 +1047,7 @@
         }
         if (DOM.iframe) {
             DOM.iframe.style.display = (state.currentMode === 'tv') ? 'block' : 'none';
-            DOM.iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1&playsinline=1`;
+            DOM.iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0&enablejsapi=1&playsinline=1';
         }
         state.isPlaying = true;
         if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
@@ -1170,7 +1116,7 @@
             renderGroupPlaylists(groupName);
         } else if (last.startsWith('playlist:')) {
             const playlistName = last.replace('playlist:', '');
-            const playlist = state.playlists.find(p => p.name === playlistName);
+            const playlist = state.playlists.find(function(p) { return p.name === playlistName; });
             if (playlist) {
                 state.isGroupView = false;
                 state.isPlaylistView = true;
@@ -1206,33 +1152,32 @@
         if (!DOM.listContainer) return;
         const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         let filtered = state.groupNames;
-        if (search) filtered = state.groupNames.filter(g => g.toLowerCase().includes(search));
+        if (search) filtered = state.groupNames.filter(function(g) { return g.toLowerCase().includes(search); });
 
         if (filtered.length === 0) {
-            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">No groups found</div>`;
+            DOM.listContainer.innerHTML = '<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">No groups found</div>';
             return;
         }
 
         let html = '';
-        filtered.forEach(groupName => {
+        filtered.forEach(function(groupName) {
             const pls = state.groups[groupName] || [];
-            const totalVideos = pls.reduce((sum, p) => sum + p.videoIds.length, 0);
+            let totalVideos = 0;
+            pls.forEach(function(p) { totalVideos += p.videoIds.length; });
             const icon = getGroupIcon(groupName);
-            html += `
-                <div class="list-item" data-group="${escapeHtml(groupName)}" data-type="group">
-                    <span class="group-icon">${icon}</span>
-                    <div class="info">
-                        <div class="title">${escapeHtml(groupName)}</div>
-                        <div class="sub">${pls.length} playlists • ${totalVideos} videos</div>
-                    </div>
-                    <span class="badge">${pls.length}</span>
-                </div>
-            `;
+            html += '<div class="list-item" data-group="' + escapeHtml(groupName) + '" data-type="group">' +
+                '<span class="group-icon">' + icon + '</span>' +
+                '<div class="info">' +
+                '<div class="title">' + escapeHtml(groupName) + '</div>' +
+                '<div class="sub">' + pls.length + ' playlists • ' + totalVideos + ' videos</div>' +
+                '</div>' +
+                '<span class="badge">' + pls.length + '</span>' +
+                '</div>';
         });
         DOM.listContainer.innerHTML = html;
 
-        DOM.listContainer.querySelectorAll('.list-item[data-type="group"]').forEach(el => {
-            el.addEventListener('click', () => navigateToGroup(el.dataset.group));
+        DOM.listContainer.querySelectorAll('.list-item[data-type="group"]').forEach(function(el) {
+            el.addEventListener('click', function() { navigateToGroup(el.dataset.group); });
         });
     }
 
@@ -1241,37 +1186,35 @@
         const playlistsInGroup = state.groups[groupName] || [];
         const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         let filtered = playlistsInGroup;
-        if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
+        if (search) filtered = filtered.filter(function(p) { return p.name.toLowerCase().includes(search); });
 
         if (filtered.length === 0) {
-            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">No playlists in this group</div>`;
+            DOM.listContainer.innerHTML = '<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">No playlists in this group</div>';
             return;
         }
 
-        let html = `<div style="padding:4px 8px;font-size:0.7rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:4px;">
-            ${getGroupIcon(groupName)} ${escapeHtml(groupName)} (${filtered.length} playlists)
-        </div>`;
+        let html = '<div style="padding:4px 8px;font-size:0.7rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:4px;">' +
+            getGroupIcon(groupName) + ' ' + escapeHtml(groupName) + ' (' + filtered.length + ' playlists)' +
+            '</div>';
 
-        filtered.forEach((pl, idx) => {
+        filtered.forEach(function(pl, idx) {
             const isActive = state.viewingPlaylist === pl && state.isPlaylistView;
             const cacheKey = pl.name;
             const cachedCount = state.metadataCache[cacheKey] ? Object.keys(state.metadataCache[cacheKey]).length : 0;
             const hasMetadata = cachedCount > 0 && cachedCount >= pl.videoIds.length;
-            html += `
-                <div class="list-item ${isActive ? 'active' : ''}" data-index="${idx}" data-type="playlist">
-                    <span class="icon">${hasMetadata ? '📋' : '📋'}</span>
-                    <div class="info">
-                        <div class="title">${escapeHtml(pl.name)}</div>
-                        <div class="sub">${pl.videoIds.length} videos ${hasMetadata ? '✅' : (cachedCount > 0 ? `(${cachedCount}/${pl.videoIds.length})` : '')}</div>
-                    </div>
-                    <span class="video-count">${pl.videoIds.length}</span>
-                </div>
-            `;
+            html += '<div class="list-item ' + (isActive ? 'active' : '') + '" data-index="' + idx + '" data-type="playlist">' +
+                '<span class="icon">' + (hasMetadata ? '📋' : '📋') + '</span>' +
+                '<div class="info">' +
+                '<div class="title">' + escapeHtml(pl.name) + '</div>' +
+                '<div class="sub">' + pl.videoIds.length + ' videos ' + (hasMetadata ? '✅' : (cachedCount > 0 ? '(' + cachedCount + '/' + pl.videoIds.length + ')' : '')) + '</div>' +
+                '</div>' +
+                '<span class="video-count">' + pl.videoIds.length + '</span>' +
+                '</div>';
         });
         DOM.listContainer.innerHTML = html;
 
-        DOM.listContainer.querySelectorAll('.list-item[data-type="playlist"]').forEach(el => {
-            el.addEventListener('click', () => {
+        DOM.listContainer.querySelectorAll('.list-item[data-type="playlist"]').forEach(function(el) {
+            el.addEventListener('click', function() {
                 const idx = parseInt(el.dataset.index);
                 const pl = filtered[idx];
                 if (pl) {
@@ -1292,14 +1235,14 @@
         const cache = state.metadataCache[cacheKey] || {};
         const isLiveTV = playlist.group && isLiveTVGroup(playlist.group);
 
-        let html = `<div style="padding:4px 8px;font-size:0.7rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;">
-            <span>▶ ${escapeHtml(playlist.name)} (${playlist.videoIds.length})</span>
-            <span style="font-size:0.6rem;">${Object.keys(cache).length}/${playlist.videoIds.length} loaded</span>
-        </div>`;
+        let html = '<div style="padding:4px 8px;font-size:0.7rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;">' +
+            '<span>▶ ' + escapeHtml(playlist.name) + ' (' + playlist.videoIds.length + ')</span>' +
+            '<span style="font-size:0.6rem;">' + Object.keys(cache).length + '/' + playlist.videoIds.length + ' loaded</span>' +
+            '</div>';
 
-        let videos = playlist.videoIds.map((id, idx) => ({ id, index: idx }));
+        let videos = playlist.videoIds.map(function(id, idx) { return { id: id, index: idx }; });
         if (search) {
-            videos = videos.filter(v => {
+            videos = videos.filter(function(v) {
                 const meta = cache[v.id];
                 if (meta) {
                     const title = state.translateEnabled && meta.translatedTitle ? meta.translatedTitle : meta.title;
@@ -1310,26 +1253,33 @@
         }
 
         if (videos.length === 0 && search) {
-            html += `<div style="text-align:center;padding:20px;font-size:0.7rem;color:var(--text2);">No matching videos</div>`;
+            html += '<div style="text-align:center;padding:20px;font-size:0.7rem;color:var(--text2);">No matching videos</div>';
             DOM.listContainer.innerHTML = html;
             return;
         }
 
-        // For Live TV, we need to fetch channel logos for each video
-        const logoPromises = isLiveTV ? videos.map(v => fetchChannelLogo(v.id)) : [];
+        // Live TV logos are generated synchronously from the playlist/channel name.
+        // No network request is made here, so rendering cannot trigger a render loop.
+        if (isLiveTV) {
+            videos.forEach(function(v) {
+                if (!state.channelLogoCache[v.id]) {
+                    const channelName = (cache[v.id] && cache[v.id].author && cache[v.id].author !== 'Unknown') ? cache[v.id].author : playlist.name;
+                    state.channelLogoCache[v.id] = generateChannelLogo(channelName, v.id);
+                }
+            });
+        }
 
-        videos.forEach((v) => {
+        videos.forEach(function(v) {
             const isActive = state.viewingPlaylist === playlist && state.viewingVideoIndex === v.index;
             const meta = cache[v.id];
-            let title = meta ? meta.title : `Video ${v.index + 1}`;
+            let title = meta ? meta.title : 'Video ' + (v.index + 1);
             let translated = false;
             if (state.translateEnabled && meta && meta.translatedTitle) {
                 title = meta.translatedTitle;
                 translated = true;
             }
             
-            // For Live TV: use channel logo as thumbnail
-            let thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+            let thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg';
             let thumbClass = '';
             if (isLiveTV) {
                 const logoUrl = state.channelLogoCache[v.id];
@@ -1342,28 +1292,26 @@
             const author = meta ? meta.author : '';
             const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
 
-            html += `
-                <div class="list-item ${isActive ? 'active' : ''}" data-video-index="${v.index}" data-type="video">
-                    <img class="thumb ${thumbClass}" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
-                    <div class="info">
-                        <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)} ${translatedBadge}</div>
-                        <div class="sub">${escapeHtml(author)}</div>
-                    </div>
-                    <span class="badge">${v.index + 1}</span>
-                </div>
-            `;
+            html += '<div class="list-item ' + (isActive ? 'active' : '') + '" data-video-index="' + v.index + '" data-type="video">' +
+                '<img class="thumb ' + thumbClass + '" src="' + thumb + '" alt="" loading="lazy" onerror="this.src=\'https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg\'">' +
+                '<div class="info">' +
+                '<div class="title" title="' + escapeHtml(title) + '">' + escapeHtml(title) + ' ' + translatedBadge + '</div>' +
+                '<div class="sub">' + escapeHtml(author) + '</div>' +
+                '</div>' +
+                '<span class="badge">' + (v.index + 1) + '</span>' +
+                '</div>';
         });
 
         if (state.isLoadingMetadata && Object.keys(cache).length < playlist.videoIds.length) {
-            html += `<div style="text-align:center;padding:12px;font-size:0.65rem;color:var(--text2);">
-                <span class="loading-spinner" style="display:inline-block;margin-right:8px;"></span> Loading metadata...
-            </div>`;
+            html += '<div style="text-align:center;padding:12px;font-size:0.65rem;color:var(--text2);">' +
+                '<span class="loading-spinner" style="display:inline-block;margin-right:8px;"></span> Loading metadata...' +
+                '</div>';
         }
 
         DOM.listContainer.innerHTML = html;
 
-        DOM.listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(el => {
-            el.addEventListener('click', () => {
+        DOM.listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(function(el) {
+            el.addEventListener('click', function() {
                 const idx = parseInt(el.dataset.videoIndex);
                 state.videoEndedManually = false;
                 state.playingPlaylist = playlist;
@@ -1389,18 +1337,19 @@
     function saveHistory() {
         try {
             const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-            state.history = state.history.filter(h => h.timestamp > sevenDaysAgo);
+            state.history = state.history.filter(function(h) { return h.timestamp > sevenDaysAgo; });
             localStorage.setItem('shafin_tube_history', JSON.stringify(state.history));
         } catch (e) {}
     }
 
-    function addToHistory(playlistName, videoId, title, thumbnail, position = 0) {
-        state.history = state.history.filter(h => !(h.videoId === videoId && h.playlistName === playlistName));
+    function addToHistory(playlistName, videoId, title, thumbnail, position) {
+        position = position || 0;
+        state.history = state.history.filter(function(h) { return !(h.videoId === videoId && h.playlistName === playlistName); });
         const entry = { 
-            playlistName, 
-            videoId, 
-            title, 
-            thumbnail, 
+            playlistName: playlistName, 
+            videoId: videoId, 
+            title: title, 
+            thumbnail: thumbnail, 
             timestamp: Date.now(), 
             position: Math.round(position) 
         };
@@ -1416,42 +1365,40 @@
             return;
         }
         const groups = {};
-        state.history.forEach(h => {
+        state.history.forEach(function(h) {
             const dateKey = new Date(h.timestamp).toDateString();
             if (!groups[dateKey]) groups[dateKey] = [];
             groups[dateKey].push(h);
         });
         let html = '';
-        Object.keys(groups).sort((a, b) => new Date(b) - new Date(a)).forEach(dateKey => {
+        Object.keys(groups).sort(function(a, b) { return new Date(b) - new Date(a); }).forEach(function(dateKey) {
             const items = groups[dateKey];
             const dateObj = new Date(dateKey);
-            html += `<div class="history-date-group"><div class="date-label">${dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>`;
-            items.forEach((h) => {
-                const posStr = h.position && h.position > 0 ? `${formatTime(h.position)}` : '';
-                html += `
-                    <div class="history-item" data-vid="${h.videoId}" data-playlist="${escapeHtml(h.playlistName)}" data-position="${h.position || 0}">
-                        <img class="thumb" src="${h.thumbnail}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${h.videoId}/mqdefault.jpg'">
-                        <div class="info">
-                            <div class="title">${escapeHtml(h.title)}</div>
-                            <div class="sub">${escapeHtml(h.playlistName)}</div>
-                        </div>
-                        ${posStr ? `<span class="position-badge">⏱ ${posStr}</span>` : ''}
-                        <span class="count-badge">${new Date(h.timestamp).toLocaleTimeString()}</span>
-                        <button class="delete-btn" data-vid="${h.videoId}" data-playlist="${escapeHtml(h.playlistName)}" title="Remove from history">✕</button>
-                    </div>
-                `;
+            html += '<div class="history-date-group"><div class="date-label">' + dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) + '</div>';
+            items.forEach(function(h) {
+                const posStr = h.position && h.position > 0 ? formatTime(h.position) : '';
+                html += '<div class="history-item" data-vid="' + h.videoId + '" data-playlist="' + escapeHtml(h.playlistName) + '" data-position="' + (h.position || 0) + '">' +
+                    '<img class="thumb" src="' + h.thumbnail + '" alt="" loading="lazy" onerror="this.src=\'https://img.youtube.com/vi/' + h.videoId + '/mqdefault.jpg\'">' +
+                    '<div class="info">' +
+                    '<div class="title">' + escapeHtml(h.title) + '</div>' +
+                    '<div class="sub">' + escapeHtml(h.playlistName) + '</div>' +
+                    '</div>' +
+                    (posStr ? '<span class="position-badge">⏱ ' + posStr + '</span>' : '') +
+                    '<span class="count-badge">' + new Date(h.timestamp).toLocaleTimeString() + '</span>' +
+                    '<button class="delete-btn" data-vid="' + h.videoId + '" data-playlist="' + escapeHtml(h.playlistName) + '" title="Remove from history">✕</button>' +
+                    '</div>';
             });
-            html += `</div>`;
+            html += '</div>';
         });
         DOM.historyList.innerHTML = html;
 
-        DOM.historyList.querySelectorAll('.history-item').forEach(el => {
-            el.addEventListener('click', (e) => {
+        DOM.historyList.querySelectorAll('.history-item').forEach(function(el) {
+            el.addEventListener('click', function(e) {
                 if (e.target.classList.contains('delete-btn')) return;
                 const videoId = el.dataset.vid;
                 const playlistName = el.dataset.playlist;
                 const position = parseInt(el.dataset.position) || 0;
-                const playlist = state.playlists.find(p => p.name === playlistName);
+                const playlist = state.playlists.find(function(p) { return p.name === playlistName; });
                 if (playlist) {
                     const vidIdx = playlist.videoIds.indexOf(videoId);
                     if (vidIdx >= 0) {
@@ -1468,8 +1415,8 @@
             });
         });
 
-        DOM.historyList.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+        DOM.historyList.querySelectorAll('.delete-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const videoId = btn.dataset.vid;
                 const playlistName = btn.dataset.playlist;
@@ -1480,7 +1427,7 @@
 
     function deleteHistoryItem(videoId, playlistName, event) {
         event.stopPropagation();
-        state.history = state.history.filter(h => !(h.videoId === videoId && h.playlistName === playlistName));
+        state.history = state.history.filter(function(h) { return !(h.videoId === videoId && h.playlistName === playlistName); });
         saveHistory();
         renderHistory();
         showToast('🗑️ History item removed');
@@ -1498,7 +1445,7 @@
     }
 
     function updateHistoryPosition(playlistName, videoId, position) {
-        const entry = state.history.find(h => h.videoId === videoId && h.playlistName === playlistName);
+        const entry = state.history.find(function(h) { return h.videoId === videoId && h.playlistName === playlistName; });
         if (entry) {
             entry.position = Math.round(position);
             saveHistory();
@@ -1513,7 +1460,7 @@
         const cacheKey = text.substring(0, 100);
         if (state.translateCache[cacheKey]) return state.translateCache[cacheKey];
         try {
-            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(text)}`;
+            const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=' + encodeURIComponent(text);
             const response = await fetch(url);
             if (!response.ok) throw new Error('Translation failed');
             const data = await response.json();
@@ -1536,73 +1483,97 @@
     }
 
     // ============================================================
-    // METADATA FETCHING
+    // METADATA FETCHING - FIXED infinite loop
     // ============================================================
     async function fetchVideoMetadata(videoId) {
         try {
-            const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+            const url = 'https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + videoId + '&format=json';
             const resp = await fetch(url);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
             const data = await resp.json();
             return { 
-                title: data.title || `Video ${videoId}`, 
+                title: data.title || 'Video ' + videoId, 
                 author: data.author_name || 'Unknown', 
-                thumbnail: data.thumbnail_url || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+                thumbnail: data.thumbnail_url || 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg'
             };
         } catch (err) {
             return { 
-                title: `Video ${videoId}`, 
+                title: 'Video ' + videoId, 
                 author: 'Unknown', 
-                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+                thumbnail: 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg'
             };
         }
     }
 
-    async function fetchPlaylistMetadata(playlist, force = false) {
-        if (!playlist || playlist.videoIds.length === 0 || state.isLoadingMetadata) return;
+    async function fetchPlaylistMetadata(playlist, force) {
+        force = force || false;
+        if (!playlist || !playlist.videoIds || playlist.videoIds.length === 0) return;
+        if (state.isLoadingMetadata) return;
+
         const cacheKey = playlist.name;
-        if (!force && state.metadataCache[cacheKey] && playlist.videoIds.every(id => state.metadataCache[cacheKey][id])) return;
         if (!state.metadataCache[cacheKey]) state.metadataCache[cacheKey] = {};
+        const cache = state.metadataCache[cacheKey];
+
         state.isLoadingMetadata = true;
-        showToast(`Fetching metadata for ${playlist.name}...`);
-        
-        const batchSize = 5;
-        let fetched = 0;
+        showToast('Fetching metadata for ' + playlist.name + '...');
+
+        let index = 0;
         const total = playlist.videoIds.length;
-        const isLiveTV = playlist.group && isLiveTVGroup(playlist.group);
-        
-        for (let i = 0; i < total; i += batchSize) {
-            const batch = playlist.videoIds.slice(i, i + batchSize);
-            const promises = batch.map(async (id) => {
-                if (state.metadataCache[cacheKey][id]) return;
-                const meta = await fetchVideoMetadata(id);
-                state.metadataCache[cacheKey][id] = meta;
-                
-                // If Live TV, fetch channel logo
-                if (isLiveTV) {
-                    await fetchChannelLogo(id);
+
+        async function processNextMetadata() {
+            // Find the next uncached ID without using a long-running loop.
+            while (index < total && !force && cache[playlist.videoIds[index]]) {
+                index++;
+            }
+
+            if (index >= total) {
+                state.isLoadingMetadata = false;
+                if (DOM.statusBadge) DOM.statusBadge.textContent = '✅ ' + total + ' videos';
+                try {
+                    localStorage.setItem('shafin_tube_cache', JSON.stringify({
+                        metadataCache: state.metadataCache,
+                        timestamp: Date.now()
+                    }));
+                } catch (e) {}
+                // Metadata is now available, so rebuild Live TV logos using the
+                // actual YouTube channel/author name instead of the playlist name.
+                if (playlist.group && isLiveTVGroup(playlist.group)) {
+                    playlist.videoIds.forEach(function(videoId) {
+                        const meta = cache[videoId];
+                        const channelName = meta && meta.author && meta.author !== 'Unknown' ? meta.author : playlist.name;
+                        state.channelLogoCache[videoId] = generateChannelLogo(channelName, videoId);
+                    });
                 }
-                
-                fetched++;
-                if (fetched % 5 === 0 || fetched === total) {
-                    if (DOM.statusBadge) DOM.statusBadge.textContent = `📥 ${fetched}/${total}`;
-                }
-                await new Promise(r => setTimeout(r, 200));
-            });
-            await Promise.all(promises);
-            await new Promise(r => setTimeout(r, 300));
+                if (state.isPlaylistView && state.viewingPlaylist === playlist) renderVideos(playlist);
+                return;
+            }
+
+            const id = playlist.videoIds[index++];
+            try {
+                cache[id] = await fetchVideoMetadata(id);
+            } catch (e) {
+                console.warn('Failed to fetch metadata for:', id, e);
+                cache[id] = {
+                    title: 'Video ' + id,
+                    author: 'Unknown',
+                    thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg'
+                };
+            }
+
+            if (DOM.statusBadge) DOM.statusBadge.textContent = '📥 ' + index + '/' + total;
+            setTimeout(processNextMetadata, 50);
         }
-        state.isLoadingMetadata = false;
-        if (DOM.statusBadge) DOM.statusBadge.textContent = `✅ ${total} videos`;
-        showToast(`Loaded metadata for ${total} videos`);
-        localStorage.setItem('shafin_tube_cache', JSON.stringify({ metadataCache: state.metadataCache, timestamp: Date.now() }));
-        if (state.isPlaylistView && state.viewingPlaylist === playlist) renderVideos(playlist);
+
+        processNextMetadata();
     }
 
     // ============================================================
     // CORE PLAYER FUNCTIONS
     // ============================================================
-    function playVideo(playlist, videoIndex, restore = false, startPosition = 0) {
+    function playVideo(playlist, videoIndex, restore, startPosition) {
+        restore = restore || false;
+        startPosition = startPosition || 0;
+        
         if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) {
             console.log('playVideo: Invalid playlist or index');
             return;
@@ -1625,9 +1596,9 @@
         const cacheKey = playlist.name;
         const cache = state.metadataCache[cacheKey] || {};
         const meta = cache[videoId];
-        let title = meta ? meta.title : `Video ${videoIndex + 1}`;
+        let title = meta ? meta.title : 'Video ' + (videoIndex + 1);
         if (state.translateEnabled && meta && meta.translatedTitle) title = meta.translatedTitle;
-        let thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${videoId}/mqdefault.jpg';
+        let thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg';
         
         // For Live TV, use channel logo if available
         if (playlist.group && isLiveTVGroup(playlist.group)) {
@@ -1636,10 +1607,10 @@
         }
 
         if (!startPosition) {
-            const historyEntry = state.history.find(h => h.videoId === videoId && h.playlistName === playlist.name);
+            const historyEntry = state.history.find(function(h) { return h.videoId === videoId && h.playlistName === playlist.name; });
             if (historyEntry && historyEntry.position > 0) {
                 startPosition = historyEntry.position;
-                console.log(`Resuming video at position: ${formatTime(startPosition)}`);
+                console.log('Resuming video at position: ' + formatTime(startPosition));
             }
         }
 
@@ -1652,8 +1623,8 @@
             fallbackToIframe(videoId);
         }
 
-        if (DOM.playerInfo) DOM.playerInfo.textContent = `${playlist.name} • ${title}`;
-        if (!restore) showToast(`▶ ${title}`);
+        if (DOM.playerInfo) DOM.playerInfo.textContent = playlist.name + ' • ' + title;
+        if (!restore) showToast('▶ ' + title);
         saveState();
         
         if (state.isPlaylistView && state.viewingPlaylist) {
@@ -1668,7 +1639,7 @@
                 if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
             }
             if (DOM.radioTitle) DOM.radioTitle.textContent = title;
-            if (DOM.radioSub) DOM.radioSub.textContent = `${playlist.name} • Radio Mode`;
+            if (DOM.radioSub) DOM.radioSub.textContent = playlist.name + ' • Radio Mode';
         } else {
             if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('active');
         }
@@ -1693,8 +1664,11 @@
         }
         let idx;
         if (state.playbackMode === 1) {
-            do { idx = Math.floor(Math.random() * playlist.videoIds.length); } 
-            while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
+            let attempts = 0;
+            do {
+                idx = Math.floor(Math.random() * playlist.videoIds.length);
+                attempts++;
+            } while (idx === state.playingVideoIndex && playlist.videoIds.length > 1 && attempts < 20);
         } else {
             idx = (playlist !== state.playingPlaylist) ? 0 : (state.playingVideoIndex + 1) % playlist.videoIds.length;
         }
@@ -1718,8 +1692,11 @@
         }
         let idx;
         if (state.playbackMode === 1) {
-            do { idx = Math.floor(Math.random() * playlist.videoIds.length); } 
-            while (idx === state.playingVideoIndex && playlist.videoIds.length > 1);
+            let attempts = 0;
+            do {
+                idx = Math.floor(Math.random() * playlist.videoIds.length);
+                attempts++;
+            } while (idx === state.playingVideoIndex && playlist.videoIds.length > 1 && attempts < 20);
         } else {
             idx = (playlist !== state.playingPlaylist) ? playlist.videoIds.length - 1 : 
                   (state.playingVideoIndex - 1 + playlist.videoIds.length) % playlist.videoIds.length;
@@ -1754,13 +1731,13 @@
         const playlist = state.playingPlaylist;
         const idx = Math.floor(Math.random() * playlist.videoIds.length);
         playVideo(playlist, idx);
-        setTimeout(() => {
+        setTimeout(function() {
             if (state.ytPlayer && typeof state.ytPlayer.getDuration === 'function') {
                 const duration = state.ytPlayer.getDuration();
                 if (duration && duration > 10) {
                     const pos = 0.1 + Math.random() * 0.8;
                     state.ytPlayer.seekTo(duration * pos, true);
-                    showToast(`✨ Random video at ${Math.round(pos * 100)}% position`);
+                    showToast('✨ Random video at ' + Math.round(pos * 100) + '% position');
                     const videoId = playlist.videoIds[idx];
                     updateHistoryPosition(playlist.name, videoId, duration * pos);
                 }
@@ -1803,7 +1780,7 @@
             const duration = state.ytPlayer.getDuration();
             const newTime = Math.max(0, Math.min(duration || 0, current + seconds));
             state.ytPlayer.seekTo(newTime, true);
-            showToast(`${seconds > 0 ? '⏩' : '⏪'} ${Math.abs(seconds)}s`);
+            showToast((seconds > 0 ? '⏩' : '⏪') + ' ' + Math.abs(seconds) + 's');
             state.videoEndDetected = false;
             state.videoEndedManually = false;
             if (state.playingPlaylist && state.playingVideoIndex >= 0) {
@@ -1859,13 +1836,13 @@
 
     function copyVideoId() {
         if (!state.currentVideoId) { showToast('No video playing', 1500, true); return; }
-        navigator.clipboard.writeText(state.currentVideoId).then(() => {
+        navigator.clipboard.writeText(state.currentVideoId).then(function() {
             showToast('📋 Video ID copied: ' + state.currentVideoId);
             if (DOM.videoIdTile) DOM.videoIdTile.style.borderColor = 'var(--accent)';
-            setTimeout(() => {
+            setTimeout(function() {
                 if (DOM.videoIdTile) DOM.videoIdTile.style.borderColor = 'var(--border)';
             }, 1500);
-        }).catch(() => {
+        }).catch(function() {
             const textArea = document.createElement('textarea');
             textArea.value = state.currentVideoId;
             document.body.appendChild(textArea);
@@ -1881,7 +1858,7 @@
     // ============================================================
     function startPlayerTimer() {
         if (state.timerInterval) clearInterval(state.timerInterval);
-        state.timerInterval = setInterval(() => {
+        state.timerInterval = setInterval(function() {
             updatePlayerTimer();
             updateProgress();
         }, 500);
@@ -1900,7 +1877,7 @@
         const current = state.ytPlayer.getCurrentTime();
         const duration = state.ytPlayer.getDuration();
         if (duration && duration > 0) {
-            DOM.playerTimer.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+            DOM.playerTimer.textContent = formatTime(current) + ' / ' + formatTime(duration);
             if (state.playingPlaylist && state.playingVideoIndex >= 0 && current > 0) {
                 const videoId = state.playingPlaylist.videoIds[state.playingVideoIndex];
                 updateHistoryPosition(state.playingPlaylist.name, videoId, current);
@@ -1924,13 +1901,13 @@
         state.timerSeconds = minutes * 60;
         if (DOM.timerDisplay) {
             DOM.timerDisplay.classList.add('active');
-            DOM.timerDisplay.textContent = `${minutes}:00`;
+            DOM.timerDisplay.textContent = minutes + ':00';
         }
         if (DOM.timerPresetBtn) {
-            DOM.timerPresetBtn.textContent = `⏱️ ${minutes}m`;
+            DOM.timerPresetBtn.textContent = '⏱️ ' + minutes + 'm';
             DOM.timerPresetBtn.classList.add('active');
         }
-        state.timerCountdownInterval = setInterval(() => {
+        state.timerCountdownInterval = setInterval(function() {
             state.timerSeconds--;
             if (state.timerSeconds <= 0) {
                 clearInterval(state.timerCountdownInterval);
@@ -1940,7 +1917,7 @@
                     state.autoPlayPending = true;
                     randomVideoWithPosition();
                     showToast('⏱️ Timer: Random video at random position');
-                    setTimeout(() => {
+                    setTimeout(function() {
                         if (minutes > 0) setTimerPreset(minutes);
                         state.autoPlayPending = false;
                     }, 1000);
@@ -1948,7 +1925,7 @@
             } else {
                 const mins = Math.floor(state.timerSeconds / 60);
                 const secs = state.timerSeconds % 60;
-                if (DOM.timerDisplay) DOM.timerDisplay.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+                if (DOM.timerDisplay) DOM.timerDisplay.textContent = mins + ':' + String(secs).padStart(2, '0');
             }
         }, 1000);
     }
@@ -1980,18 +1957,18 @@
                 if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
             }
             if (state.ytPlayer) {
-                const container = document.getElementById('yt-player-container');
-                if (container) container.style.display = 'none';
+                const container2 = document.getElementById('yt-player-container');
+                if (container2) container2.style.display = 'none';
             }
             if (state.playingPlaylist && state.playingVideoIndex >= 0) {
                 const cacheKey = state.playingPlaylist.name;
                 const cache = state.metadataCache[cacheKey] || {};
                 const videoId = state.playingPlaylist.videoIds[state.playingVideoIndex];
                 const meta = cache[videoId];
-                let title = meta ? meta.title : `Video ${state.playingVideoIndex + 1}`;
+                let title = meta ? meta.title : 'Video ' + (state.playingVideoIndex + 1);
                 if (state.translateEnabled && meta && meta.translatedTitle) title = meta.translatedTitle;
                 if (DOM.radioTitle) DOM.radioTitle.textContent = title;
-                if (DOM.radioSub) DOM.radioSub.textContent = `${state.playingPlaylist.name} • Radio Mode`;
+                if (DOM.radioSub) DOM.radioSub.textContent = state.playingPlaylist.name + ' • Radio Mode';
             }
             if (DOM.blankScreen) DOM.blankScreen.classList.remove('show');
         }
@@ -2011,7 +1988,7 @@
     function saveState() {
         try {
             const stateData = {
-                playlistName: state.playingPlaylist?.name || null,
+                playlistName: state.playingPlaylist ? state.playingPlaylist.name : null,
                 videoIndex: state.playingVideoIndex,
                 playbackMode: state.playbackMode,
                 currentMode: state.currentMode,
@@ -2053,10 +2030,10 @@
         
         const videoId = extractVideoId(url);
         if (videoId) {
-            let customPlaylist = state.playlists.find(p => p.name === 'Custom Video' && p.videoIds[0] === videoId);
+            let customPlaylist = state.playlists.find(function(p) { return p.name === 'Custom Video' && p.videoIds[0] === videoId; });
             if (!customPlaylist) {
                 customPlaylist = { name: 'Custom Video', videoIds: [videoId], group: 'Custom' };
-                const existing = state.playlists.find(p => p.name === 'Custom Video');
+                const existing = state.playlists.find(function(p) { return p.name === 'Custom Video'; });
                 if (!existing) {
                     state.playlists.push(customPlaylist);
                     if (!state.groups['Custom']) state.groups['Custom'] = [];
@@ -2077,17 +2054,17 @@
             state.viewingVideoIndex = 0;
             navigateToPlaylist(customPlaylist);
             fetchPlaylistMetadata(customPlaylist);
-            setTimeout(() => playVideo(customPlaylist, 0), 500);
-            showToast(`▶ Playing: ${url}`);
+            setTimeout(function() { playVideo(customPlaylist, 0); }, 500);
+            showToast('▶ Playing: ' + url);
             return;
         }
         
         const tempPlaylist = { name: 'Custom Stream', videoIds: [url], group: 'Custom' };
-        const existing = state.playlists.find(p => p.name === 'Custom Stream');
-        if (!existing) {
+        const existing2 = state.playlists.find(function(p) { return p.name === 'Custom Stream'; });
+        if (!existing2) {
             state.playlists.push(tempPlaylist);
             if (!state.groups['Custom']) state.groups['Custom'] = [];
-            if (!state.groups['Custom'].find(p => p.name === 'Custom Stream')) {
+            if (!state.groups['Custom'].find(function(p) { return p.name === 'Custom Stream'; })) {
                 state.groups['Custom'].push(tempPlaylist);
             }
             if (!state.groupNames.includes('Custom')) state.groupNames.push('Custom');
@@ -2104,8 +2081,8 @@
         if (DOM.placeholder) DOM.placeholder.style.display = 'none';
         state.isPlaying = true;
         if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
-        if (DOM.playerInfo) DOM.playerInfo.textContent = `Custom Stream`;
-        showToast(`▶ Playing custom stream`);
+        if (DOM.playerInfo) DOM.playerInfo.textContent = 'Custom Stream';
+        showToast('▶ Playing custom stream');
         saveState();
     }
 
@@ -2115,20 +2092,20 @@
     async function loadFromSheet() {
         if (DOM.statusBadge) DOM.statusBadge.textContent = '⏳ Loading...';
         if (DOM.listContainer) {
-            DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">
-                <span class="loading-spinner" style="display:inline-block;margin-right:8px;"></span> Loading groups...
-            </div>`;
+            DOM.listContainer.innerHTML = '<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">' +
+                '<span class="loading-spinner" style="display:inline-block;margin-right:8px;"></span> Loading groups...' +
+                '</div>';
         }
         
         try {
             console.log('📡 Fetching CSV...');
             const resp = await fetch(CONFIG.SHEET_URL);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
             
             const csv = await resp.text();
             console.log('📄 CSV loaded, length:', csv.length);
             
-            const rows = csv.split(/\r?\n/).filter(r => r.trim());
+            const rows = csv.split(/\r?\n/).filter(function(r) { return r.trim(); });
             console.log('📊 Found', rows.length, 'rows');
             
             if (rows.length < 2) throw new Error('CSV has no data rows');
@@ -2142,20 +2119,20 @@
                 const fields = parseCSVLine(rows[i]);
                 if (fields.length < 2) continue;
                 
-                const name = fields[0]?.trim() || '';
-                const idsRaw = fields[1]?.trim() || '';
-                const group = fields[2]?.trim() || 'Uncategorized';
-                const link = fields[3]?.trim() || '';
+                const name = fields[0] ? fields[0].trim() : '';
+                const idsRaw = fields[1] ? fields[1].trim() : '';
+                const group = fields[2] ? fields[2].trim() : 'Uncategorized';
+                const link = fields[3] ? fields[3].trim() : '';
                 
                 if (!name || !idsRaw) continue;
                 
-                const videoIds = idsRaw.split(',').map(id => id.trim()).filter(id => id.length === 11);
+                const videoIds = idsRaw.split(',').map(function(id) { return id.trim(); }).filter(function(id) { return id.length === 11; });
                 if (videoIds.length === 0) {
-                    console.warn(`⚠️ No valid video IDs for: "${name}"`);
+                    console.warn('⚠️ No valid video IDs for: "' + name + '"');
                     continue;
                 }
                 
-                const playlist = { name, videoIds, group, link };
+                const playlist = { name: name, videoIds: videoIds, group: group, link: link };
                 state.playlists.push(playlist);
                 validPlaylists++;
                 
@@ -2165,14 +2142,14 @@
             
             state.groupNames = Object.keys(state.groups).sort();
             
-            console.log(`✅ Loaded ${validPlaylists} playlists in ${state.groupNames.length} groups`);
+            console.log('✅ Loaded ' + validPlaylists + ' playlists in ' + state.groupNames.length + ' groups');
             
             if (validPlaylists === 0) {
                 throw new Error('No valid playlists found. Check your CSV format.');
             }
             
-            if (DOM.statusBadge) DOM.statusBadge.textContent = `✅ ${validPlaylists} playlists`;
-            showToast(`Loaded ${validPlaylists} playlists in ${state.groupNames.length} groups`);
+            if (DOM.statusBadge) DOM.statusBadge.textContent = '✅ ' + validPlaylists + ' playlists';
+            showToast('Loaded ' + validPlaylists + ' playlists in ' + state.groupNames.length + ' groups');
             
             try {
                 const raw = localStorage.getItem('shafin_tube_cache');
@@ -2216,11 +2193,11 @@
             showToast('Error: ' + err.message, 4000, true);
             console.error('❌ Load error:', err);
             if (DOM.listContainer) {
-                DOM.listContainer.innerHTML = `<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">
-                    ❌ ${err.message}<br>
-                    <span style="font-size:0.6rem;margin-top:8px;display:block;">Check console (F12) for details</span>
-                    <button onclick="location.reload()" style="margin-top:12px;padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;">Retry</button>
-                </div>`;
+                DOM.listContainer.innerHTML = '<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">' +
+                    '❌ ' + err.message + '<br>' +
+                    '<span style="font-size:0.6rem;margin-top:8px;display:block;">Check console (F12) for details</span>' +
+                    '<button onclick="location.reload()" style="margin-top:12px;padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:20px;cursor:pointer;">Retry</button>' +
+                    '</div>';
             }
         }
     }
@@ -2245,7 +2222,7 @@
         loadFromSheet();
         
         if (DOM.homeBtn) {
-            DOM.homeBtn.addEventListener('click', () => {
+            DOM.homeBtn.addEventListener('click', function() {
                 if (DOM.historyPanel && DOM.historyPanel.classList.contains('open')) {
                     closeHistory();
                 }
@@ -2256,7 +2233,7 @@
         }
         
         if (DOM.searchInput) {
-            DOM.searchInput.addEventListener('input', () => {
+            DOM.searchInput.addEventListener('input', function() {
                 if (state.isGroupView) renderGroups();
                 else if (state.currentGroupName && !state.isPlaylistView) renderGroupPlaylists(state.currentGroupName);
                 else if (state.isPlaylistView && state.viewingPlaylist) renderVideos(state.viewingPlaylist);
@@ -2267,7 +2244,7 @@
         
         if (DOM.moreBtn) DOM.moreBtn.addEventListener('click', toggleMoreDropdown);
         if (DOM.moreRefresh) {
-            DOM.moreRefresh.addEventListener('click', () => {
+            DOM.moreRefresh.addEventListener('click', function() {
                 if (state.viewingPlaylist && state.isPlaylistView) {
                     const cacheKey = state.viewingPlaylist.name;
                     if (state.metadataCache[cacheKey]) delete state.metadataCache[cacheKey];
@@ -2298,31 +2275,31 @@
         if (DOM.playBtn) DOM.playBtn.addEventListener('click', togglePlayPause);
         if (DOM.shuffleBtn) DOM.shuffleBtn.addEventListener('click', cyclePlaybackMode);
 
-        if (DOM.tvModeOption) DOM.tvModeOption.addEventListener('click', () => setMode('tv'));
-        if (DOM.radioModeOption) DOM.radioModeOption.addEventListener('click', () => setMode('radio'));
+        if (DOM.tvModeOption) DOM.tvModeOption.addEventListener('click', function() { setMode('tv'); });
+        if (DOM.radioModeOption) DOM.radioModeOption.addEventListener('click', function() { setMode('radio'); });
 
         if (DOM.timerPresetBtn) {
-            DOM.timerPresetBtn.addEventListener('click', (e) => {
+            DOM.timerPresetBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.toggle('open');
             });
         }
 
-        document.querySelectorAll('.preset-option').forEach(opt => {
-            opt.addEventListener('click', (e) => {
+        document.querySelectorAll('.preset-option').forEach(function(opt) {
+            opt.addEventListener('click', function(e) {
                 e.stopPropagation();
                 setTimerPreset(parseInt(opt.dataset.minutes));
                 if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.remove('open');
             });
         });
 
-        document.addEventListener('click', () => {
+        document.addEventListener('click', function() {
             if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.remove('open');
         });
 
         if (DOM.manualPlayBtn) DOM.manualPlayBtn.addEventListener('click', playManualInput);
         if (DOM.manualInput) {
-            DOM.manualInput.addEventListener('keydown', (e) => {
+            DOM.manualInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') playManualInput();
             });
         }
@@ -2331,19 +2308,19 @@
         
         if (DOM.closeAbout) DOM.closeAbout.addEventListener('click', closeAbout);
         if (DOM.aboutOverlay) {
-            DOM.aboutOverlay.addEventListener('click', (e) => {
+            DOM.aboutOverlay.addEventListener('click', function(e) {
                 if (e.target === DOM.aboutOverlay) closeAbout();
             });
         }
         
         if (DOM.closeShortcuts) DOM.closeShortcuts.addEventListener('click', closeShortcuts);
         if (DOM.shortcutsOverlay) {
-            DOM.shortcutsOverlay.addEventListener('click', (e) => {
+            DOM.shortcutsOverlay.addEventListener('click', function(e) {
                 if (e.target === DOM.shortcutsOverlay) closeShortcuts();
             });
         }
 
-        document.addEventListener('visibilitychange', () => {
+        document.addEventListener('visibilitychange', function() {
             if (!document.hidden && !state.isPlaying && state.playingPlaylist && !state.autoPlayPending && !state.isStopped) {
                 if (state.ytPlayer && typeof state.ytPlayer.getCurrentTime === 'function') {
                     const current = state.ytPlayer.getCurrentTime();
@@ -2351,7 +2328,7 @@
                     if (duration > 0 && current >= duration - 0.5 && !state.videoEndedManually) {
                         state.videoEndDetected = true;
                         state.autoPlayPending = true;
-                        setTimeout(() => {
+                        setTimeout(function() {
                             if (state.playingPlaylist && !state.isStopped) handleVideoEnd();
                             state.autoPlayPending = false;
                         }, 300);
@@ -2360,7 +2337,7 @@
             }
         });
 
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', function(e) {
             if (e.target.tagName === 'INPUT') return;
             
             if (e.key === '?' || e.key === '/') {
@@ -2400,45 +2377,45 @@
         const mobileMoreSheet = $('mobileMoreSheet');
         const mobileMoreOverlay = $('mobileMoreOverlay');
         const mobileMoreBtn = $('mobileMoreBtn');
-        const closeMobileMore = () => {
+        const closeMobileMore = function() {
             if (mobileMoreSheet) mobileMoreSheet.classList.remove('open');
             if (mobileMoreOverlay) mobileMoreOverlay.classList.remove('open');
         };
-        const openMobileMore = () => {
+        const openMobileMore = function() {
             if (mobileMoreSheet) mobileMoreSheet.classList.add('open');
             if (mobileMoreOverlay) mobileMoreOverlay.classList.add('open');
         };
-        $('mobileHomeBtn')?.addEventListener('click', () => {
+        $('mobileHomeBtn')?.addEventListener('click', function() {
             closeMobileMore();
             DOM.homeBtn?.click();
-            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-btn').forEach(function(b) { b.classList.remove('active'); });
             $('mobileHomeBtn')?.classList.add('active');
         });
-        $('mobileSearchBtn')?.addEventListener('click', () => {
+        $('mobileSearchBtn')?.addEventListener('click', function() {
             closeMobileMore();
-            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-btn').forEach(function(b) { b.classList.remove('active'); });
             $('mobileSearchBtn')?.classList.add('active');
             DOM.searchInput?.focus();
             document.querySelector('.sidebar')?.scrollIntoView({behavior:'smooth', block:'start'});
         });
-        $('mobileHistoryBtn')?.addEventListener('click', () => {
+        $('mobileHistoryBtn')?.addEventListener('click', function() {
             closeMobileMore();
             openHistory();
-            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-btn').forEach(function(b) { b.classList.remove('active'); });
             $('mobileHistoryBtn')?.classList.add('active');
         });
-        mobileMoreBtn?.addEventListener('click', () => {
+        mobileMoreBtn?.addEventListener('click', function() {
             if (mobileMoreSheet?.classList.contains('open')) closeMobileMore(); 
             else openMobileMore();
-            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-btn').forEach(function(b) { b.classList.remove('active'); });
             mobileMoreBtn.classList.add('active');
         });
         mobileMoreOverlay?.addEventListener('click', closeMobileMore);
         $('mobileCloseMore')?.addEventListener('click', closeMobileMore);
-        $('mobileRandomAction')?.addEventListener('click', () => { closeMobileMore(); randomVideoWithPosition(); });
-        $('mobileGroupShuffleAction')?.addEventListener('click', () => { closeMobileMore(); toggleGroupShuffle(); });
-        $('mobileTranslateAction')?.addEventListener('click', () => { closeMobileMore(); toggleTranslation(); });
-        $('mobileRefreshAction')?.addEventListener('click', () => { 
+        $('mobileRandomAction')?.addEventListener('click', function() { closeMobileMore(); randomVideoWithPosition(); });
+        $('mobileGroupShuffleAction')?.addEventListener('click', function() { closeMobileMore(); toggleGroupShuffle(); });
+        $('mobileTranslateAction')?.addEventListener('click', function() { closeMobileMore(); toggleTranslation(); });
+        $('mobileRefreshAction')?.addEventListener('click', function() { 
             closeMobileMore(); 
             if (state.viewingPlaylist && state.isPlaylistView) {
                 const cacheKey = state.viewingPlaylist.name;
@@ -2449,9 +2426,9 @@
                 showToast('Open a playlist first to refresh', 1500, true);
             }
         });
-        $('mobileThemeAction')?.addEventListener('click', () => { closeMobileMore(); DOM.themeToggle?.click(); });
-        $('mobileAboutAction')?.addEventListener('click', () => { closeMobileMore(); openAbout(); });
-        $('mobileTimerAction')?.addEventListener('click', () => {
+        $('mobileThemeAction')?.addEventListener('click', function() { closeMobileMore(); DOM.themeToggle?.click(); });
+        $('mobileAboutAction')?.addEventListener('click', function() { closeMobileMore(); openAbout(); });
+        $('mobileTimerAction')?.addEventListener('click', function() {
             closeMobileMore();
             DOM.timerPresetBtn?.click();
             if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.add('open');
