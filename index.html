@@ -98,7 +98,9 @@
         .list-item .thumb { width: 40px; height: 22px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .list-item .thumb.live-tv { border-radius: 50%; width: 28px; height: 28px; border: 2px solid var(--accent); object-fit: cover; }
         .live-logo-wrap { width: 32px; height: 32px; flex: 0 0 32px; display:flex; align-items:center; justify-content:center; }
-        .live-channel-fallback { width: 32px; height: 32px; border-radius: 50%; display:flex; align-items:center; justify-content:center; background: var(--bg3); border: 2px solid var(--accent); font-size:1.1rem; }
+        .live-channel-logo, .live-channel-fallback { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 0; box-sizing: border-box; }
+        .live-channel-fallback { align-items:center; justify-content:center; color:#fff; font-size:0.85rem; font-weight:700; }
+
         .list-item .info { flex: 1; min-width: 0; }
         .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
         .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
@@ -292,7 +294,7 @@
             .list-item .info { min-width: 0; }
             .list-item .badge { padding: 1px 5px; }
             .live-logo-wrap { width: 28px; height: 28px; flex-basis: 28px; }
-            .live-channel-fallback { width: 28px; height: 28px; font-size:0.9rem; }
+            .live-channel-logo, .live-channel-fallback { width: 28px; height: 28px; }
             .list-item .title { font-size: 0.65rem; }
             .list-item .sub { font-size: 0.5rem; }
             .list-item .thumb { width: 30px; height: 17px; }
@@ -582,6 +584,7 @@
         toast: $('toast'),
         timeDisplay: $('timeDisplay'),
         dayDisplay: $('dayDisplay'),
+        videoContainer: $('videoContainer'),
         progressContainer: $('progressContainer'),
         progressBar: $('progressBar'),
         shortcutsOverlay: $('shortcutsOverlay'),
@@ -633,10 +636,10 @@
         isLoadingMetadata: false,
         isSeeking: false,
         videoEndedManually: false,
-        userClickedVideo: false,
-        metadataFetchingPlaylist: null,
-        metadataProcessed: 0,
-        metadataTotal: 0
+        channelLogoCache: {},
+        channelLogoPromises: {},
+        isFetchingLogos: false,
+        playerGeneration: 0
     };
 
     // ============================================================
@@ -644,7 +647,7 @@
     // ============================================================
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>"]/g, function(m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m] || m; });
+        return str.replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m] || m);
     }
 
     function formatTime(seconds) {
@@ -785,60 +788,60 @@
     }
 
     // ============================================================
+    // CHANNEL ICON - Live TV
+    // ============================================================
+    function makeLiveLogoHtml() {
+        return '<span class="live-channel-fallback" style="display:flex;background:transparent;border:none;font-size:1.35rem;">📡</span>';
+    }
+
+    // ============================================================
     // VIDEO END HANDLER
     // ============================================================
     function handleVideoEnd() {
-      // If user clicked this video manually, don't auto-advance
-      if (state.userClickedVideo) {
-          state.userClickedVideo = false;
-          state.videoEndedManually = true;
-          return;
-      }
-      
-      if (state.videoEndedManually) {
-          state.videoEndedManually = false;
-          return;
-      }
-      
-      const playlist = state.playingPlaylist;
-      if (!playlist || playlist.videoIds.length === 0) return;
-      
-      const currentIdx = state.playingVideoIndex;
-      if (currentIdx < 0 || currentIdx >= playlist.videoIds.length) return;
-      
-      let nextPlaylist = playlist;
-      let nextIdx;
-      
-      if (state.groupShuffleEnabled) {
-          const randomPlaylist = getRandomPlaylistFromGroup(playlist.group, playlist);
-          if (randomPlaylist) {
-              nextPlaylist = randomPlaylist;
-          }
-      }
-      
-      if (state.playbackMode === 2) {
-          nextIdx = currentIdx;
-      } else if (state.playbackMode === 1) {
-          let idx;
-          let attempts = 0;
-          do {
-              idx = Math.floor(Math.random() * nextPlaylist.videoIds.length);
-              attempts++;
-          } while (idx === currentIdx && nextPlaylist.videoIds.length > 1 && attempts < 20);
-          nextIdx = idx;
-      } else {
-          if (nextPlaylist !== playlist) {
-              nextIdx = 0;
-          } else {
-              nextIdx = (currentIdx + 1) % nextPlaylist.videoIds.length;
-          }
-      }
-      
-      state.isAutoPlaying = true;
-      state.viewingPlaylist = nextPlaylist;
-      state.viewingVideoIndex = nextIdx;
-      playVideo(nextPlaylist, nextIdx);
-      setTimeout(function() { state.isAutoPlaying = false; }, 500);
+        if (state.videoEndedManually) {
+            state.videoEndedManually = false;
+            return;
+        }
+        
+        const playlist = state.playingPlaylist;
+        if (!playlist || playlist.videoIds.length === 0) return;
+        
+        const currentIdx = state.playingVideoIndex;
+        if (currentIdx < 0 || currentIdx >= playlist.videoIds.length) return;
+        
+        let nextPlaylist = playlist;
+        let nextIdx;
+        
+        if (state.groupShuffleEnabled) {
+            const randomPlaylist = getRandomPlaylistFromGroup(playlist.group, playlist);
+            if (randomPlaylist) {
+                nextPlaylist = randomPlaylist;
+            }
+        }
+        
+        if (state.playbackMode === 2) {
+            nextIdx = currentIdx;
+        } else if (state.playbackMode === 1) {
+            let idx;
+            let attempts = 0;
+            do {
+                idx = Math.floor(Math.random() * nextPlaylist.videoIds.length);
+                attempts++;
+            } while (idx === currentIdx && nextPlaylist.videoIds.length > 1 && attempts < 20);
+            nextIdx = idx;
+        } else {
+            if (nextPlaylist !== playlist) {
+                nextIdx = 0;
+            } else {
+                nextIdx = (currentIdx + 1) % nextPlaylist.videoIds.length;
+            }
+        }
+        
+        state.isAutoPlaying = true;
+        state.viewingPlaylist = nextPlaylist;
+        state.viewingVideoIndex = nextIdx;
+        playVideo(nextPlaylist, nextIdx);
+        setTimeout(function() { state.isAutoPlaying = false; }, 500);
     }
 
     // ============================================================
@@ -950,14 +953,20 @@
 
     function createYouTubePlayer(videoId, autoplay, startPosition) {
         autoplay = (autoplay !== undefined) ? autoplay : true;
-        startPosition = startPosition || 0;
-        
+        startPosition = Number(startPosition) || 0;
+
         if (typeof YT === 'undefined' || !YT.Player) {
             setTimeout(function() { createYouTubePlayer(videoId, autoplay, startPosition); }, 500);
             return;
         }
+
+        // Every player instance gets its own generation. Events from a
+        // destroyed/previous player must never be allowed to trigger the
+        // next-video logic for the newly selected video.
+        const generation = ++state.playerGeneration;
+
         if (state.ytPlayer && typeof state.ytPlayer.destroy === 'function') {
-            state.ytPlayer.destroy();
+            try { state.ytPlayer.destroy(); } catch (e) {}
             state.ytPlayer = null;
         }
 
@@ -967,6 +976,7 @@
         state.videoEndedManually = false;
         if (DOM.blankScreen) DOM.blankScreen.classList.remove('show');
         state.currentVideoId = videoId;
+
         if (DOM.videoIdTile) {
             DOM.videoIdTile.textContent = 'ID: ' + videoId.substring(0, 8) + '...';
             DOM.videoIdTile.classList.add('show');
@@ -982,24 +992,49 @@
         if (DOM.placeholder) DOM.placeholder.style.display = 'none';
         container.appendChild(playerDiv);
 
-        const playerVars = { 
+        const playerVars = {
             rel: 0, modestbranding: 1, controls: 1, fs: 1, iv_load_policy: 3,
             playsinline: 1
         };
-        if (autoplay) playerVars.autoplay = 1;
-        if (startPosition > 0) playerVars.start = Math.floor(startPosition);
 
+        // Do not put a possibly-completed history position into playerVars.
+        // We decide the safe starting position after YouTube reports the
+        // actual duration in onReady.
         state.ytPlayer = new YT.Player('yt-player-container', {
             height: '100%', width: '100%', videoId: videoId, playerVars: playerVars,
             events: {
                 onReady: function(e) {
+                    if (generation !== state.playerGeneration) return;
+
                     state.isPlaying = true;
                     if (DOM.playBtn) DOM.playBtn.textContent = '⏸';
+
+                    let safeStart = 0;
+                    try {
+                        const duration = e.target.getDuration();
+                        if (startPosition > 0 && duration > 0) {
+                            // Treat the final ~2 seconds as completed. Replay
+                            // from zero instead of loading directly into ENDED.
+                            safeStart = startPosition >= Math.max(0, duration - 2) ? 0 : startPosition;
+                        }
+                    } catch (err) {
+                        safeStart = 0;
+                    }
+
+                    if (safeStart > 0 && typeof e.target.seekTo === 'function') {
+                        try { e.target.seekTo(Math.floor(safeStart), true); } catch (err) {}
+                    }
+
                     if (autoplay) e.target.playVideo();
                     startPlayerTimer();
-                    if (state.isMuted && typeof e.target.setVolume === 'function') e.target.setVolume(0);
+                    if (state.isMuted && typeof e.target.setVolume === 'function') {
+                        e.target.setVolume(0);
+                    }
                 },
+
                 onStateChange: function(e) {
+                    if (generation !== state.playerGeneration) return;
+
                     const s = e.data;
                     if (s === YT.PlayerState.PLAYING) {
                         state.isPlaying = true;
@@ -1016,17 +1051,33 @@
                         state.isPlaying = false;
                         if (DOM.playBtn) DOM.playBtn.textContent = '▶';
                         if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
+
                         if (!state.videoEndedManually && !state.autoPlayPending && !state.isStopped) {
                             state.videoEndDetected = true;
                             state.autoPlayPending = true;
                             setTimeout(function() {
-                                if (state.playingPlaylist && !state.isStopped) handleVideoEnd();
-                                state.autoPlayPending = false;
+                                // Re-check both the player generation and the
+                                // current selected item before advancing.
+                                if (
+                                    generation === state.playerGeneration &&
+                                    state.playingPlaylist &&
+                                    state.currentVideoId === videoId &&
+                                    !state.isStopped
+                                ) {
+                                    handleVideoEnd();
+                                }
+                                if (generation === state.playerGeneration) {
+                                    state.autoPlayPending = false;
+                                }
                             }, 500);
                         }
                     }
                 },
-                onError: function() { showToast('Error playing video', 3000, true); }
+
+                onError: function() {
+                    if (generation !== state.playerGeneration) return;
+                    showToast('Error playing video', 3000, true);
+                }
             }
         });
     }
@@ -1264,30 +1315,19 @@
                 translated = true;
             }
             
+            const channelName = meta && meta.author && meta.author !== 'Unknown' ? meta.author : 'Loading channel…';
+            const liveLogo = isLiveTV ? makeLiveLogoHtml() : '';
             const thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg';
             const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
 
-            // For Live TV: show 📡 icon with channel name as title
-            if (isLiveTV) {
-                const channelName = meta && meta.author && meta.author !== 'Unknown' ? meta.author : 'Loading...';
-                html += '<div class="list-item ' + (isActive ? 'active' : '') + '" data-video-index="' + v.index + '" data-type="video">' +
-                    '<div class="live-logo-wrap"><div class="live-channel-fallback">📡</div></div>' +
-                    '<div class="info">' +
-                    '<div class="title" title="' + escapeHtml(channelName) + '">' + escapeHtml(channelName) + ' ' + translatedBadge + '</div>' +
-                    '<div class="sub">Live TV</div>' +
-                    '</div>' +
-                    '<span class="badge">' + (v.index + 1) + '</span>' +
-                    '</div>';
-            } else {
-                html += '<div class="list-item ' + (isActive ? 'active' : '') + '" data-video-index="' + v.index + '" data-type="video">' +
-                    '<img class="thumb" src="' + thumb + '" alt="" loading="lazy" onerror="this.src=\'https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg\'">' +
-                    '<div class="info">' +
-                    '<div class="title" title="' + escapeHtml(title) + '">' + escapeHtml(title) + ' ' + translatedBadge + '</div>' +
-                    '<div class="sub">' + escapeHtml(meta ? meta.author : '') + '</div>' +
-                    '</div>' +
-                    '<span class="badge">' + (v.index + 1) + '</span>' +
-                    '</div>';
-            }
+            html += '<div class="list-item ' + (isActive ? 'active' : '') + '" data-video-index="' + v.index + '" data-type="video">' +
+                (isLiveTV ? '<div class="live-logo-wrap">' + liveLogo + '</div>' : '<img class="thumb" src="' + thumb + '" alt="" loading="lazy">') +
+                '<div class="info">' +
+                '<div class="title" title="' + escapeHtml(isLiveTV ? channelName : title) + '">' + escapeHtml(isLiveTV ? channelName : title) + ' ' + translatedBadge + '</div>' +
+                (isLiveTV ? '' : '<div class="sub">' + escapeHtml(meta ? meta.author : '') + '</div>') +
+                '</div>' +
+                '<span class="badge">' + (v.index + 1) + '</span>' +
+                '</div>';
         });
 
         if (state.isLoadingMetadata && Object.keys(cache).length < playlist.videoIds.length) {
@@ -1299,17 +1339,16 @@
         DOM.listContainer.innerHTML = html;
 
         DOM.listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(function(el) {
-          el.addEventListener('click', function() {
-              const idx = parseInt(el.dataset.videoIndex);
-              state.userClickedVideo = true;   // <-- ADD THIS
-              state.videoEndedManually = false;
-              state.playingPlaylist = playlist;
-              state.playingVideoIndex = idx;
-              state.viewingPlaylist = playlist;
-              state.viewingVideoIndex = idx;
-              playVideo(playlist, idx, false, 0);  // Start from beginning
-          });
-});
+            el.addEventListener('click', function() {
+                const idx = parseInt(el.dataset.videoIndex);
+                state.videoEndedManually = false;
+                state.playingPlaylist = playlist;
+                state.playingVideoIndex = idx;
+                state.viewingPlaylist = playlist;
+                state.viewingVideoIndex = idx;
+                playVideo(playlist, idx);
+            });
+        });
     }
 
     // ============================================================
@@ -1472,7 +1511,7 @@
     }
 
     // ============================================================
-    // METADATA FETCHING - FAST PARALLEL VERSION
+    // METADATA FETCHING - FIXED infinite loop
     // ============================================================
     async function fetchVideoMetadata(videoId) {
         try {
@@ -1505,74 +1544,82 @@
         if (!state.metadataCache[cacheKey]) state.metadataCache[cacheKey] = {};
         const cache = state.metadataCache[cacheKey];
 
-        // Check if all metadata is already loaded
-        const allLoaded = playlist.videoIds.every(function(id) { return cache[id]; });
-        if (!force && allLoaded) return;
-
         state.isLoadingMetadata = true;
-        state.metadataFetchingPlaylist = playlist.name;
-        state.metadataProcessed = 0;
-        state.metadataTotal = playlist.videoIds.length;
-
         showToast('Fetching metadata for ' + playlist.name + '...');
 
-        // Process in parallel batches for speed
-        const batchSize = 6;
-        const ids = playlist.videoIds.filter(function(id) { return !cache[id] || force; });
-        const totalToFetch = ids.length;
+        const ids = playlist.videoIds.slice();
+        const pendingIds = force ? ids : ids.filter(function(id) { return !cache[id]; });
+        const total = pendingIds.length;
 
-        if (totalToFetch === 0) {
+        if (total === 0) {
             state.isLoadingMetadata = false;
-            state.metadataFetchingPlaylist = null;
+            if (DOM.statusBadge) DOM.statusBadge.textContent = '✅ ' + playlist.videoIds.length + ' videos';
+            if (state.isPlaylistView && state.viewingPlaylist === playlist) renderVideos(playlist);
             return;
         }
 
-        // Process batches in parallel
-        for (let i = 0; i < ids.length; i += batchSize) {
-            const batch = ids.slice(i, i + batchSize);
-            const promises = batch.map(async function(id) {
+        // Fetch several metadata requests in parallel instead of one-by-one.
+        // A small worker pool avoids hammering oEmbed while making large
+        // playlists load much faster.
+        const concurrency = Math.min(5, total);
+        let completed = 0;
+        let cursor = 0;
+
+        async function worker() {
+            while (true) {
+                const index = cursor++;
+                if (index >= total) return;
+
+                const id = pendingIds[index];
                 try {
-                    const meta = await fetchVideoMetadata(id);
-                    cache[id] = meta;
+                    cache[id] = await fetchVideoMetadata(id);
                 } catch (e) {
+                    console.warn('Failed to fetch metadata for:', id, e);
                     cache[id] = {
                         title: 'Video ' + id,
                         author: 'Unknown',
+                        authorUrl: '',
                         thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg'
                     };
                 }
-                state.metadataProcessed++;
-                if (DOM.statusBadge) {
-                    DOM.statusBadge.textContent = '📥 ' + state.metadataProcessed + '/' + state.metadataTotal;
-                }
-                // Update UI periodically
-                if (state.metadataProcessed % 5 === 0 || state.metadataProcessed === state.metadataTotal) {
-                    if (state.isPlaylistView && state.viewingPlaylist === playlist) {
-                        renderVideos(playlist);
-                    }
-                }
-            });
-            await Promise.all(promises);
-            // Small delay between batches to avoid rate limiting
-            await new Promise(function(r) { setTimeout(r, 200); });
-        }
 
-        state.isLoadingMetadata = false;
-        state.metadataFetchingPlaylist = null;
-        if (DOM.statusBadge) DOM.statusBadge.textContent = '✅ ' + state.metadataTotal + ' videos';
-        showToast('Loaded metadata for ' + state.metadataTotal + ' videos');
+                completed++;
+                if (DOM.statusBadge) {
+                    DOM.statusBadge.textContent = '📥 ' + completed + '/' + total;
+                }
+                if (state.isPlaylistView && state.viewingPlaylist === playlist) {
+                    renderVideos(playlist);
+                }
+            }
+        }
 
         try {
-            localStorage.setItem('shafin_tube_cache', JSON.stringify({
-                metadataCache: state.metadataCache,
-                timestamp: Date.now()
-            }));
-        } catch (e) {}
+            await Promise.all(Array.from({ length: concurrency }, worker));
+        } finally {
+            state.isLoadingMetadata = false;
+            if (DOM.statusBadge) {
+                DOM.statusBadge.textContent = '✅ ' + playlist.videoIds.length + ' videos';
+            }
+            try {
+                localStorage.setItem('shafin_tube_cache', JSON.stringify({
+                    metadataCache: state.metadataCache,
+                    timestamp: Date.now()
+                }));
+            } catch (e) {}
 
-        if (state.isPlaylistView && state.viewingPlaylist === playlist) {
-            renderVideos(playlist);
+            if (state.isPlaylistView && state.viewingPlaylist === playlist) {
+                renderVideos(playlist);
+            }
         }
     }
+
+    // ============================================================
+    // LIVE TV
+    // ============================================================
+    // Live-TV entries are intentionally treated as normal YouTube
+    // video/live URLs. We do NOT create hidden YouTube players to test
+    // whether a channel is currently live. The user can simply open the
+    // entry; YouTube itself decides whether the stream is available.
 
     // ============================================================
     // CORE PLAYER FUNCTIONS
@@ -1580,7 +1627,7 @@
     function playVideo(playlist, videoIndex, restore, startPosition) {
         restore = restore || false;
         startPosition = startPosition || 0;
-        state.userClickedVideo = false;
+        
         if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) {
             console.log('playVideo: Invalid playlist or index');
             return;
@@ -1614,6 +1661,13 @@
                 console.log('Resuming video at position: ' + formatTime(startPosition));
             }
         }
+
+        // A completed video is stored at (or very close to) its duration.
+        // Starting YouTube at that position can immediately emit ENDED and
+        // advance to the next item before the user gets a chance to replay it.
+        // The player now verifies the real duration onReady and rewinds a
+        // completed item to the beginning.
+        if (startPosition < 0 || !isFinite(startPosition)) startPosition = 0;
 
         addToHistory(playlist.name, videoId, title, thumb, startPosition);
         if (DOM.placeholder) DOM.placeholder.style.display = 'none';
@@ -2322,21 +2376,9 @@
         }
 
         document.addEventListener('visibilitychange', function() {
-            if (!document.hidden && !state.isPlaying && state.playingPlaylist && !state.autoPlayPending && !state.isStopped) {
-                if (state.ytPlayer && typeof state.ytPlayer.getCurrentTime === 'function') {
-                    const current = state.ytPlayer.getCurrentTime();
-                    const duration = state.ytPlayer.getDuration();
-                    if (duration > 0 && current >= duration - 0.5 && !state.videoEndedManually) {
-                        state.videoEndDetected = true;
-                        state.autoPlayPending = true;
-                        setTimeout(function() {
-                            if (state.playingPlaylist && !state.isStopped) handleVideoEnd();
-                            state.autoPlayPending = false;
-                        }, 300);
-                    }
-                }
-            }
-        });
+        // Do not infer video completion from tab visibility. YouTube's
+        // ENDED event is the authoritative signal and is generation-checked.
+    });
 
         document.addEventListener('keydown', function(e) {
             if (e.target.tagName === 'INPUT') return;
@@ -2438,7 +2480,7 @@
         console.log('🟢 Shafin Tube initialized successfully!');
         console.log('✎ Edit sheet:', CONFIG.EDIT_URL);
         console.log('⌨️ Press ? for keyboard shortcuts');
-        console.log('📺 Live TV group shows 📡 icon with channel names');
+        console.log('📺 Live TV group shows 📺 icon and channel logos');
     }
 
     if (document.readyState === 'loading') {
