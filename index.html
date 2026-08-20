@@ -97,6 +97,10 @@
         .list-item.active { background: var(--bg3); border-left-color: var(--accent); }
         .list-item .thumb { width: 40px; height: 22px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .list-item .thumb.live-tv { border-radius: 50%; width: 28px; height: 28px; border: 2px solid var(--accent); object-fit: cover; }
+        .live-logo-wrap { width: 32px; height: 32px; flex: 0 0 32px; display:flex; align-items:center; justify-content:center; }
+        .live-channel-logo, .live-channel-fallback { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 0; box-sizing: border-box; }
+        .live-channel-fallback { align-items:center; justify-content:center; color:#fff; font-size:0.85rem; font-weight:700; }
+
         .list-item .info { flex: 1; min-width: 0; }
         .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
         .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
@@ -282,10 +286,15 @@
         }
         
         @media (max-width: 480px) {
-            .sidebar { width: 240px; }
+            .sidebar { width: 100%; min-width: 0; }
             .sidebar-header { padding: 4px 6px; }
             .sidebar-search { font-size: 0.6rem; padding: 3px 8px; min-width: 60px; }
-            .list-item { padding: 4px 6px; gap: 5px; }
+            .list-container { width: 100%; min-width: 0; box-sizing: border-box; padding-left: 4px; padding-right: 4px; }
+            .list-item { width: 100%; box-sizing: border-box; padding: 5px 6px; gap: 6px; min-width: 0; }
+            .list-item .info { min-width: 0; }
+            .list-item .badge { padding: 1px 5px; }
+            .live-logo-wrap { width: 28px; height: 28px; flex-basis: 28px; }
+            .live-channel-logo, .live-channel-fallback { width: 28px; height: 28px; }
             .list-item .title { font-size: 0.65rem; }
             .list-item .sub { font-size: 0.5rem; }
             .list-item .thumb { width: 30px; height: 17px; }
@@ -629,7 +638,10 @@
         videoEndedManually: false,
         channelLogoCache: {},
         channelLogoPromises: {},
-        isFetchingLogos: false
+        isFetchingLogos: false,
+        liveTVStatus: {},
+        liveTVChecking: {},
+        liveTVCheckTimer: null
     };
 
     // ============================================================
@@ -778,22 +790,11 @@
     }
 
     // ============================================================
-    // CHANNEL LOGO - For Live TV (Improved)
+    // CHANNEL ICON - Live TV
     // ============================================================
-    function generateChannelLogo(channelName, videoId) {
-        const initial = channelName ? channelName.charAt(0).toUpperCase() : '?';
-        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#FF8A5C', '#A29BFE', '#FD79A8', '#00B894', '#FDCB6E', '#E17055'];
-        const colorIndex = (videoId || initial).length % colors.length;
-        const color = colors[colorIndex];
-        const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">' +
-            '<circle cx="20" cy="20" r="18" fill="' + color + '"/>' +
-            '<text x="20" y="26" font-family="Arial" font-size="18" font-weight="bold" fill="white" text-anchor="middle">' + initial + '</text>' +
-            '</svg>';
-        return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+    function makeLiveLogoHtml() {
+        return '<span class="live-channel-fallback" style="display:flex;background:transparent;border:none;font-size:1.35rem;">📡</span>';
     }
-
-    // Keep one promise per video ID. Multiple render/metadata calls can ask
-    // for the same logo, but only one network request will be made.
 
     // ============================================================
     // VIDEO END HANDLER
@@ -1241,6 +1242,10 @@
             '</div>';
 
         let videos = playlist.videoIds.map(function(id, idx) { return { id: id, index: idx }; });
+        // For Live TV, hide streams that have been confirmed ended/unavailable.
+        if (isLiveTV) {
+            videos = videos.filter(function(v) { return state.liveTVStatus[v.id] !== 'ended' && state.liveTVStatus[v.id] !== 'unavailable'; });
+        }
         if (search) {
             videos = videos.filter(function(v) {
                 const meta = cache[v.id];
@@ -1258,17 +1263,6 @@
             return;
         }
 
-        // Live TV logos are generated synchronously from the playlist/channel name.
-        // No network request is made here, so rendering cannot trigger a render loop.
-        if (isLiveTV) {
-            videos.forEach(function(v) {
-                if (!state.channelLogoCache[v.id]) {
-                    const channelName = (cache[v.id] && cache[v.id].author && cache[v.id].author !== 'Unknown') ? cache[v.id].author : playlist.name;
-                    state.channelLogoCache[v.id] = generateChannelLogo(channelName, v.id);
-                }
-            });
-        }
-
         videos.forEach(function(v) {
             const isActive = state.viewingPlaylist === playlist && state.viewingVideoIndex === v.index;
             const meta = cache[v.id];
@@ -1279,24 +1273,16 @@
                 translated = true;
             }
             
-            let thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg';
-            let thumbClass = '';
-            if (isLiveTV) {
-                const logoUrl = state.channelLogoCache[v.id];
-                if (logoUrl) {
-                    thumb = logoUrl;
-                    thumbClass = 'live-tv';
-                }
-            }
-            
-            const author = meta ? meta.author : '';
+            const channelName = meta && meta.author && meta.author !== 'Unknown' ? meta.author : 'Loading channel…';
+            const liveLogo = isLiveTV ? makeLiveLogoHtml() : '';
+            const thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg';
             const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
 
             html += '<div class="list-item ' + (isActive ? 'active' : '') + '" data-video-index="' + v.index + '" data-type="video">' +
-                '<img class="thumb ' + thumbClass + '" src="' + thumb + '" alt="" loading="lazy" onerror="this.src=\'https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg\'">' +
+                (isLiveTV ? '<div class="live-logo-wrap">' + liveLogo + '</div>' : '<img class="thumb" src="' + thumb + '" alt="" loading="lazy">') +
                 '<div class="info">' +
-                '<div class="title" title="' + escapeHtml(title) + '">' + escapeHtml(title) + ' ' + translatedBadge + '</div>' +
-                '<div class="sub">' + escapeHtml(author) + '</div>' +
+                '<div class="title" title="' + escapeHtml(isLiveTV ? channelName : title) + '">' + escapeHtml(isLiveTV ? channelName : title) + ' ' + translatedBadge + '</div>' +
+                (isLiveTV ? '' : '<div class="sub">' + escapeHtml(meta ? meta.author : '') + '</div>') +
                 '</div>' +
                 '<span class="badge">' + (v.index + 1) + '</span>' +
                 '</div>';
@@ -1309,6 +1295,11 @@
         }
 
         DOM.listContainer.innerHTML = html;
+
+        if (isLiveTV) {
+            checkLiveTVStatuses(playlist);
+            startLiveTVStatusRefresh(playlist);
+        }
 
         DOM.listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(function(el) {
             el.addEventListener('click', function() {
@@ -1493,13 +1484,15 @@
             const data = await resp.json();
             return { 
                 title: data.title || 'Video ' + videoId, 
-                author: data.author_name || 'Unknown', 
+                author: data.author_name || 'Unknown',
+                authorUrl: data.author_url || '',
                 thumbnail: data.thumbnail_url || 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg'
             };
         } catch (err) {
             return { 
                 title: 'Video ' + videoId, 
-                author: 'Unknown', 
+                author: 'Unknown',
+                authorUrl: '',
                 thumbnail: 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg'
             };
         }
@@ -1535,16 +1528,10 @@
                         timestamp: Date.now()
                     }));
                 } catch (e) {}
-                // Metadata is now available, so rebuild Live TV logos using the
-                // actual YouTube channel/author name instead of the playlist name.
-                if (playlist.group && isLiveTVGroup(playlist.group)) {
-                    playlist.videoIds.forEach(function(videoId) {
-                        const meta = cache[videoId];
-                        const channelName = meta && meta.author && meta.author !== 'Unknown' ? meta.author : playlist.name;
-                        state.channelLogoCache[videoId] = generateChannelLogo(channelName, videoId);
-                    });
-                }
                 if (state.isPlaylistView && state.viewingPlaylist === playlist) renderVideos(playlist);
+                if (playlist.group && isLiveTVGroup(playlist.group)) {
+                    checkLiveTVStatuses(playlist);
+                }
                 return;
             }
 
@@ -1565,6 +1552,134 @@
         }
 
         processNextMetadata();
+    }
+
+    // ============================================================
+    // LIVE TV STATUS CHECKER
+    // ============================================================
+    // YouTube oEmbed can identify a channel/video, but it does not tell us
+    // whether a live broadcast has ended. For Live TV we therefore use a
+    // hidden, muted YouTube IFrame player to test the stream state.
+    // - PLAYING => keep the channel visible
+    // - ENDED / ERROR => hide it
+    // - timeout => keep it visible (avoid false removal because of network/API delay)
+    function checkSingleLiveTV(videoId) {
+        return new Promise(function(resolve) {
+            if (!videoId) { resolve('unavailable'); return; }
+            if (state.liveTVStatus[videoId] === 'live' || state.liveTVStatus[videoId] === 'ended' || state.liveTVStatus[videoId] === 'unavailable') {
+                resolve(state.liveTVStatus[videoId]);
+                return;
+            }
+            if (state.liveTVChecking[videoId]) {
+                state.liveTVChecking[videoId].push(resolve);
+                return;
+            }
+            state.liveTVChecking[videoId] = [resolve];
+
+            function finish(status) {
+                state.liveTVStatus[videoId] = status;
+                const waiters = state.liveTVChecking[videoId] || [];
+                delete state.liveTVChecking[videoId];
+                waiters.forEach(function(fn) { fn(status); });
+            }
+
+            if (typeof YT === 'undefined' || !YT.Player) {
+                finish('unknown');
+                return;
+            }
+
+            const host = document.createElement('div');
+            host.id = 'live-status-check-' + videoId + '-' + Date.now();
+            host.style.cssText = 'position:fixed;width:2px;height:2px;left:-10000px;top:-10000px;opacity:0;pointer-events:none;overflow:hidden;';
+            document.body.appendChild(host);
+
+            let done = false;
+            let player = null;
+            const timeout = setTimeout(function() {
+                if (done) return;
+                done = true;
+                try { if (player && player.destroy) player.destroy(); } catch(e) {}
+                host.remove();
+                finish('unknown');
+            }, 8000);
+
+            function complete(status) {
+                if (done) return;
+                done = true;
+                clearTimeout(timeout);
+                try { if (player && player.stopVideo) player.stopVideo(); } catch(e) {}
+                try { if (player && player.destroy) player.destroy(); } catch(e) {}
+                host.remove();
+                finish(status);
+            }
+
+            try {
+                player = new YT.Player(host.id, {
+                    width: '2', height: '2', videoId: videoId,
+                    playerVars: { autoplay: 1, controls: 0, mute: 1, playsinline: 1, rel: 0 },
+                    events: {
+                        onReady: function(e) {
+                            try { e.target.mute(); e.target.playVideo(); } catch(err) {}
+                        },
+                        onStateChange: function(e) {
+                            if (e.data === YT.PlayerState.PLAYING) {
+                                // Newer player builds expose isLiveContent. If it is
+                                // explicitly false, this is not a live broadcast.
+                                try {
+                                    const data = e.target.getVideoData ? e.target.getVideoData() : null;
+                                    if (data && data.isLiveContent === false) {
+                                        complete('ended');
+                                        return;
+                                    }
+                                } catch(err) {}
+                                complete('live');
+                            } else if (e.data === YT.PlayerState.ENDED) {
+                                complete('ended');
+                            }
+                        },
+                        onError: function() { complete('unavailable'); }
+                    }
+                });
+            } catch (err) {
+                complete('unknown');
+            }
+        });
+    }
+
+    function checkLiveTVStatuses(playlist) {
+        if (!playlist || !playlist.group || !isLiveTVGroup(playlist.group)) return;
+        if (typeof YT === 'undefined' || !YT.Player) {
+            setTimeout(function() { checkLiveTVStatuses(playlist); }, 1000);
+            return;
+        }
+
+        const ids = playlist.videoIds.slice();
+        let index = 0;
+        let changed = false;
+        function next() {
+            if (index >= ids.length) {
+                if (changed && state.isPlaylistView && state.viewingPlaylist === playlist) renderVideos(playlist);
+                return;
+            }
+            const id = ids[index++];
+            const before = state.liveTVStatus[id];
+            checkSingleLiveTV(id).then(function(status) {
+                if (before !== status && (status === 'ended' || status === 'unavailable')) changed = true;
+                setTimeout(next, 80);
+            });
+        }
+        next();
+    }
+
+    function startLiveTVStatusRefresh(playlist) {
+        if (state.liveTVCheckTimer) {
+            clearInterval(state.liveTVCheckTimer);
+            state.liveTVCheckTimer = null;
+        }
+        if (!playlist || !playlist.group || !isLiveTVGroup(playlist.group)) return;
+        state.liveTVCheckTimer = setInterval(function() {
+            if (state.isPlaylistView && state.viewingPlaylist === playlist) checkLiveTVStatuses(playlist);
+        }, 120000);
     }
 
     // ============================================================
@@ -1600,12 +1715,6 @@
         if (state.translateEnabled && meta && meta.translatedTitle) title = meta.translatedTitle;
         let thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg';
         
-        // For Live TV, use channel logo if available
-        if (playlist.group && isLiveTVGroup(playlist.group)) {
-            const logoUrl = state.channelLogoCache[videoId];
-            if (logoUrl) thumb = logoUrl;
-        }
-
         if (!startPosition) {
             const historyEntry = state.history.find(function(h) { return h.videoId === videoId && h.playlistName === playlist.name; });
             if (historyEntry && historyEntry.position > 0) {
