@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Shafin Tube Pro</title>
+    <title>Shafin Tube</title>
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23000000'/><rect x='15' y='25' width='70' height='50' rx='8' fill='%231a1a1a' stroke='%232a2a2a' stroke-width='2'/><rect x='35' y='38' width='30' height='24' rx='4' fill='%23ff0000'/><circle cx='50' cy='50' r='6' fill='%23ffffff'/></svg>">
     <style>
         /* ============================================================
@@ -44,7 +44,7 @@
         .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 2px 12px; border-radius: 16px; cursor: pointer; font-size: 0.55rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
         .manual-input-wrap .play-btn:hover { background: var(--accent2); }
         
-        .header-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; flex-wrap: nowrap; }
+        .header-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; flex-wrap: nowrap; position: relative; }
         .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
         .header-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .header-btn.random-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
@@ -105,6 +105,7 @@
         .list-item:hover { background: var(--hover); }
         .list-item.active { background: var(--bg3); border-left-color: var(--accent); }
         .list-item .thumb { width: 40px; height: 22px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .list-item .thumb.live-tv { border-radius: 50%; width: 28px; height: 28px; border: 2px solid var(--accent); }
         .list-item .info { flex: 1; min-width: 0; }
         .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
         .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
@@ -259,6 +260,7 @@
             .timer-preset-btn { font-size: 0.5rem; padding: 2px 8px; height: 24px; min-width: 32px; }
             .status-badge { font-size: 0.45rem; padding: 1px 6px; }
             .list-item .thumb { width: 34px; height: 19px; }
+            .list-item .thumb.live-tv { width: 24px; height: 24px; }
             .list-item .title { font-size: 0.7rem; }
             .control-btn { width: 28px; height: 28px; font-size: 0.7rem; }
             .mode-switch .mode-option { font-size: 0.55rem; padding: 3px 10px; }
@@ -309,6 +311,7 @@
             .list-item .title { font-size: 0.65rem; }
             .list-item .sub { font-size: 0.5rem; }
             .list-item .thumb { width: 30px; height: 17px; }
+            .list-item .thumb.live-tv { width: 22px; height: 22px; }
             .controls { gap: 5px; padding: 4px 8px; }
             .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
             .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
@@ -369,7 +372,7 @@
                 <button class="play-btn" id="manualPlayBtn">▶</button>
             </div>
         </div>
-        <div class="header-right" style="position:relative;">
+        <div class="header-right">
             <span class="status-badge" id="statusBadge">📡 Loading...</span>
             <span class="timer-display" id="timerDisplay">∞</span>
             <div class="timer-preset-wrap">
@@ -394,7 +397,6 @@
                 <div class="more-dropdown" id="moreDropdown">
                     <button class="more-item" id="moreRefresh"><span class="more-icon">⟳</span> Refresh Metadata</button>
                     <button class="more-item" id="moreShortcuts"><span class="more-icon">⌨️</span> Keyboard Shortcuts</button>
-                    <button class="more-item" id="moreAudioOnly"><span class="more-icon">🎵</span> Audio Only Mode</button>
                     <div class="more-divider"></div>
                     <button class="more-item" id="moreAbout"><span class="more-icon">ℹ️</span> About</button>
                     <a class="more-item" id="moreEdit" href="https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing" target="_blank" style="text-decoration:none;color:var(--text);">
@@ -489,7 +491,6 @@
             <div class="shortcut-item"><span>History</span><span class="key">H</span></div>
             <div class="shortcut-item"><span>Stop Playback</span><span class="key">X</span></div>
             <div class="shortcut-item"><span>Copy Video ID</span><span class="key">C</span></div>
-            <div class="shortcut-item"><span>Audio Only Mode</span><span class="key">A</span></div>
             <div class="shortcut-item"><span>Go Home</span><span class="key">Home</span></div>
             <div class="shortcut-item"><span>Show Help</span><span class="key">?</span></div>
         </div>
@@ -533,7 +534,6 @@
         <button class="mobile-more-action" id="mobileRefreshAction"><span>⟳</span><span>Refresh</span></button>
         <button class="mobile-more-action" id="mobileTimerAction"><span>⏱️</span><span>Timer</span></button>
         <button class="mobile-more-action" id="mobileThemeAction"><span>🌙</span><span>Theme</span></button>
-        <button class="mobile-more-action" id="mobileAudioOnlyAction"><span>🎵</span><span>Audio Only</span></button>
         <button class="mobile-more-action" id="mobileAboutAction"><span>ℹ️</span><span>About</span></button>
         <button class="mobile-more-action" id="mobileCloseMore"><span>✕</span><span>Close</span></button>
     </div>
@@ -620,10 +620,8 @@
         moreDropdown: $('moreDropdown'),
         moreRefresh: $('moreRefresh'),
         moreShortcuts: $('moreShortcuts'),
-        moreAudioOnly: $('moreAudioOnly'),
         moreAbout: $('moreAbout'),
-        moreEdit: $('moreEdit'),
-        shortcutBtn: $('shortcutBtn')
+        moreEdit: $('moreEdit')
     };
 
     // ============================================================
@@ -637,7 +635,7 @@
         playingVideoIndex: -1,
         viewingPlaylist: null,
         viewingVideoIndex: -1,
-        playbackMode: 0, // 0=sequential, 1=shuffle, 2=loop
+        playbackMode: 0,
         isPlaying: false,
         isPlaylistView: false,
         isGroupView: true,
@@ -661,9 +659,9 @@
         isAutoPlaying: false,
         groupShuffleEnabled: false,
         isLoadingMetadata: false,
-        audioOnlyMode: false,
         isSeeking: false,
-        videoEndedManually: false // Track if user manually ended video
+        videoEndedManually: false,
+        channelLogoCache: {} // Cache for channel logos
     };
 
     // ============================================================
@@ -746,7 +744,6 @@
         DOM.moreDropdown.classList.remove('open');
     }
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
         if (DOM.moreDropdown && !DOM.moreDropdown.contains(e.target) && e.target !== DOM.moreBtn) {
             closeMoreDropdown();
@@ -763,37 +760,6 @@
 
     function closeAbout() {
         DOM.aboutOverlay.classList.remove('open');
-    }
-
-    // ============================================================
-    // AUDIO ONLY MODE
-    // ============================================================
-    function toggleAudioOnly() {
-        state.audioOnlyMode = !state.audioOnlyMode;
-        // Update UI in more dropdown
-        const audioOnlyItem = DOM.moreAudioOnly;
-        if (audioOnlyItem) {
-            audioOnlyItem.innerHTML = `<span class="more-icon">🎵</span> ${state.audioOnlyMode ? 'Audio Only: ON' : 'Audio Only: OFF'}`;
-            audioOnlyItem.style.color = state.audioOnlyMode ? 'var(--accent)' : 'var(--text)';
-        }
-        showToast(state.audioOnlyMode ? '🎵 Audio Only Mode ON' : '🎵 Audio Only Mode OFF');
-        
-        if (state.audioOnlyMode && state.ytPlayer) {
-            // Set to lowest quality to save bandwidth
-            try {
-                state.ytPlayer.setPlaybackQuality('small');
-                const container = document.getElementById('yt-player-container');
-                if (container) container.style.opacity = '0.2';
-            } catch(e) {}
-        } else if (!state.audioOnlyMode && state.ytPlayer) {
-            try {
-                state.ytPlayer.setPlaybackQuality('auto');
-                const container = document.getElementById('yt-player-container');
-                if (container) container.style.opacity = '1';
-            } catch(e) {}
-        }
-        saveState();
-        closeMoreDropdown();
     }
 
     // ============================================================
@@ -845,10 +811,53 @@
     }
 
     // ============================================================
-    // VIDEO END HANDLER - Smart: don't auto-advance if user interacted
+    // CHANNEL LOGO FETCHER for Live TV
+    // ============================================================
+    async function fetchChannelLogo(videoId) {
+        if (state.channelLogoCache[videoId]) return state.channelLogoCache[videoId];
+        
+        try {
+            // First try to get channel info from oembed
+            const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error('Failed to fetch');
+            const data = await resp.json();
+            
+            // Try to get channel ID from author_url
+            if (data.author_url) {
+                const channelId = data.author_url.split('/').pop();
+                if (channelId) {
+                    // Use YouTube's channel avatar API
+                    const avatarUrl = `https://yt3.ggpht.com/ytc/...`; // This would need a proper API
+                    // Fallback: use a colored logo with channel name initial
+                    const initial = data.author_name ? data.author_name.charAt(0).toUpperCase() : '?';
+                    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#FF8A5C', '#A29BFE'];
+                    const colorIndex = channelId.length % colors.length;
+                    const color = colors[colorIndex];
+                    // Create a data URI for a colored circle with initial
+                    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                        <circle cx="20" cy="20" r="18" fill="${color}"/>
+                        <text x="20" y="26" font-family="Arial" font-size="18" font-weight="bold" fill="white" text-anchor="middle">${initial}</text>
+                    </svg>`;
+                    const encoded = btoa(svg);
+                    const logoUrl = `data:image/svg+xml;base64,${encoded}`;
+                    state.channelLogoCache[videoId] = logoUrl;
+                    return logoUrl;
+                }
+            }
+        } catch (e) {
+            console.log('Could not fetch channel logo for:', videoId);
+        }
+        
+        // Fallback to generic channel icon
+        state.channelLogoCache[videoId] = null;
+        return null;
+    }
+
+    // ============================================================
+    // VIDEO END HANDLER
     // ============================================================
     function handleVideoEnd() {
-        // If user manually ended the video (clicked it, etc.), don't auto-advance
         if (state.videoEndedManually) {
             state.videoEndedManually = false;
             return;
@@ -932,7 +941,6 @@
             }
         });
         
-        // Touch support
         DOM.progressContainer.addEventListener('touchstart', (e) => {
             if (!state.ytPlayer || typeof state.ytPlayer.seekTo !== 'function') return;
             state.isSeeking = true;
@@ -959,7 +967,6 @@
             const seekTime = percent * duration;
             state.ytPlayer.seekTo(seekTime, true);
             DOM.progressBar.style.width = (percent * 100) + '%';
-            // Reset manual end flag when user seeks
             state.videoEndedManually = false;
         }
     }
@@ -1027,9 +1034,6 @@
         const playerDiv = document.createElement('div');
         playerDiv.id = 'yt-player-container';
         playerDiv.style.cssText = 'width:100%;height:100%;position:relative;';
-        if (state.audioOnlyMode) {
-            playerDiv.style.opacity = '0.2';
-        }
         const old = document.getElementById('yt-player-container');
         if (old) old.remove();
         if (DOM.iframe) DOM.iframe.style.display = 'none';
@@ -1052,9 +1056,6 @@
                     if (autoplay) e.target.playVideo();
                     startPlayerTimer();
                     if (state.isMuted && typeof e.target.setVolume === 'function') e.target.setVolume(0);
-                    if (state.audioOnlyMode) {
-                        try { e.target.setPlaybackQuality('small'); } catch(e) {}
-                    }
                 },
                 onStateChange: (e) => {
                     const s = e.data;
@@ -1073,7 +1074,6 @@
                         state.isPlaying = false;
                         if (DOM.playBtn) DOM.playBtn.textContent = '▶';
                         if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
-                        // Only auto-advance if not manually ended
                         if (!state.videoEndedManually && !state.autoPlayPending && !state.isStopped) {
                             state.videoEndDetected = true;
                             state.autoPlayPending = true;
@@ -1198,6 +1198,10 @@
         return '📁';
     }
 
+    function isLiveTVGroup(groupName) {
+        return groupName && groupName.toLowerCase().includes('live tv');
+    }
+
     function renderGroups() {
         if (!DOM.listContainer) return;
         const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
@@ -1286,9 +1290,7 @@
         const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         const cacheKey = playlist.name;
         const cache = state.metadataCache[cacheKey] || {};
-
-        // Check if this is Live TV group
-        const isLiveTV = playlist.group && playlist.group.toLowerCase().includes('live tv');
+        const isLiveTV = playlist.group && isLiveTVGroup(playlist.group);
 
         let html = `<div style="padding:4px 8px;font-size:0.7rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;">
             <span>▶ ${escapeHtml(playlist.name)} (${playlist.videoIds.length})</span>
@@ -1313,6 +1315,9 @@
             return;
         }
 
+        // For Live TV, we need to fetch channel logos for each video
+        const logoPromises = isLiveTV ? videos.map(v => fetchChannelLogo(v.id)) : [];
+
         videos.forEach((v) => {
             const isActive = state.viewingPlaylist === playlist && state.viewingVideoIndex === v.index;
             const meta = cache[v.id];
@@ -1325,8 +1330,13 @@
             
             // For Live TV: use channel logo as thumbnail
             let thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
-            if (isLiveTV && meta && meta.channelLogo) {
-                thumb = meta.channelLogo;
+            let thumbClass = '';
+            if (isLiveTV) {
+                const logoUrl = state.channelLogoCache[v.id];
+                if (logoUrl) {
+                    thumb = logoUrl;
+                    thumbClass = 'live-tv';
+                }
             }
             
             const author = meta ? meta.author : '';
@@ -1334,7 +1344,7 @@
 
             html += `
                 <div class="list-item ${isActive ? 'active' : ''}" data-video-index="${v.index}" data-type="video">
-                    <img class="thumb" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
+                    <img class="thumb ${thumbClass}" src="${thumb}" alt="" loading="lazy" onerror="this.src='https://img.youtube.com/vi/${v.id}/mqdefault.jpg'">
                     <div class="info">
                         <div class="title" title="${escapeHtml(title)}">${escapeHtml(title)} ${translatedBadge}</div>
                         <div class="sub">${escapeHtml(author)}</div>
@@ -1355,7 +1365,6 @@
         DOM.listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(el => {
             el.addEventListener('click', () => {
                 const idx = parseInt(el.dataset.videoIndex);
-                // Reset manual end flag when user clicks a video
                 state.videoEndedManually = false;
                 state.playingPlaylist = playlist;
                 state.playingVideoIndex = idx;
@@ -1527,7 +1536,7 @@
     }
 
     // ============================================================
-    // METADATA FETCHING with Channel Logo support for Live TV
+    // METADATA FETCHING
     // ============================================================
     async function fetchVideoMetadata(videoId) {
         try {
@@ -1535,30 +1544,11 @@
             const resp = await fetch(url);
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const data = await resp.json();
-            
-            // For Live TV groups, try to get channel logo
-            const result = { 
+            return { 
                 title: data.title || `Video ${videoId}`, 
                 author: data.author_name || 'Unknown', 
                 thumbnail: data.thumbnail_url || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
             };
-            
-            // Try to get channel logo for Live TV
-            try {
-                const channelUrl = `https://www.youtube.com/channel/${videoId}`;
-                // We'll use a different approach - get from channel ID if available
-                // For now, use the author's avatar from oembed if available
-                if (data.author_url) {
-                    const authorId = data.author_url.split('/').pop();
-                    if (authorId) {
-                        const avatarUrl = `https://yt3.ggpht.com/ytc/...`; // This needs a different API
-                        // Fallback: use the author name as a seed for a consistent logo
-                        // We'll use the existing thumbnail as fallback
-                    }
-                }
-            } catch(e) {}
-            
-            return result;
         } catch (err) {
             return { 
                 title: `Video ${videoId}`, 
@@ -1579,12 +1569,20 @@
         const batchSize = 5;
         let fetched = 0;
         const total = playlist.videoIds.length;
+        const isLiveTV = playlist.group && isLiveTVGroup(playlist.group);
+        
         for (let i = 0; i < total; i += batchSize) {
             const batch = playlist.videoIds.slice(i, i + batchSize);
             const promises = batch.map(async (id) => {
                 if (state.metadataCache[cacheKey][id]) return;
                 const meta = await fetchVideoMetadata(id);
                 state.metadataCache[cacheKey][id] = meta;
+                
+                // If Live TV, fetch channel logo
+                if (isLiveTV) {
+                    await fetchChannelLogo(id);
+                }
+                
                 fetched++;
                 if (fetched % 5 === 0 || fetched === total) {
                     if (DOM.statusBadge) DOM.statusBadge.textContent = `📥 ${fetched}/${total}`;
@@ -1629,11 +1627,12 @@
         const meta = cache[videoId];
         let title = meta ? meta.title : `Video ${videoIndex + 1}`;
         if (state.translateEnabled && meta && meta.translatedTitle) title = meta.translatedTitle;
-        let thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+        let thumb = meta ? meta.thumbnail : `https://img.youtube.com/vi/${videoId}/mqdefault.jpg';
         
         // For Live TV, use channel logo if available
-        if (playlist.group && playlist.group.toLowerCase().includes('live tv') && meta && meta.channelLogo) {
-            thumb = meta.channelLogo;
+        if (playlist.group && isLiveTVGroup(playlist.group)) {
+            const logoUrl = state.channelLogoCache[videoId];
+            if (logoUrl) thumb = logoUrl;
         }
 
         if (!startPosition) {
@@ -2017,8 +2016,7 @@
                 playbackMode: state.playbackMode,
                 currentMode: state.currentMode,
                 translateEnabled: state.translateEnabled,
-                groupShuffleEnabled: state.groupShuffleEnabled,
-                audioOnlyMode: state.audioOnlyMode
+                groupShuffleEnabled: state.groupShuffleEnabled
             };
             localStorage.setItem('shafin_tube_state', JSON.stringify(stateData));
         } catch (e) {}
@@ -2192,18 +2190,10 @@
                 state.currentMode = savedState.currentMode || 'tv';
                 state.translateEnabled = savedState.translateEnabled || false;
                 state.groupShuffleEnabled = savedState.groupShuffleEnabled || false;
-                state.audioOnlyMode = savedState.audioOnlyMode || false;
                 if (state.groupShuffleEnabled && DOM.groupShuffleBtn) {
                     DOM.groupShuffleBtn.classList.add('active');
                 }
                 if (state.translateEnabled && DOM.translateBtn) DOM.translateBtn.classList.add('active');
-                if (state.audioOnlyMode) {
-                    const audioOnlyItem = DOM.moreAudioOnly;
-                    if (audioOnlyItem) {
-                        audioOnlyItem.innerHTML = `<span class="more-icon">🎵</span> Audio Only: ON`;
-                        audioOnlyItem.style.color = 'var(--accent)';
-                    }
-                }
                 updateShuffleButton();
                 updateModeUI();
             }
@@ -2239,7 +2229,7 @@
     // INITIALIZATION
     // ============================================================
     function init() {
-        console.log('🔄 Initializing Shafin Tube Pro...');
+        console.log('🔄 Initializing Shafin Tube...');
         
         loadHistory();
         console.log('✅ History loaded');
@@ -2249,13 +2239,11 @@
         setTimerPreset(0);
         console.log('✅ UI updated');
         
-        // Setup progress bar
         setupProgressSeek();
         
         console.log('📡 Loading from sheet...');
         loadFromSheet();
         
-        // Home button
         if (DOM.homeBtn) {
             DOM.homeBtn.addEventListener('click', () => {
                 if (DOM.historyPanel && DOM.historyPanel.classList.contains('open')) {
@@ -2277,7 +2265,6 @@
 
         if (DOM.backBtn) DOM.backBtn.addEventListener('click', goBack);
         
-        // More dropdown
         if (DOM.moreBtn) DOM.moreBtn.addEventListener('click', toggleMoreDropdown);
         if (DOM.moreRefresh) {
             DOM.moreRefresh.addEventListener('click', () => {
@@ -2293,13 +2280,9 @@
             });
         }
         if (DOM.moreShortcuts) DOM.moreShortcuts.addEventListener('click', toggleShortcuts);
-        if (DOM.moreAudioOnly) DOM.moreAudioOnly.addEventListener('click', toggleAudioOnly);
         if (DOM.moreAbout) DOM.moreAbout.addEventListener('click', openAbout);
         if (DOM.moreEdit) {
-            DOM.moreEdit.addEventListener('click', (e) => {
-                // Link opens in new tab
-                closeMoreDropdown();
-            });
+            DOM.moreEdit.addEventListener('click', closeMoreDropdown);
         }
         
         if (DOM.translateBtn) DOM.translateBtn.addEventListener('click', toggleTranslation);
@@ -2346,7 +2329,6 @@
 
         if (DOM.videoIdTile) DOM.videoIdTile.addEventListener('click', copyVideoId);
         
-        // About
         if (DOM.closeAbout) DOM.closeAbout.addEventListener('click', closeAbout);
         if (DOM.aboutOverlay) {
             DOM.aboutOverlay.addEventListener('click', (e) => {
@@ -2354,7 +2336,6 @@
             });
         }
         
-        // Shortcuts
         if (DOM.closeShortcuts) DOM.closeShortcuts.addEventListener('click', closeShortcuts);
         if (DOM.shortcutsOverlay) {
             DOM.shortcutsOverlay.addEventListener('click', (e) => {
@@ -2380,12 +2361,7 @@
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.target.tagName === 'INPUT') {
-                if (e.key === 'Enter' && e.target === DOM.searchInput) {
-                    // Trigger search
-                }
-                return;
-            }
+            if (e.target.tagName === 'INPUT') return;
             
             if (e.key === '?' || e.key === '/') {
                 e.preventDefault();
@@ -2414,7 +2390,6 @@
             else if (e.key === 'f' || e.key === 'F') { randomVideoWithPosition(); }
             else if (e.key === 'c' || e.key === 'C') { copyVideoId(); }
             else if (e.key === 'g' || e.key === 'G') { toggleGroupShuffle(); }
-            else if (e.key === 'a' || e.key === 'A') { toggleAudioOnly(); }
             else if (e.key === 'Home') { 
                 e.preventDefault(); 
                 if (DOM.homeBtn) DOM.homeBtn.click(); 
@@ -2475,7 +2450,6 @@
             }
         });
         $('mobileThemeAction')?.addEventListener('click', () => { closeMobileMore(); DOM.themeToggle?.click(); });
-        $('mobileAudioOnlyAction')?.addEventListener('click', () => { closeMobileMore(); toggleAudioOnly(); });
         $('mobileAboutAction')?.addEventListener('click', () => { closeMobileMore(); openAbout(); });
         $('mobileTimerAction')?.addEventListener('click', () => {
             closeMobileMore();
@@ -2483,10 +2457,10 @@
             if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.add('open');
         });
 
-        console.log('🟢 Shafin Tube Pro initialized successfully!');
+        console.log('🟢 Shafin Tube initialized successfully!');
         console.log('✎ Edit sheet:', CONFIG.EDIT_URL);
         console.log('⌨️ Press ? for keyboard shortcuts');
-        console.log('📺 Live TV group shows 📺 icon and channel logos as thumbnails');
+        console.log('📺 Live TV group shows 📺 icon and channel logos');
     }
 
     if (document.readyState === 'loading') {
