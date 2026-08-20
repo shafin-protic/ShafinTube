@@ -98,9 +98,7 @@
         .list-item .thumb { width: 40px; height: 22px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .list-item .thumb.live-tv { border-radius: 50%; width: 28px; height: 28px; border: 2px solid var(--accent); object-fit: cover; }
         .live-logo-wrap { width: 32px; height: 32px; flex: 0 0 32px; display:flex; align-items:center; justify-content:center; }
-        .live-channel-logo, .live-channel-fallback { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 0; box-sizing: border-box; }
-        .live-channel-fallback { align-items:center; justify-content:center; color:#fff; font-size:0.85rem; font-weight:700; }
-
+        .live-channel-fallback { width: 32px; height: 32px; border-radius: 50%; display:flex; align-items:center; justify-content:center; background: var(--bg3); border: 2px solid var(--accent); font-size:1.1rem; }
         .list-item .info { flex: 1; min-width: 0; }
         .list-item .title { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: default; }
         .list-item .sub { font-size: 0.55rem; color: var(--text2); margin-top: 1px; }
@@ -294,7 +292,7 @@
             .list-item .info { min-width: 0; }
             .list-item .badge { padding: 1px 5px; }
             .live-logo-wrap { width: 28px; height: 28px; flex-basis: 28px; }
-            .live-channel-logo, .live-channel-fallback { width: 28px; height: 28px; }
+            .live-channel-fallback { width: 28px; height: 28px; font-size:0.9rem; }
             .list-item .title { font-size: 0.65rem; }
             .list-item .sub { font-size: 0.5rem; }
             .list-item .thumb { width: 30px; height: 17px; }
@@ -584,7 +582,6 @@
         toast: $('toast'),
         timeDisplay: $('timeDisplay'),
         dayDisplay: $('dayDisplay'),
-        videoContainer: $('videoContainer'),
         progressContainer: $('progressContainer'),
         progressBar: $('progressBar'),
         shortcutsOverlay: $('shortcutsOverlay'),
@@ -636,12 +633,10 @@
         isLoadingMetadata: false,
         isSeeking: false,
         videoEndedManually: false,
-        channelLogoCache: {},
-        channelLogoPromises: {},
-        isFetchingLogos: false,
-        liveTVStatus: {},
-        liveTVChecking: {},
-        liveTVCheckTimer: null
+        userClickedVideo: false,
+        metadataFetchingPlaylist: null,
+        metadataProcessed: 0,
+        metadataTotal: 0
     };
 
     // ============================================================
@@ -649,7 +644,7 @@
     // ============================================================
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m] || m);
+        return str.replace(/[&<>"]/g, function(m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m] || m; });
     }
 
     function formatTime(seconds) {
@@ -790,60 +785,60 @@
     }
 
     // ============================================================
-    // CHANNEL ICON - Live TV
-    // ============================================================
-    function makeLiveLogoHtml() {
-        return '<span class="live-channel-fallback" style="display:flex;background:transparent;border:none;font-size:1.35rem;">📡</span>';
-    }
-
-    // ============================================================
     // VIDEO END HANDLER
     // ============================================================
     function handleVideoEnd() {
-        if (state.videoEndedManually) {
-            state.videoEndedManually = false;
-            return;
-        }
-        
-        const playlist = state.playingPlaylist;
-        if (!playlist || playlist.videoIds.length === 0) return;
-        
-        const currentIdx = state.playingVideoIndex;
-        if (currentIdx < 0 || currentIdx >= playlist.videoIds.length) return;
-        
-        let nextPlaylist = playlist;
-        let nextIdx;
-        
-        if (state.groupShuffleEnabled) {
-            const randomPlaylist = getRandomPlaylistFromGroup(playlist.group, playlist);
-            if (randomPlaylist) {
-                nextPlaylist = randomPlaylist;
-            }
-        }
-        
-        if (state.playbackMode === 2) {
-            nextIdx = currentIdx;
-        } else if (state.playbackMode === 1) {
-            let idx;
-            let attempts = 0;
-            do {
-                idx = Math.floor(Math.random() * nextPlaylist.videoIds.length);
-                attempts++;
-            } while (idx === currentIdx && nextPlaylist.videoIds.length > 1 && attempts < 20);
-            nextIdx = idx;
-        } else {
-            if (nextPlaylist !== playlist) {
-                nextIdx = 0;
-            } else {
-                nextIdx = (currentIdx + 1) % nextPlaylist.videoIds.length;
-            }
-        }
-        
-        state.isAutoPlaying = true;
-        state.viewingPlaylist = nextPlaylist;
-        state.viewingVideoIndex = nextIdx;
-        playVideo(nextPlaylist, nextIdx);
-        setTimeout(function() { state.isAutoPlaying = false; }, 500);
+      // If user clicked this video manually, don't auto-advance
+      if (state.userClickedVideo) {
+          state.userClickedVideo = false;
+          state.videoEndedManually = true;
+          return;
+      }
+      
+      if (state.videoEndedManually) {
+          state.videoEndedManually = false;
+          return;
+      }
+      
+      const playlist = state.playingPlaylist;
+      if (!playlist || playlist.videoIds.length === 0) return;
+      
+      const currentIdx = state.playingVideoIndex;
+      if (currentIdx < 0 || currentIdx >= playlist.videoIds.length) return;
+      
+      let nextPlaylist = playlist;
+      let nextIdx;
+      
+      if (state.groupShuffleEnabled) {
+          const randomPlaylist = getRandomPlaylistFromGroup(playlist.group, playlist);
+          if (randomPlaylist) {
+              nextPlaylist = randomPlaylist;
+          }
+      }
+      
+      if (state.playbackMode === 2) {
+          nextIdx = currentIdx;
+      } else if (state.playbackMode === 1) {
+          let idx;
+          let attempts = 0;
+          do {
+              idx = Math.floor(Math.random() * nextPlaylist.videoIds.length);
+              attempts++;
+          } while (idx === currentIdx && nextPlaylist.videoIds.length > 1 && attempts < 20);
+          nextIdx = idx;
+      } else {
+          if (nextPlaylist !== playlist) {
+              nextIdx = 0;
+          } else {
+              nextIdx = (currentIdx + 1) % nextPlaylist.videoIds.length;
+          }
+      }
+      
+      state.isAutoPlaying = true;
+      state.viewingPlaylist = nextPlaylist;
+      state.viewingVideoIndex = nextIdx;
+      playVideo(nextPlaylist, nextIdx);
+      setTimeout(function() { state.isAutoPlaying = false; }, 500);
     }
 
     // ============================================================
@@ -1242,10 +1237,6 @@
             '</div>';
 
         let videos = playlist.videoIds.map(function(id, idx) { return { id: id, index: idx }; });
-        // For Live TV, hide streams that have been confirmed ended/unavailable.
-        if (isLiveTV) {
-            videos = videos.filter(function(v) { return state.liveTVStatus[v.id] !== 'ended' && state.liveTVStatus[v.id] !== 'unavailable'; });
-        }
         if (search) {
             videos = videos.filter(function(v) {
                 const meta = cache[v.id];
@@ -1273,19 +1264,30 @@
                 translated = true;
             }
             
-            const channelName = meta && meta.author && meta.author !== 'Unknown' ? meta.author : 'Loading channel…';
-            const liveLogo = isLiveTV ? makeLiveLogoHtml() : '';
             const thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg';
             const translatedBadge = translated ? '<span class="translated-badge">🌐</span>' : '';
 
-            html += '<div class="list-item ' + (isActive ? 'active' : '') + '" data-video-index="' + v.index + '" data-type="video">' +
-                (isLiveTV ? '<div class="live-logo-wrap">' + liveLogo + '</div>' : '<img class="thumb" src="' + thumb + '" alt="" loading="lazy">') +
-                '<div class="info">' +
-                '<div class="title" title="' + escapeHtml(isLiveTV ? channelName : title) + '">' + escapeHtml(isLiveTV ? channelName : title) + ' ' + translatedBadge + '</div>' +
-                (isLiveTV ? '' : '<div class="sub">' + escapeHtml(meta ? meta.author : '') + '</div>') +
-                '</div>' +
-                '<span class="badge">' + (v.index + 1) + '</span>' +
-                '</div>';
+            // For Live TV: show 📡 icon with channel name as title
+            if (isLiveTV) {
+                const channelName = meta && meta.author && meta.author !== 'Unknown' ? meta.author : 'Loading...';
+                html += '<div class="list-item ' + (isActive ? 'active' : '') + '" data-video-index="' + v.index + '" data-type="video">' +
+                    '<div class="live-logo-wrap"><div class="live-channel-fallback">📡</div></div>' +
+                    '<div class="info">' +
+                    '<div class="title" title="' + escapeHtml(channelName) + '">' + escapeHtml(channelName) + ' ' + translatedBadge + '</div>' +
+                    '<div class="sub">Live TV</div>' +
+                    '</div>' +
+                    '<span class="badge">' + (v.index + 1) + '</span>' +
+                    '</div>';
+            } else {
+                html += '<div class="list-item ' + (isActive ? 'active' : '') + '" data-video-index="' + v.index + '" data-type="video">' +
+                    '<img class="thumb" src="' + thumb + '" alt="" loading="lazy" onerror="this.src=\'https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg\'">' +
+                    '<div class="info">' +
+                    '<div class="title" title="' + escapeHtml(title) + '">' + escapeHtml(title) + ' ' + translatedBadge + '</div>' +
+                    '<div class="sub">' + escapeHtml(meta ? meta.author : '') + '</div>' +
+                    '</div>' +
+                    '<span class="badge">' + (v.index + 1) + '</span>' +
+                    '</div>';
+            }
         });
 
         if (state.isLoadingMetadata && Object.keys(cache).length < playlist.videoIds.length) {
@@ -1296,22 +1298,18 @@
 
         DOM.listContainer.innerHTML = html;
 
-        if (isLiveTV) {
-            checkLiveTVStatuses(playlist);
-            startLiveTVStatusRefresh(playlist);
-        }
-
         DOM.listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(function(el) {
-            el.addEventListener('click', function() {
-                const idx = parseInt(el.dataset.videoIndex);
-                state.videoEndedManually = false;
-                state.playingPlaylist = playlist;
-                state.playingVideoIndex = idx;
-                state.viewingPlaylist = playlist;
-                state.viewingVideoIndex = idx;
-                playVideo(playlist, idx);
-            });
-        });
+          el.addEventListener('click', function() {
+              const idx = parseInt(el.dataset.videoIndex);
+              state.userClickedVideo = true;   // <-- ADD THIS
+              state.videoEndedManually = false;
+              state.playingPlaylist = playlist;
+              state.playingVideoIndex = idx;
+              state.viewingPlaylist = playlist;
+              state.viewingVideoIndex = idx;
+              playVideo(playlist, idx, false, 0);  // Start from beginning
+          });
+});
     }
 
     // ============================================================
@@ -1474,7 +1472,7 @@
     }
 
     // ============================================================
-    // METADATA FETCHING - FIXED infinite loop
+    // METADATA FETCHING - FAST PARALLEL VERSION
     // ============================================================
     async function fetchVideoMetadata(videoId) {
         try {
@@ -1507,179 +1505,73 @@
         if (!state.metadataCache[cacheKey]) state.metadataCache[cacheKey] = {};
         const cache = state.metadataCache[cacheKey];
 
+        // Check if all metadata is already loaded
+        const allLoaded = playlist.videoIds.every(function(id) { return cache[id]; });
+        if (!force && allLoaded) return;
+
         state.isLoadingMetadata = true;
+        state.metadataFetchingPlaylist = playlist.name;
+        state.metadataProcessed = 0;
+        state.metadataTotal = playlist.videoIds.length;
+
         showToast('Fetching metadata for ' + playlist.name + '...');
 
-        let index = 0;
-        const total = playlist.videoIds.length;
+        // Process in parallel batches for speed
+        const batchSize = 6;
+        const ids = playlist.videoIds.filter(function(id) { return !cache[id] || force; });
+        const totalToFetch = ids.length;
 
-        async function processNextMetadata() {
-            // Find the next uncached ID without using a long-running loop.
-            while (index < total && !force && cache[playlist.videoIds[index]]) {
-                index++;
-            }
-
-            if (index >= total) {
-                state.isLoadingMetadata = false;
-                if (DOM.statusBadge) DOM.statusBadge.textContent = '✅ ' + total + ' videos';
-                try {
-                    localStorage.setItem('shafin_tube_cache', JSON.stringify({
-                        metadataCache: state.metadataCache,
-                        timestamp: Date.now()
-                    }));
-                } catch (e) {}
-                if (state.isPlaylistView && state.viewingPlaylist === playlist) renderVideos(playlist);
-                if (playlist.group && isLiveTVGroup(playlist.group)) {
-                    checkLiveTVStatuses(playlist);
-                }
-                return;
-            }
-
-            const id = playlist.videoIds[index++];
-            try {
-                cache[id] = await fetchVideoMetadata(id);
-            } catch (e) {
-                console.warn('Failed to fetch metadata for:', id, e);
-                cache[id] = {
-                    title: 'Video ' + id,
-                    author: 'Unknown',
-                    thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg'
-                };
-            }
-
-            if (DOM.statusBadge) DOM.statusBadge.textContent = '📥 ' + index + '/' + total;
-            setTimeout(processNextMetadata, 50);
-        }
-
-        processNextMetadata();
-    }
-
-    // ============================================================
-    // LIVE TV STATUS CHECKER
-    // ============================================================
-    // YouTube oEmbed can identify a channel/video, but it does not tell us
-    // whether a live broadcast has ended. For Live TV we therefore use a
-    // hidden, muted YouTube IFrame player to test the stream state.
-    // - PLAYING => keep the channel visible
-    // - ENDED / ERROR => hide it
-    // - timeout => keep it visible (avoid false removal because of network/API delay)
-    function checkSingleLiveTV(videoId) {
-        return new Promise(function(resolve) {
-            if (!videoId) { resolve('unavailable'); return; }
-            if (state.liveTVStatus[videoId] === 'live' || state.liveTVStatus[videoId] === 'ended' || state.liveTVStatus[videoId] === 'unavailable') {
-                resolve(state.liveTVStatus[videoId]);
-                return;
-            }
-            if (state.liveTVChecking[videoId]) {
-                state.liveTVChecking[videoId].push(resolve);
-                return;
-            }
-            state.liveTVChecking[videoId] = [resolve];
-
-            function finish(status) {
-                state.liveTVStatus[videoId] = status;
-                const waiters = state.liveTVChecking[videoId] || [];
-                delete state.liveTVChecking[videoId];
-                waiters.forEach(function(fn) { fn(status); });
-            }
-
-            if (typeof YT === 'undefined' || !YT.Player) {
-                finish('unknown');
-                return;
-            }
-
-            const host = document.createElement('div');
-            host.id = 'live-status-check-' + videoId + '-' + Date.now();
-            host.style.cssText = 'position:fixed;width:2px;height:2px;left:-10000px;top:-10000px;opacity:0;pointer-events:none;overflow:hidden;';
-            document.body.appendChild(host);
-
-            let done = false;
-            let player = null;
-            const timeout = setTimeout(function() {
-                if (done) return;
-                done = true;
-                try { if (player && player.destroy) player.destroy(); } catch(e) {}
-                host.remove();
-                finish('unknown');
-            }, 8000);
-
-            function complete(status) {
-                if (done) return;
-                done = true;
-                clearTimeout(timeout);
-                try { if (player && player.stopVideo) player.stopVideo(); } catch(e) {}
-                try { if (player && player.destroy) player.destroy(); } catch(e) {}
-                host.remove();
-                finish(status);
-            }
-
-            try {
-                player = new YT.Player(host.id, {
-                    width: '2', height: '2', videoId: videoId,
-                    playerVars: { autoplay: 1, controls: 0, mute: 1, playsinline: 1, rel: 0 },
-                    events: {
-                        onReady: function(e) {
-                            try { e.target.mute(); e.target.playVideo(); } catch(err) {}
-                        },
-                        onStateChange: function(e) {
-                            if (e.data === YT.PlayerState.PLAYING) {
-                                // Newer player builds expose isLiveContent. If it is
-                                // explicitly false, this is not a live broadcast.
-                                try {
-                                    const data = e.target.getVideoData ? e.target.getVideoData() : null;
-                                    if (data && data.isLiveContent === false) {
-                                        complete('ended');
-                                        return;
-                                    }
-                                } catch(err) {}
-                                complete('live');
-                            } else if (e.data === YT.PlayerState.ENDED) {
-                                complete('ended');
-                            }
-                        },
-                        onError: function() { complete('unavailable'); }
-                    }
-                });
-            } catch (err) {
-                complete('unknown');
-            }
-        });
-    }
-
-    function checkLiveTVStatuses(playlist) {
-        if (!playlist || !playlist.group || !isLiveTVGroup(playlist.group)) return;
-        if (typeof YT === 'undefined' || !YT.Player) {
-            setTimeout(function() { checkLiveTVStatuses(playlist); }, 1000);
+        if (totalToFetch === 0) {
+            state.isLoadingMetadata = false;
+            state.metadataFetchingPlaylist = null;
             return;
         }
 
-        const ids = playlist.videoIds.slice();
-        let index = 0;
-        let changed = false;
-        function next() {
-            if (index >= ids.length) {
-                if (changed && state.isPlaylistView && state.viewingPlaylist === playlist) renderVideos(playlist);
-                return;
-            }
-            const id = ids[index++];
-            const before = state.liveTVStatus[id];
-            checkSingleLiveTV(id).then(function(status) {
-                if (before !== status && (status === 'ended' || status === 'unavailable')) changed = true;
-                setTimeout(next, 80);
+        // Process batches in parallel
+        for (let i = 0; i < ids.length; i += batchSize) {
+            const batch = ids.slice(i, i + batchSize);
+            const promises = batch.map(async function(id) {
+                try {
+                    const meta = await fetchVideoMetadata(id);
+                    cache[id] = meta;
+                } catch (e) {
+                    cache[id] = {
+                        title: 'Video ' + id,
+                        author: 'Unknown',
+                        thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg'
+                    };
+                }
+                state.metadataProcessed++;
+                if (DOM.statusBadge) {
+                    DOM.statusBadge.textContent = '📥 ' + state.metadataProcessed + '/' + state.metadataTotal;
+                }
+                // Update UI periodically
+                if (state.metadataProcessed % 5 === 0 || state.metadataProcessed === state.metadataTotal) {
+                    if (state.isPlaylistView && state.viewingPlaylist === playlist) {
+                        renderVideos(playlist);
+                    }
+                }
             });
+            await Promise.all(promises);
+            // Small delay between batches to avoid rate limiting
+            await new Promise(function(r) { setTimeout(r, 200); });
         }
-        next();
-    }
 
-    function startLiveTVStatusRefresh(playlist) {
-        if (state.liveTVCheckTimer) {
-            clearInterval(state.liveTVCheckTimer);
-            state.liveTVCheckTimer = null;
+        state.isLoadingMetadata = false;
+        state.metadataFetchingPlaylist = null;
+        if (DOM.statusBadge) DOM.statusBadge.textContent = '✅ ' + state.metadataTotal + ' videos';
+        showToast('Loaded metadata for ' + state.metadataTotal + ' videos');
+
+        try {
+            localStorage.setItem('shafin_tube_cache', JSON.stringify({
+                metadataCache: state.metadataCache,
+                timestamp: Date.now()
+            }));
+        } catch (e) {}
+
+        if (state.isPlaylistView && state.viewingPlaylist === playlist) {
+            renderVideos(playlist);
         }
-        if (!playlist || !playlist.group || !isLiveTVGroup(playlist.group)) return;
-        state.liveTVCheckTimer = setInterval(function() {
-            if (state.isPlaylistView && state.viewingPlaylist === playlist) checkLiveTVStatuses(playlist);
-        }, 120000);
     }
 
     // ============================================================
@@ -1688,7 +1580,7 @@
     function playVideo(playlist, videoIndex, restore, startPosition) {
         restore = restore || false;
         startPosition = startPosition || 0;
-        
+        state.userClickedVideo = false;
         if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) {
             console.log('playVideo: Invalid playlist or index');
             return;
@@ -2546,7 +2438,7 @@
         console.log('🟢 Shafin Tube initialized successfully!');
         console.log('✎ Edit sheet:', CONFIG.EDIT_URL);
         console.log('⌨️ Press ? for keyboard shortcuts');
-        console.log('📺 Live TV group shows 📺 icon and channel logos');
+        console.log('📺 Live TV group shows 📡 icon with channel names');
     }
 
     if (document.readyState === 'loading') {
