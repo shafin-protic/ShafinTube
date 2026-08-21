@@ -211,6 +211,23 @@
         .more-dropdown .more-item:hover { background: var(--bg4); }
         .more-dropdown .more-item .more-icon { font-size: 0.9rem; }
         .more-dropdown .more-divider { height: 1px; background: var(--border); margin: 4px 8px; }
+
+        /* Video ID Export */
+        .export-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
+        .export-btn { width: auto; min-width: 72px; height: 28px; padding: 0 10px; border-radius: 16px; font-size: 0.62rem; font-weight: 600; gap: 4px; white-space: nowrap; }
+        .export-btn.has-items { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+        .export-count { font-variant-numeric: tabular-nums; }
+        .export-dropdown { position: absolute; top: 34px; right: 0; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 4px 0; min-width: 170px; display: none; flex-direction: column; box-shadow: -8px 8px 30px var(--shadow); z-index: 300; }
+        .export-dropdown.open { display: flex; }
+        .export-dropdown .export-item { padding: 8px 14px; font-size: 0.7rem; color: var(--text); cursor: pointer; border: none; background: transparent; text-align: left; display: flex; align-items: center; gap: 9px; }
+        .export-dropdown .export-item:hover { background: var(--bg4); }
+        .export-dropdown .export-item.disabled { opacity: 0.45; cursor: default; }
+        .export-dropdown .export-item.disabled:hover { background: transparent; }
+        .video-export-btn { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border: 0; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.72rem; line-height: 18px; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity var(--transition), transform var(--transition); z-index: 2; box-shadow: 0 2px 8px var(--shadow); }
+        .list-item:hover .video-export-btn, .video-export-btn:focus-visible { opacity: 1; pointer-events: auto; }
+        .video-export-btn:hover { transform: translateY(-50%) scale(1.12); }
+        .list-item .badge { position: relative; padding-right: 8px; transition: padding-right var(--transition); }
+        .list-item:hover .badge { padding-right: 22px; }
         
         .about-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 6000; display: none; align-items: center; justify-content: center; }
         .about-overlay.open { display: flex; }
@@ -232,6 +249,10 @@
             .logo-text { font-size: 0.8rem; }
             .logo-img { width: 24px; height: 24px; }
             .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
+            .export-btn { min-width: 62px; height: 24px; padding: 0 7px; font-size: 0.55rem; }
+            .export-dropdown { top: 30px; min-width: 155px; }
+            .video-export-btn { opacity: 1; pointer-events: auto; width: 20px; height: 20px; font-size: 0.75rem; }
+            .list-item .badge { padding-right: 23px; }
             .clock-tile { min-width: 72px; width: 72px; min-height: 28px; padding: 1px 6px; }
             .clock-tile .time { font-size: 0.6rem; }
             .clock-tile .day { font-size: 0.4rem; }
@@ -374,6 +395,16 @@
             <button class="header-btn random-btn" id="randomBtn" title="Random Video (Random Position)">✨</button>
             <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
             <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles">🌐</button>
+
+            <div class="export-wrap">
+                <button class="header-btn export-btn" id="exportBtn" title="Export Video IDs">
+                    📤 <span>Export</span> <span class="export-count" id="exportCount">(0)</span>
+                </button>
+                <div class="export-dropdown" id="exportDropdown">
+                    <button class="export-item" id="exportDownload"><span>⬇️</span> Download List</button>
+                    <button class="export-item" id="exportClear"><span>🗑️</span> Clear List</button>
+                </div>
+            </div>
             
             <div style="position:relative;display:inline-block;">
                 <button class="header-btn more-btn" id="moreBtn" title="More options">⋮</button>
@@ -596,7 +627,12 @@
         moreRefresh: $('moreRefresh'),
         moreShortcuts: $('moreShortcuts'),
         moreAbout: $('moreAbout'),
-        moreEdit: $('moreEdit')
+        moreEdit: $('moreEdit'),
+        exportBtn: $('exportBtn'),
+        exportCount: $('exportCount'),
+        exportDropdown: $('exportDropdown'),
+        exportDownload: $('exportDownload'),
+        exportClear: $('exportClear')
     };
 
     // ============================================================
@@ -639,7 +675,8 @@
         channelLogoCache: {},
         channelLogoPromises: {},
         isFetchingLogos: false,
-        playerGeneration: 0
+        playerGeneration: 0,
+        exportVideoIds: []
     };
 
     // ============================================================
@@ -1326,7 +1363,9 @@
                 '<div class="title" title="' + escapeHtml(isLiveTV ? channelName : title) + '">' + escapeHtml(isLiveTV ? channelName : title) + ' ' + translatedBadge + '</div>' +
                 (isLiveTV ? '' : '<div class="sub">' + escapeHtml(meta ? meta.author : '') + '</div>') +
                 '</div>' +
-                '<span class="badge">' + (v.index + 1) + '</span>' +
+                '<span class="badge">' + (v.index + 1) +
+                '<button class="video-export-btn" type="button" title="Add Video ID to export list" aria-label="Add Video ID to export list">+</button>' +
+                '</span>' +
                 '</div>';
         });
 
@@ -1337,6 +1376,17 @@
         }
 
         DOM.listContainer.innerHTML = html;
+
+        DOM.listContainer.querySelectorAll('.video-export-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const item = btn.closest('.list-item');
+                if (!item) return;
+                const idx = parseInt(item.dataset.videoIndex);
+                addVideoToExport(playlist.videoIds[idx], btn);
+            });
+        });
 
         DOM.listContainer.querySelectorAll('.list-item[data-type="video"]').forEach(function(el) {
             el.addEventListener('click', function() {
@@ -1349,6 +1399,79 @@
                 playVideo(playlist, idx);
             });
         });
+    }
+
+    // ============================================================
+    // VIDEO ID EXPORT
+    // ============================================================
+    function updateExportUI() {
+        const count = state.exportVideoIds.length;
+        if (DOM.exportCount) DOM.exportCount.textContent = '(' + count + ')';
+        if (DOM.exportBtn) DOM.exportBtn.classList.toggle('has-items', count > 0);
+        if (DOM.exportDownload) DOM.exportDownload.classList.toggle('disabled', count === 0);
+        if (DOM.exportClear) DOM.exportClear.classList.toggle('disabled', count === 0);
+    }
+
+    function toggleExportDropdown() {
+        if (!DOM.exportDropdown) return;
+        DOM.exportDropdown.classList.toggle('open');
+        if (DOM.exportDropdown.classList.contains('open')) closeMoreDropdown();
+    }
+
+    function closeExportDropdown() {
+        if (DOM.exportDropdown) DOM.exportDropdown.classList.remove('open');
+    }
+
+    function addVideoToExport(videoId, button) {
+        if (!videoId) return;
+        if (state.exportVideoIds.includes(videoId)) {
+            showToast('Already in export list');
+            return;
+        }
+        state.exportVideoIds.push(videoId);
+        updateExportUI();
+        if (button) {
+            button.textContent = '✓';
+            button.title = 'Already added';
+            setTimeout(function() {
+                if (button && button.isConnected) {
+                    button.textContent = '+';
+                    button.title = 'Add Video ID to export list';
+                }
+            }, 900);
+        }
+        showToast('Added to export list • ' + state.exportVideoIds.length);
+    }
+
+    function downloadExportList() {
+        if (!state.exportVideoIds.length) {
+            showToast('Export list is empty', 1500, true);
+            return;
+        }
+        const blob = new Blob([state.exportVideoIds.join(',')], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'ShafinTube_Video_IDs.txt';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+        showToast('Downloaded ' + state.exportVideoIds.length + ' Video IDs');
+        closeExportDropdown();
+    }
+
+    function clearExportList() {
+        if (!state.exportVideoIds.length) {
+            closeExportDropdown();
+            return;
+        }
+        const count = state.exportVideoIds.length;
+        state.exportVideoIds = [];
+        updateExportUI();
+        closeExportDropdown();
+        if (state.isPlaylistView && state.viewingPlaylist) renderVideos(state.viewingPlaylist);
+        showToast('Cleared ' + count + ' Video IDs');
     }
 
     // ============================================================
@@ -1558,44 +1681,14 @@
             return;
         }
 
-        // Fetch several metadata requests in parallel instead of one-by-one.
-        // A small worker pool avoids hammering oEmbed while making large
-        // playlists load much faster.
-        const concurrency = Math.min(5, total);
+        // IMPORTANT: Do not use a long-running loop here. The preview/runtime
+        // watchdog can stop JavaScript that runs continuously for >400ms.
+        // Instead, process one small batch, yield to the browser, then schedule
+        // the next batch. This keeps the UI responsive even for huge playlists.
+        const batchSize = 5;
         let completed = 0;
-        let cursor = 0;
 
-        async function worker() {
-            while (true) {
-                const index = cursor++;
-                if (index >= total) return;
-
-                const id = pendingIds[index];
-                try {
-                    cache[id] = await fetchVideoMetadata(id);
-                } catch (e) {
-                    console.warn('Failed to fetch metadata for:', id, e);
-                    cache[id] = {
-                        title: 'Video ' + id,
-                        author: 'Unknown',
-                        authorUrl: '',
-                        thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg'
-                    };
-                }
-
-                completed++;
-                if (DOM.statusBadge) {
-                    DOM.statusBadge.textContent = '📥 ' + completed + '/' + total;
-                }
-                if (state.isPlaylistView && state.viewingPlaylist === playlist) {
-                    renderVideos(playlist);
-                }
-            }
-        }
-
-        try {
-            await Promise.all(Array.from({ length: concurrency }, worker));
-        } finally {
+        function finishMetadataLoad() {
             state.isLoadingMetadata = false;
             if (DOM.statusBadge) {
                 DOM.statusBadge.textContent = '✅ ' + playlist.videoIds.length + ' videos';
@@ -1606,10 +1699,64 @@
                     timestamp: Date.now()
                 }));
             } catch (e) {}
-
             if (state.isPlaylistView && state.viewingPlaylist === playlist) {
                 renderVideos(playlist);
             }
+        }
+
+        async function processBatch(startIndex) {
+            if (startIndex >= total) {
+                finishMetadataLoad();
+                return;
+            }
+
+            const endIndex = Math.min(startIndex + batchSize, total);
+            const batch = [];
+
+            // This loop is intentionally bounded to at most 5 iterations.
+            // It only creates the current batch and performs no DOM work.
+            for (let index = startIndex; index < endIndex; index++) {
+                batch.push((async function(id) {
+                    try {
+                        cache[id] = await fetchVideoMetadata(id);
+                    } catch (e) {
+                        console.warn('Failed to fetch metadata for:', id, e);
+                        cache[id] = {
+                            title: 'Video ' + id,
+                            author: 'Unknown',
+                            authorUrl: '',
+                            thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg'
+                        };
+                    }
+                    completed++;
+                })(pendingIds[index]));
+            }
+
+            await Promise.all(batch);
+
+            if (DOM.statusBadge) {
+                DOM.statusBadge.textContent = '📥 ' + completed + '/' + total;
+            }
+
+            // Render once per batch, not once per video. This is a major
+            // performance improvement for large playlists.
+            if (state.isPlaylistView && state.viewingPlaylist === playlist) {
+                renderVideos(playlist);
+            }
+
+            // Yield a real browser task before continuing. This prevents the
+            // preview watchdog from seeing one continuous execution chain.
+            await new Promise(function(resolve) { setTimeout(resolve, 0); });
+
+            // No loop and no unbounded worker: schedule the next bounded batch.
+            return processBatch(endIndex);
+        }
+
+        try {
+            await processBatch(0);
+        } catch (e) {
+            console.error('Metadata loading stopped:', e);
+            finishMetadataLoad();
         }
     }
 
@@ -2269,6 +2416,7 @@
         updateShuffleButton();
         updateModeUI();
         setTimerPreset(0);
+        updateExportUI();
         console.log('✅ UI updated');
         
         setupProgressSeek();
@@ -2298,6 +2446,18 @@
         if (DOM.backBtn) DOM.backBtn.addEventListener('click', goBack);
         
         if (DOM.moreBtn) DOM.moreBtn.addEventListener('click', toggleMoreDropdown);
+        if (DOM.exportBtn) DOM.exportBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleExportDropdown();
+        });
+        if (DOM.exportDownload) DOM.exportDownload.addEventListener('click', function(e) {
+            e.stopPropagation();
+            downloadExportList();
+        });
+        if (DOM.exportClear) DOM.exportClear.addEventListener('click', function(e) {
+            e.stopPropagation();
+            clearExportList();
+        });
         if (DOM.moreRefresh) {
             DOM.moreRefresh.addEventListener('click', function() {
                 if (state.viewingPlaylist && state.isPlaylistView) {
@@ -2350,6 +2510,7 @@
 
         document.addEventListener('click', function() {
             if (DOM.timerPresetDropdown) DOM.timerPresetDropdown.classList.remove('open');
+            closeExportDropdown();
         });
 
         if (DOM.manualPlayBtn) DOM.manualPlayBtn.addEventListener('click', playManualInput);
@@ -2397,6 +2558,7 @@
                 else if (DOM.shortcutsOverlay && DOM.shortcutsOverlay.classList.contains('open')) closeShortcuts();
                 else if (DOM.aboutOverlay && DOM.aboutOverlay.classList.contains('open')) closeAbout();
                 else if (DOM.moreDropdown && DOM.moreDropdown.classList.contains('open')) closeMoreDropdown();
+                else if (DOM.exportDropdown && DOM.exportDropdown.classList.contains('open')) closeExportDropdown();
                 else if (!state.isGroupView) goBack();
             }
             else if (e.key === 's' || e.key === 'S') { cyclePlaybackMode(); }
