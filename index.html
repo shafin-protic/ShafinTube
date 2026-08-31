@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Shafin Tube</title>
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23000000'/><rect x='15' y='25' width='70' height='50' rx='8' fill='%231a1a1a' stroke='%232a2a2a' stroke-width='2'/><rect x='35' y='38' width='30' height='24' rx='4' fill='%23ff0000'/><circle cx='50' cy='50' r='6' fill='%23ffffff'/></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
@@ -27,190 +28,226 @@
         body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: background var(--transition), color var(--transition); }
         .app { display: flex; flex-direction: column; height: 100vh; max-width: 100vw; overflow: hidden; }
         
-        .header { background: var(--bg2); padding: 6px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 44px; gap: 6px; flex-wrap: nowrap; }
-        .logo-area { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        .logo-img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
-        .logo-text { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+        .header { background: var(--bg2); padding: 4px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 40px; gap: 4px; flex-wrap: nowrap; }
+        .logo-area { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .logo-img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
+        .logo-text { font-size: 0.85rem; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
         .logo-text span { color: var(--accent); }
-        .logo-text .sub { font-size: 0.5rem; font-weight: 400; color: var(--text2); margin-left: 4px; }
+        .logo-text .sub { font-size: 0.45rem; font-weight: 400; color: var(--text2); margin-left: 3px; }
         
-        .header-center { display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; flex-wrap: nowrap; overflow: hidden; }
-        .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 1px 4px 1px 12px; flex-shrink: 1; max-width: 280px; min-width: 120px; }
-        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.6rem; outline: none; padding: 4px 0; width: 100%; min-width: 60px; }
+        .header-center { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; flex-wrap: nowrap; overflow: hidden; }
+        .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 18px; padding: 1px 3px 1px 10px; flex-shrink: 1; max-width: 240px; min-width: 100px; }
+        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.55rem; outline: none; padding: 3px 0; width: 100%; min-width: 50px; }
         .manual-input-wrap input::placeholder { color: var(--text2); }
-        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 2px 12px; border-radius: 16px; cursor: pointer; font-size: 0.55rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 1px 10px; border-radius: 14px; cursor: pointer; font-size: 0.5rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
         .manual-input-wrap .play-btn:hover { background: var(--accent2); }
         
-        .header-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; flex-wrap: nowrap; position: relative; }
-        .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
+        .header-right { display: flex; align-items: center; gap: 3px; flex-shrink: 0; flex-wrap: nowrap; position: relative; }
+        .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
         .header-btn:hover { background: var(--bg4); transform: scale(1.05); }
-        .header-btn.go-to-btn { font-size: 0.8rem; }
-        .header-btn.random-btn { font-size: 0.8rem; }
-        .header-btn.history-btn { font-size: 0.8rem; }
-        .header-btn.translate-btn { font-size: 0.7rem; }
+        .header-btn.go-to-btn { font-size: 0.75rem; }
+        .header-btn.random-btn { font-size: 0.75rem; }
+        .header-btn.history-btn { font-size: 0.75rem; }
+        .header-btn.translate-btn { font-size: 0.65rem; }
         .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.more-btn { font-size: 0.8rem; }
-        .header-btn.category-btn { font-size: 0.6rem; padding: 0 10px; border-radius: 16px; width: auto; height: 26px; background: var(--bg3); border-color: var(--border); color: var(--text2); }
+        .header-btn.more-btn { font-size: 0.75rem; }
+        .header-btn.category-btn { font-size: 0.55rem; padding: 0 8px; border-radius: 14px; width: auto; height: 24px; background: var(--bg3); border-color: var(--border); color: var(--text2); }
         .header-btn.category-btn:hover { background: var(--bg4); color: var(--text); }
         .header-btn.category-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.category-btn .seg-icon { margin-right: 3px; }
-        .header-btn.iptv-link { background: var(--accent); border-color: var(--accent); color: #fff; font-size: 0.55rem; padding: 0 12px; border-radius: 16px; width: auto; height: 26px; }
-        .header-btn.iptv-link:hover { background: var(--accent2); transform: scale(1.02); }
+        .header-btn.category-btn .seg-icon { margin-right: 2px; }
         
-        .status-badge { font-size: 0.5rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
-        .timer-display { font-size: 0.55rem; font-weight: 600; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 16px; border: 1px solid var(--border); min-width: 36px; text-align: center; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+        .status-badge { font-size: 0.45rem; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 16px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
+        .timer-display { font-size: 0.5rem; font-weight: 600; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 14px; border: 1px solid var(--border); min-width: 32px; text-align: center; font-variant-numeric: tabular-nums; flex-shrink: 0; }
         .timer-display.active { background: var(--accent); color: #fff; border-color: var(--accent); }
         .timer-preset-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
-        .timer-preset-btn { padding: 2px 8px; height: 26px; border-radius: 16px; font-size: 0.5rem; font-weight: 500; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); display: inline-flex; align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: all var(--transition); white-space: nowrap; min-width: 32px; }
+        .timer-preset-btn { padding: 1px 6px; height: 24px; border-radius: 14px; font-size: 0.45rem; font-weight: 500; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); display: inline-flex; align-items: center; justify-content: center; gap: 2px; cursor: pointer; transition: all var(--transition); white-space: nowrap; min-width: 28px; }
         .timer-preset-btn:hover { background: var(--bg4); color: var(--text); }
         .timer-preset-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .timer-preset-dropdown { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 4px 0; min-width: 70px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 100; }
+        .timer-preset-dropdown { position: absolute; top: 28px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 3px 0; min-width: 60px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 100; }
         .timer-preset-dropdown.open { display: flex; }
-        .timer-preset-dropdown .preset-option { padding: 4px 12px; font-size: 0.55rem; color: var(--text2); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: center; }
+        .timer-preset-dropdown .preset-option { padding: 3px 10px; font-size: 0.5rem; color: var(--text2); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: center; }
         .timer-preset-dropdown .preset-option:hover { background: var(--bg4); color: var(--text); }
-        .timer-preset-dropdown .preset-option.off { border-top: 1px solid var(--border); margin-top: 3px; padding-top: 5px; }
+        .timer-preset-dropdown .preset-option.off { border-top: 1px solid var(--border); margin-top: 2px; padding-top: 4px; }
         
-        .clock-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; min-width: 85px; width: 85px; min-height: 30px; flex-shrink: 0; line-height: 1.2; text-align: center; }
-        .clock-tile .time { font-size: 0.65rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-        .clock-tile .day { font-size: 0.4rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
+        .clock-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; min-width: 75px; width: 75px; min-height: 26px; flex-shrink: 0; line-height: 1.2; text-align: center; }
+        .clock-tile .time { font-size: 0.6rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .clock-tile .day { font-size: 0.35rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
+        
+        .iptv-category-chips { display: flex; flex-wrap: wrap; gap: 3px; padding: 3px 8px; border-bottom: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
+        .iptv-category-chip { padding: 2px 10px; border-radius: 14px; font-size: 0.55rem; font-weight: 500; cursor: pointer; transition: all var(--transition); background: var(--bg3); border: 1px solid var(--border); color: var(--text2); white-space: nowrap; }
+        .iptv-category-chip:hover { background: var(--bg4); color: var(--text); }
+        .iptv-category-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         
         .main-content { display: flex; flex: 1; overflow: hidden; min-height: 0; }
-        .sidebar { width: 360px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
+        .sidebar { width: 340px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
         .sidebar-header { padding: 4px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
-        .sidebar-header .home-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); flex-shrink: 0; }
+        .sidebar-header .home-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); flex-shrink: 0; }
         .sidebar-header .home-btn:hover { background: var(--bg4); transform: scale(1.05); }
-        .sidebar-search { flex: 1; min-width: 80px; padding: 4px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; color: var(--text); font-size: 0.65rem; outline: none; }
+        .sidebar-search { flex: 1; min-width: 70px; padding: 3px 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: 18px; color: var(--text); font-size: 0.6rem; outline: none; }
         .sidebar-search:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
         .sidebar-search::placeholder { color: var(--text2); }
-        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 2px 8px; border-radius: 20px; cursor: pointer; font-size: 0.6rem; display: none; align-items: center; gap: 3px; flex-shrink: 0; }
+        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 2px 8px; border-radius: 16px; cursor: pointer; font-size: 0.55rem; display: none; align-items: center; gap: 3px; flex-shrink: 0; }
         .back-btn:hover { background: var(--bg4); }
         .back-btn.show { display: flex; }
         
-        .list-container { flex: 1; overflow-y: auto; padding: 4px 6px; -webkit-overflow-scrolling: touch; }
+        .list-container { flex: 1; overflow-y: auto; padding: 3px 5px; -webkit-overflow-scrolling: touch; }
         .list-container::-webkit-scrollbar { width: 3px; }
         .list-container::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
-        .list-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; margin: 1px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; }
+        .list-item { display: flex; align-items: center; gap: 6px; padding: 4px 6px; margin: 1px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; }
         .list-item:hover { background: var(--hover); }
         .list-item.active { background: var(--bg3); border-left-color: var(--accent); }
-        .list-item .thumb { width: 36px; height: 20px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .list-item.offline { opacity: 0.5; }
+        .list-item .thumb { width: 32px; height: 18px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .list-item .thumb.live-tv { border-radius: 50%; width: 24px; height: 24px; border: 2px solid var(--accent); object-fit: cover; }
+        .list-item .thumb.sub-thumb { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
+        .live-logo-wrap { width: 28px; height: 28px; flex: 0 0 28px; display:flex; align-items:center; justify-content:center; }
+        .live-channel-fallback { width: 28px; height: 28px; border-radius: 50%; display:flex; align-items:center; justify-content:center; background:var(--bg4); font-size:1rem; }
         .list-item .info { flex: 1; min-width: 0; }
-        .list-item .title { font-size: 0.7rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
-        .list-item .sub { font-size: 0.5rem; color: var(--text2); margin-top: 1px; }
-        .list-item .badge { font-size: 0.45rem; background: var(--bg4); padding: 1px 6px; border-radius: 12px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
-        .list-item .group-icon { font-size: 1.1rem; flex-shrink: 0; width: 26px; text-align: center; }
-        .list-item .translated-badge { font-size: 0.45rem; background: var(--accent-glow); color: var(--accent); padding: 1px 4px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
+        .list-item .title { font-size: 0.65rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); display: flex; align-items: center; gap: 3px; }
+        .list-item .sub { font-size: 0.45rem; color: var(--text2); margin-top: 1px; }
+        .list-item .badge { font-size: 0.4rem; background: var(--bg4); padding: 1px 5px; border-radius: 10px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
+        .list-item .group-icon { font-size: 1rem; flex-shrink: 0; width: 24px; text-align: center; }
+        .list-item .translated-badge { font-size: 0.4rem; background: var(--accent-glow); color: var(--accent); padding: 1px 4px; border-radius: 10px; flex-shrink: 0; border: 1px solid var(--accent); }
+        .list-item .status-icon { font-size: 0.55rem; flex-shrink: 0; }
+        .status-online { color: #2eff8c; }
+        .status-offline { color: #ff5e5e; }
+        .status-checking { color: #ff9800; }
         
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
         .video-container { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden; }
-        .video-container iframe { width: 100%; height: 100%; border: none; }
-        .video-container .placeholder { color: var(--text2); font-size: 0.8rem; text-align: center; padding: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; pointer-events: none; }
-        .video-container .placeholder .big-icon { font-size: 2.2rem; display: block; margin-bottom: 8px; }
+        .video-container iframe { width: 100%; height: 100%; border: none; display: none; }
+        .video-container iframe.active { display: block; }
+        .video-container video { width: 100%; height: 100%; object-fit: contain; background: #000; display: none; }
+        .video-container video.active { display: block; }
+        .video-container .placeholder { color: var(--text2); font-size: 0.75rem; text-align: center; padding: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; pointer-events: none; }
+        .video-container .placeholder .big-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
         .video-container .blank { display: none; width: 100%; height: 100%; background: #000; }
         .video-container .blank.show { display: block; }
+        
+        .radio-visualizer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 20px; z-index: 5; }
+        .radio-visualizer.active { display: flex; }
+        .radio-visualizer .radio-icon { font-size: 2.8rem; animation: pulse 2s infinite; }
+        .radio-visualizer .radio-title { font-size: 0.9rem; font-weight: 500; color: var(--text); text-align: center; max-width: 80%; }
+        .radio-visualizer .radio-sub { font-size: 0.6rem; color: var(--text2); text-align: center; }
+        .radio-visualizer .equalizer { display: flex; gap: 3px; align-items: center; justify-content: center; height: 30px; }
+        .radio-visualizer .equalizer-bar { width: 3px; background: var(--accent); border-radius: 2px; animation: equalize 1.2s infinite ease-in-out; }
+        .radio-visualizer .equalizer-bar:nth-child(1) { animation-delay: 0s; height: 8px; }
+        .radio-visualizer .equalizer-bar:nth-child(2) { animation-delay: 0.2s; height: 16px; }
+        .radio-visualizer .equalizer-bar:nth-child(3) { animation-delay: 0.4s; height: 5px; }
+        .radio-visualizer .equalizer-bar:nth-child(4) { animation-delay: 0.6s; height: 22px; }
+        .radio-visualizer .equalizer-bar:nth-child(5) { animation-delay: 0.8s; height: 10px; }
+        .radio-visualizer .equalizer-bar:nth-child(6) { animation-delay: 1.0s; height: 6px; }
+        .radio-visualizer .equalizer-bar:nth-child(7) { animation-delay: 1.2s; height: 14px; }
+        .radio-visualizer .equalizer-bar:nth-child(8) { animation-delay: 0.3s; height: 8px; }
+        @keyframes equalize { 0%, 100% { height: 6px; } 50% { height: 22px; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+        .radio-visualizer.paused .equalizer-bar { animation-play-state: paused !important; }
+        .radio-visualizer.paused .radio-icon { animation-play-state: paused !important; }
         
         .progress-container { width: 100%; height: 3px; background: var(--bg3); cursor: pointer; position: relative; flex-shrink: 0; }
         .progress-container .progress-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.2s ease; }
         .progress-container .progress-buffer { height: 100%; width: 0%; background: var(--bg4); position: absolute; top: 0; left: 0; pointer-events: none; }
         .progress-container:hover { height: 5px; }
         
-        .controls { background: var(--bg2); padding: 5px 10px; display: flex; align-items: center; justify-content: center; gap: 6px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
-        .control-btn { width: 30px; height: 30px; border-radius: 50%; font-size: 0.75rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
+        .controls { background: var(--bg2); padding: 4px 8px; display: flex; align-items: center; justify-content: center; gap: 5px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+        .control-btn { width: 28px; height: 28px; border-radius: 50%; font-size: 0.7rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .control-btn:active { transform: scale(0.94); }
-        .control-btn.shuffle-btn { font-size: 0.7rem; min-width: 30px; }
+        .control-btn.shuffle-btn { font-size: 0.65rem; min-width: 28px; }
         .control-btn.shuffle-btn.active-shuffle { background: var(--accent); border-color: var(--accent); color: #fff; }
         .control-btn.shuffle-btn.active-loop { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .control-btn.mute-btn { font-size: 0.65rem; }
+        .control-btn.mute-btn { font-size: 0.6rem; }
         .control-btn.mute-btn.muted { background: var(--accent); border-color: var(--accent); color: #fff; }
         
-        .mode-switch { display: flex; align-items: center; gap: 2px; background: var(--bg3); border: 1px solid var(--border); border-radius: 18px; padding: 2px; flex-shrink: 0; }
-        .mode-switch .mode-option { padding: 3px 10px; border-radius: 16px; font-size: 0.55rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
+        .mode-switch { display: flex; align-items: center; gap: 2px; background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 2px; flex-shrink: 0; }
+        .mode-switch .mode-option { padding: 2px 8px; border-radius: 14px; font-size: 0.5rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
         .mode-switch .mode-option:hover { color: var(--text); }
         .mode-switch .mode-option.active { background: var(--accent); color: #fff; }
         
-        .player-info-text { font-size: 0.55rem; color: var(--text2); flex: 1; min-width: 40px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-timer { font-size: 0.5rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 55px; text-align: right; flex-shrink: 0; }
-        .video-id-tile { font-size: 0.45rem; color: var(--text2); background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; min-width: 45px; text-align: center; font-family: monospace; flex-shrink: 0; display: none; cursor: pointer; }
+        .player-info-text { font-size: 0.5rem; color: var(--text2); flex: 1; min-width: 35px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-timer { font-size: 0.45rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 50px; text-align: right; flex-shrink: 0; }
+        .video-id-tile { font-size: 0.4rem; color: var(--text2); background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; min-width: 40px; text-align: center; font-family: monospace; flex-shrink: 0; display: none; cursor: pointer; }
         .video-id-tile.show { display: block; }
         
-        .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 4px 12px; border-radius: 25px; font-size: 0.6rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
-        @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 4px 10px; border-radius: 20px; font-size: 0.55rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; box-shadow: 0 8px 24px var(--shadow); }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(15px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
         .toast.hidden { display: none; }
         
-        .history-panel { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
+        .history-panel { position: fixed; top: 0; right: -380px; width: 380px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
         .history-panel.open { right: 0; }
-        .history-header { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-        .history-header h3 { font-size: 0.85rem; font-weight: 600; }
-        .history-header .close-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
-        .history-header .close-btn:hover { background: var(--bg4); }
-        .history-list { flex: 1; overflow-y: auto; padding: 6px; }
-        .history-list .empty { text-align: center; padding: 30px 16px; color: var(--text2); font-size: 0.7rem; }
-        .history-date-group { margin-bottom: 10px; }
-        .history-date-group .date-label { font-size: 0.65rem; font-weight: 600; color: var(--text2); padding: 2px 6px; border-bottom: 1px solid var(--border); margin-bottom: 3px; }
-        .history-item { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+        .history-header { padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .history-header h3 { font-size: 0.8rem; font-weight: 600; }
+        .history-header .close-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
+        .history-list { flex: 1; overflow-y: auto; padding: 5px; }
+        .history-list .empty { text-align: center; padding: 25px 14px; color: var(--text2); font-size: 0.65rem; }
+        .history-date-group { margin-bottom: 8px; }
+        .history-date-group .date-label { font-size: 0.6rem; font-weight: 600; color: var(--text2); padding: 2px 6px; border-bottom: 1px solid var(--border); margin-bottom: 3px; }
+        .history-item { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
         .history-item:hover { background: var(--hover); }
-        .history-item .thumb { width: 36px; height: 20px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .history-item .thumb { width: 32px; height: 18px; border-radius: 4px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .history-item .info { flex: 1; min-width: 0; }
-        .history-item .title { font-size: 0.68rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .history-item .sub { font-size: 0.5rem; color: var(--text2); }
-        .history-item .count-badge { font-size: 0.45rem; background: var(--bg4); padding: 1px 6px; border-radius: 12px; color: var(--text2); flex-shrink: 0; }
-        .history-item .position-badge { font-size: 0.45rem; background: var(--accent-glow); color: var(--accent); padding: 1px 4px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
-        .history-item .delete-btn { background: transparent; border: none; color: var(--text2); font-size: 0.65rem; cursor: pointer; padding: 0 4px; border-radius: 50%; flex-shrink: 0; opacity: 0.5; }
+        .history-item .title { font-size: 0.62rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-item .sub { font-size: 0.45rem; color: var(--text2); }
+        .history-item .count-badge { font-size: 0.4rem; background: var(--bg4); padding: 1px 5px; border-radius: 10px; color: var(--text2); flex-shrink: 0; }
+        .history-item .position-badge { font-size: 0.4rem; background: var(--accent-glow); color: var(--accent); padding: 1px 4px; border-radius: 10px; flex-shrink: 0; border: 1px solid var(--accent); }
+        .history-item .delete-btn { background: transparent; border: none; color: var(--text2); font-size: 0.6rem; cursor: pointer; padding: 0 3px; border-radius: 50%; flex-shrink: 0; opacity: 0.5; }
         .history-item .delete-btn:hover { color: var(--accent); opacity: 1; }
         .history-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2999; display: none; }
         .history-overlay.open { display: block; }
         
         .shortcuts-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 5000; display: none; align-items: center; justify-content: center; }
         .shortcuts-overlay.open { display: flex; }
-        .shortcuts-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; max-width: 450px; width: 90%; max-height: 80vh; overflow-y: auto; }
-        .shortcuts-panel h2 { font-size: 1.1rem; margin-bottom: 12px; color: var(--accent); }
-        .shortcuts-panel .shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
-        .shortcuts-panel .shortcut-item { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid var(--border); font-size: 0.7rem; }
-        .shortcuts-panel .shortcut-item .key { background: var(--bg3); padding: 0 6px; border-radius: 4px; font-family: monospace; color: var(--accent); }
-        .shortcuts-panel .close-shortcuts { margin-top: 12px; padding: 6px 20px; background: var(--accent); color: #fff; border: none; border-radius: 20px; cursor: pointer; font-size: 0.75rem; width: 100%; }
+        .shortcuts-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; max-width: 420px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .shortcuts-panel h2 { font-size: 1rem; margin-bottom: 10px; color: var(--accent); }
+        .shortcuts-panel .shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; }
+        .shortcuts-panel .shortcut-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid var(--border); font-size: 0.65rem; }
+        .shortcuts-panel .shortcut-item .key { background: var(--bg3); padding: 0 5px; border-radius: 4px; font-family: monospace; color: var(--accent); }
+        .shortcuts-panel .close-shortcuts { margin-top: 10px; padding: 5px 18px; background: var(--accent); color: #fff; border: none; border-radius: 18px; cursor: pointer; font-size: 0.7rem; width: 100%; }
         
-        .more-dropdown { position: absolute; top: 34px; right: 0; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 4px 0; min-width: 170px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 200; }
+        .more-dropdown { position: absolute; top: 30px; right: 0; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 3px 0; min-width: 160px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 200; }
         .more-dropdown.open { display: flex; }
-        .more-dropdown .more-item { padding: 6px 14px; font-size: 0.65rem; color: var(--text); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: left; display: flex; align-items: center; gap: 8px; }
+        .more-dropdown .more-item { padding: 5px 12px; font-size: 0.6rem; color: var(--text); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: left; display: flex; align-items: center; gap: 6px; }
         .more-dropdown .more-item:hover { background: var(--bg4); }
-        .more-dropdown .more-item .more-icon { font-size: 0.85rem; }
-        .more-dropdown .more-divider { height: 1px; background: var(--border); margin: 3px 6px; }
+        .more-dropdown .more-item .more-icon { font-size: 0.8rem; }
+        .more-dropdown .more-divider { height: 1px; background: var(--border); margin: 2px 6px; }
         
         .about-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 6000; display: none; align-items: center; justify-content: center; }
         .about-overlay.open { display: flex; }
-        .about-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; max-width: 380px; width: 90%; text-align: center; }
-        .about-panel .about-logo { width:72px; height:72px; margin:0 auto 10px; border-radius:50%; overflow:hidden; border:2px solid var(--border); }
+        .about-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; max-width: 360px; width: 90%; text-align: center; }
+        .about-panel .about-logo { width:64px; height:64px; margin:0 auto 8px; border-radius:50%; overflow:hidden; border:2px solid var(--border); }
         .about-panel .about-logo img { width:100%; height:100%; object-fit:cover; display:block; }
-        .about-panel .about-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+        .about-panel .about-title { font-size: 1rem; font-weight: 700; color: var(--text); }
         .about-panel .about-title span { color: var(--accent); }
-        .about-panel .about-desc { font-size: 0.75rem; color: var(--text2); margin: 6px 0 12px; line-height: 1.5; }
+        .about-panel .about-desc { font-size: 0.65rem; color: var(--text2); margin: 4px 0 10px; line-height: 1.4; }
         .about-panel .about-desc strong { color: var(--text); }
-        .about-panel .about-social { font-size: 0.7rem; color: var(--text2); margin: 6px 0; }
+        .about-panel .about-social { font-size: 0.6rem; color: var(--text2); margin: 4px 0; }
         .about-panel .about-social a { color: var(--accent); text-decoration: none; }
-        .about-panel .close-about { margin-top: 12px; padding: 6px 20px; background: var(--accent); color: #fff; border: none; border-radius: 20px; cursor: pointer; font-size: 0.75rem; }
+        .about-panel .close-about { margin-top: 10px; padding: 5px 18px; background: var(--accent); color: #fff; border: none; border-radius: 18px; cursor: pointer; font-size: 0.7rem; }
+        
+        .loading-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); padding: 5px 12px; border-radius: 16px; font-size: 0.55rem; z-index: 10; color: #888; border: 1px solid var(--border); display: none; }
+        .loading-overlay.show { display: block; }
         
         @media (max-width: 768px) {
             .sidebar { width: 280px; }
-            .header { padding: 4px 8px; min-height: 36px; gap: 3px; }
-            .logo-text { font-size: 0.75rem; }
-            .logo-img { width: 22px; height: 22px; }
-            .header-btn { width: 22px; height: 22px; font-size: 0.6rem; }
-            .header-btn.category-btn { font-size: 0.55rem; padding: 0 8px; height: 22px; }
-            .header-btn.iptv-link { font-size: 0.5rem; padding: 0 10px; height: 22px; }
-            .clock-tile { min-width: 75px; width: 75px; min-height: 26px; padding: 1px 4px; }
-            .clock-tile .time { font-size: 0.55rem; }
-            .clock-tile .day { font-size: 0.35rem; }
-            .manual-input-wrap { max-width: 150px; min-width: 80px; }
+            .header { padding: 3px 6px; min-height: 34px; gap: 3px; }
+            .logo-text { font-size: 0.7rem; }
+            .logo-img { width: 20px; height: 20px; }
+            .header-btn { width: 22px; height: 22px; font-size: 0.55rem; }
+            .header-btn.category-btn { font-size: 0.5rem; padding: 0 6px; height: 20px; }
+            .clock-tile { min-width: 65px; width: 65px; min-height: 22px; padding: 1px 4px; }
+            .clock-tile .time { font-size: 0.5rem; }
+            .clock-tile .day { font-size: 0.3rem; }
+            .manual-input-wrap { max-width: 130px; min-width: 70px; }
             .manual-input-wrap input { font-size: 0.45rem; }
             .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 6px; }
-            .timer-display { font-size: 0.45rem; min-width: 30px; padding: 1px 5px; }
-            .timer-preset-btn { font-size: 0.45rem; padding: 1px 6px; height: 22px; min-width: 28px; }
-            .status-badge { font-size: 0.4rem; padding: 1px 5px; }
-            .control-btn { width: 26px; height: 26px; font-size: 0.65rem; }
-            .mode-switch .mode-option { font-size: 0.5rem; padding: 2px 8px; }
-            .player-info-text { font-size: 0.5rem; }
-            .player-timer { font-size: 0.45rem; min-width: 45px; }
-            .history-panel { width: 300px; right: -300px; }
+            .timer-display { font-size: 0.4rem; min-width: 28px; padding: 1px 4px; }
+            .timer-preset-btn { font-size: 0.4rem; padding: 1px 5px; height: 20px; min-width: 24px; }
+            .status-badge { font-size: 0.4rem; padding: 1px 4px; }
+            .control-btn { width: 24px; height: 24px; font-size: 0.6rem; }
+            .mode-switch .mode-option { font-size: 0.45rem; padding: 2px 6px; }
+            .player-info-text { font-size: 0.45rem; }
+            .player-timer { font-size: 0.4rem; min-width: 40px; }
+            .history-panel { width: 280px; right: -280px; }
             .header-center { display: none; }
             .header-right .status-badge,
             .header-right .timer-display,
@@ -227,30 +264,31 @@
             .sidebar-header { position: sticky; top: 0; z-index: 20; background: var(--bg2); }
             .video-container { aspect-ratio: 16/9; width: 100%; height: auto !important; }
             .mobile-bottom-nav { display: flex !important; }
-            .mobile-nav-btn { flex: 1; max-width: 90px; border: 0; background: transparent; color: var(--text2); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font-size: 0.6rem; font-weight: 600; cursor: pointer; padding: 4px 0; }
-            .mobile-nav-btn .nav-icon { font-size: 1rem; line-height: 1; }
+            .mobile-nav-btn { flex: 1; max-width: 80px; border: 0; background: transparent; color: var(--text2); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font-size: 0.55rem; font-weight: 600; cursor: pointer; padding: 3px 0; }
+            .mobile-nav-btn .nav-icon { font-size: 0.9rem; line-height: 1; }
             .mobile-nav-btn:active { background: var(--bg4); transform: scale(0.96); }
             .mobile-nav-btn.active { color: var(--accent); background: var(--accent-glow); }
-            .mobile-more-sheet { display: block; }
-            .mobile-more-overlay { display: block; }
-            .toast { bottom: calc(var(--mobile-nav-h) + 10px); }
+            .iptv-category-chips { gap: 2px; padding: 2px 6px; }
+            .iptv-category-chip { font-size: 0.45rem; padding: 1px 8px; }
+            .toast { bottom: calc(var(--mobile-nav-h) + 8px); }
         }
         @media (max-width: 480px) {
             .sidebar { width: 100%; }
-            .sidebar-header { padding: 3px 4px; }
-            .sidebar-search { font-size: 0.55rem; padding: 3px 6px; min-width: 50px; }
-            .list-item { padding: 4px 6px; gap: 5px; }
-            .list-item .thumb { width: 30px; height: 17px; }
-            .list-item .title { font-size: 0.6rem; }
-            .list-item .sub { font-size: 0.45rem; }
-            .controls { gap: 4px; padding: 3px 6px; }
-            .control-btn { width: 24px; height: 24px; font-size: 0.6rem; }
-            .mode-switch .mode-option { font-size: 0.45rem; padding: 2px 6px; }
-            .history-panel { width: 260px; right: -260px; }
+            .sidebar-header { padding: 2px 4px; }
+            .sidebar-search { font-size: 0.5rem; padding: 2px 6px; min-width: 40px; }
+            .list-item { padding: 3px 5px; gap: 4px; }
+            .list-item .thumb { width: 26px; height: 15px; }
+            .list-item .title { font-size: 0.55rem; }
+            .list-item .sub { font-size: 0.4rem; }
+            .controls { gap: 3px; padding: 2px 4px; }
+            .control-btn { width: 22px; height: 22px; font-size: 0.55rem; }
+            .mode-switch .mode-option { font-size: 0.4rem; padding: 1px 5px; }
+            .history-panel { width: 240px; right: -240px; }
+            .iptv-category-chip { font-size: 0.4rem; padding: 1px 6px; }
         }
         .mobile-bottom-nav {
             display: none; position: fixed; left: 0; right: 0; bottom: 0; height: var(--mobile-nav-h);
-            padding: 4px 6px max(4px, env(safe-area-inset-bottom)); box-sizing: border-box;
+            padding: 3px 4px max(3px, env(safe-area-inset-bottom)); box-sizing: border-box;
             background: color-mix(in srgb, var(--bg2) 96%, transparent);
             backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
             border-top: 1px solid var(--border); z-index: 3500;
@@ -263,21 +301,21 @@
         }
         .mobile-more-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; display: block; }
         .mobile-more-sheet {
-            position: fixed; display: none; left: 8px; right: 8px; bottom: calc(var(--mobile-nav-h) + 6px);
-            z-index: 4201; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
-            padding: 6px; box-shadow: 0 16px 40px rgba(0,0,0,0.45);
-            transform: translateY(12px) scale(0.98); opacity: 0; visibility: hidden; pointer-events: none;
+            position: fixed; display: none; left: 6px; right: 6px; bottom: calc(var(--mobile-nav-h) + 4px);
+            z-index: 4201; background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+            padding: 5px; box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+            transform: translateY(10px) scale(0.98); opacity: 0; visibility: hidden; pointer-events: none;
             transition: 0.2s ease;
         }
         .mobile-more-sheet.open { transform: none; opacity: 1; visibility: visible; pointer-events: auto; display: block; }
-        .mobile-more-title { padding: 8px 8px 5px; font-weight: 700; font-size: 0.75rem; color: var(--text); }
-        .mobile-more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+        .mobile-more-title { padding: 6px 6px 4px; font-weight: 700; font-size: 0.7rem; color: var(--text); }
+        .mobile-more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
         .mobile-more-action {
             border: 1px solid var(--border); background: var(--bg3); color: var(--text);
-            min-height: 56px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 2px; font-size: 0.6rem; cursor: pointer;
+            min-height: 48px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 1px; font-size: 0.55rem; cursor: pointer;
         }
-        .mobile-more-action span:first-child { font-size: 1rem; }
+        .mobile-more-action span:first-child { font-size: 0.9rem; }
         .mobile-more-action:active { transform: scale(0.96); background: var(--bg4); }
     </style>
 </head>
@@ -286,41 +324,42 @@
     <header class="header">
         <div class="logo-area">
             <img class="logo-img" src="https://i.postimg.cc/yYbyhL4w/Rounded-Profile.png" alt="Shafin Tube" onerror="this.style.display='none'">
-            <div class="logo-text">Shafin<span>Tube</span><span class="sub">v3</span></div>
+            <div class="logo-text">Shafin<span>Tube</span><span class="sub">v5</span></div>
         </div>
         <div class="header-center">
             <div class="manual-input-wrap">
-                <input type="text" id="manualInput" placeholder="YouTube URL..." />
+                <input type="text" id="manualInput" placeholder="URL..." />
                 <button class="play-btn" id="manualPlayBtn">▶</button>
             </div>
         </div>
         <div class="header-right">
             <button class="header-btn category-btn active" data-category="playlists"><span class="seg-icon">📋</span>Playlists</button>
             <button class="header-btn category-btn" data-category="subscriptions"><span class="seg-icon">📺</span>Subs</button>
-            <button class="header-btn iptv-link" id="iptvLinkBtn">📡 IPTV</button>
+            <button class="header-btn category-btn" data-category="iptv"><span class="seg-icon">📡</span>IPTV</button>
             <button class="header-btn go-to-btn" id="goToBtn" title="Go to current list">↪</button>
             <span class="status-badge" id="statusBadge">📡 Loading...</span>
             <span class="timer-display" id="timerDisplay">∞</span>
             <div class="timer-preset-wrap">
                 <button class="timer-preset-btn" id="timerPresetBtn">⏱️ Inf</button>
                 <div class="timer-preset-dropdown" id="timerPresetDropdown">
-                    <button class="preset-option" data-minutes="2">2 min</button>
-                    <button class="preset-option" data-minutes="5">5 min</button>
-                    <button class="preset-option" data-minutes="10">10 min</button>
-                    <button class="preset-option" data-minutes="15">15 min</button>
-                    <button class="preset-option off" data-minutes="0">Infinite</button>
+                    <button class="preset-option" data-minutes="2">2m</button>
+                    <button class="preset-option" data-minutes="5">5m</button>
+                    <button class="preset-option" data-minutes="10">10m</button>
+                    <button class="preset-option" data-minutes="15">15m</button>
+                    <button class="preset-option off" data-minutes="0">∞</button>
                 </div>
             </div>
-            <button class="header-btn random-btn" id="randomBtn" title="Random Video">✨</button>
-            <button class="header-btn history-btn" id="historyBtn" title="Play History">📜</button>
-            <button class="header-btn translate-btn" id="translateBtn" title="Translate Titles">🌐</button>
+            <button class="header-btn random-btn" id="randomBtn" title="Random">✨</button>
+            <button class="header-btn history-btn" id="historyBtn" title="History">📜</button>
+            <button class="header-btn translate-btn" id="translateBtn" title="Translate">🌐</button>
             <div style="position:relative;display:inline-block;">
-                <button class="header-btn more-btn" id="moreBtn" title="More options">⋮</button>
+                <button class="header-btn more-btn" id="moreBtn" title="More">⋮</button>
                 <div class="more-dropdown" id="moreDropdown">
-                    <button class="more-item" id="moreRefresh"><span class="more-icon">⟳</span> Refresh Metadata</button>
+                    <button class="more-item" id="moreRefresh"><span class="more-icon">⟳</span> Refresh</button>
                     <button class="more-item" id="moreShortcuts"><span class="more-icon">⌨️</span> Shortcuts</button>
                     <button class="more-item" id="moreTheme"><span class="more-icon" id="moreThemeIcon">🌙</span> Theme</button>
                     <button class="more-item" id="moreRefreshSubs"><span class="more-icon">🔄</span> Refresh Subs</button>
+                    <button class="more-item" id="moreRefreshIPTV"><span class="more-icon">📡</span> Refresh IPTV</button>
                     <div class="more-divider"></div>
                     <button class="more-item" id="moreAbout"><span class="more-icon">ℹ️</span> About</button>
                     <a class="more-item" id="moreEdit" href="https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing" target="_blank" style="text-decoration:none;color:var(--text);">
@@ -342,19 +381,33 @@
                 <input class="sidebar-search" id="searchInput" type="text" placeholder="🔍 Search...">
                 <button class="back-btn" id="backBtn" aria-label="Back">⬅</button>
             </div>
+            <div class="iptv-category-chips" id="iptvChips" style="display:none;"></div>
             <div class="list-container" id="listContainer">
-                <div style="text-align:center; padding:40px 16px; font-size:0.7rem; color:var(--text2);">Loading...</div>
+                <div style="text-align:center; padding:40px 16px; font-size:0.65rem; color:var(--text2);">Loading...</div>
             </div>
         </div>
 
         <div class="player-area">
             <div class="video-container" id="videoContainer">
                 <div class="blank" id="blankScreen"></div>
+                <div class="loading-overlay" id="loadingOverlay">Loading...</div>
+                <div class="radio-visualizer" id="radioVisualizer">
+                    <div class="radio-icon">🎧</div>
+                    <div class="radio-title" id="radioTitle">Select a video</div>
+                    <div class="radio-sub" id="radioSub">Radio Mode</div>
+                    <div class="equalizer">
+                        <div class="equalizer-bar"></div><div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div><div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div><div class="equalizer-bar"></div>
+                        <div class="equalizer-bar"></div><div class="equalizer-bar"></div>
+                    </div>
+                </div>
                 <div class="placeholder" id="placeholder">
                     <span class="big-icon">🎬</span>
                     <p>Select content to start</p>
                 </div>
-                <iframe id="playerIframe" src="" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="display:none;"></iframe>
+                <iframe id="playerIframe" src="" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                <video id="nativeVideo" playsinline controls></video>
             </div>
             <div class="progress-container" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
@@ -370,7 +423,7 @@
                     <button class="mode-option active" data-mode="tv" id="tvModeOption">📺</button>
                     <button class="mode-option" data-mode="radio" id="radioModeOption">🎧</button>
                 </div>
-                <span class="player-info-text" id="playerInfo">No video playing</span>
+                <span class="player-info-text" id="playerInfo">No content</span>
                 <span class="player-timer" id="playerTimer">--:--</span>
                 <span class="video-id-tile" id="videoIdTile">ID: ---</span>
             </div>
@@ -383,7 +436,7 @@
 <div class="shortcut-item"><span>Play/Pause</span><span class="key">Space</span></div>
 <div class="shortcut-item"><span>Next/Prev</span><span class="key">N / B</span></div>
 <div class="shortcut-item"><span>Seek ±10s</span><span class="key">→ / ←</span></div>
-<div class="shortcut-item"><span>Random</span><span class="key">R / F</span></div>
+<div class="shortcut-item"><span>Random</span><span class="key">R</span></div>
 <div class="shortcut-item"><span>Mute</span><span class="key">M</span></div>
 <div class="shortcut-item"><span>Mode</span><span class="key">S</span></div>
 <div class="shortcut-item"><span>Translate</span><span class="key">T</span></div>
@@ -420,28 +473,67 @@
 </div>
 
 <div class="toast hidden" id="toast"></div>
+
 <script>
 // ============================================================
-// SHAFIN TUBE - OPTIMIZED VERSION
+// SHAFIN TUBE v5 - OPTIMIZED FOR SPEED
 // ============================================================
-// This is a minimal version. Full functionality preserved.
 
-// CONFIG
 const CONFIG = {
     PLAYLIST_SHEET: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRx0WsM-o0uDBYquZ2jkvScyk_VKetZ2PQ-92qSpjx3PZIRqUyrlCP4DIDIXOcIUsXazIfJqcun7LAp/pub?gid=0&single=true&output=csv",
-    SUB_SHEET: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRx0WsM-o0uDBYquZ2jkvScyk_VKetZ2PQ-92qSpjx3PZIRqUyrlCP4DIDIXOcIUsXazIfJqcun7LAp/pub?gid=2012650406&single=true&output=csv"
+    SUB_SHEET: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRx0WsM-o0uDBYquZ2jkvScyk_VKetZ2PQ-92qSpjx3PZIRqUyrlCP4DIDIXOcIUsXazIfJqcun7LAp/pub?gid=2012650406&single=true&output=csv",
+    IPTV_SHEET: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRx0WsM-o0uDBYquZ2jkvScyk_VKetZ2PQ-92qSpjx3PZIRqUyrlCP4DIDIXOcIUsXazIfJqcun7LAp/pub?gid=1815432154&single=true&output=csv"
 };
 
 const $ = id => document.getElementById(id);
 
-// State
+// DOM refs
+const DOM = {
+    list: $('listContainer'), search: $('searchInput'), status: $('statusBadge'),
+    home: $('homeBtn'), back: $('backBtn'), translate: $('translateBtn'),
+    history: $('historyBtn'), historyClose: $('historyCloseBtn'),
+    historyOverlay: $('historyOverlay'), historyPanel: $('historyPanel'),
+    historyList: $('historyList'), iframe: $('playerIframe'),
+    nativeVideo: $('nativeVideo'), placeholder: $('placeholder'),
+    blank: $('blankScreen'), playerInfo: $('playerInfo'),
+    playerTimer: $('playerTimer'), videoIdTile: $('videoIdTile'),
+    prev: $('prevBtn'), next: $('nextBtn'), play: $('playBtn'),
+    mute: $('muteBtn'), shuffle: $('shuffleBtn'), random: $('randomBtn'),
+    tvMode: $('tvModeOption'), radioMode: $('radioModeOption'),
+    timerPreset: $('timerPresetBtn'), timerDisplay: $('timerDisplay'),
+    timerDropdown: $('timerPresetDropdown'), manualInput: $('manualInput'),
+    manualPlay: $('manualPlayBtn'), toast: $('toast'),
+    timeDisplay: $('timeDisplay'), dayDisplay: $('dayDisplay'),
+    progressBar: $('progressBar'), progressContainer: $('progressContainer'),
+    moreBtn: $('moreBtn'), moreDropdown: $('moreDropdown'),
+    moreRefresh: $('moreRefresh'), moreShortcuts: $('moreShortcuts'),
+    moreAbout: $('moreAbout'), moreTheme: $('moreTheme'),
+    moreThemeIcon: $('moreThemeIcon'), moreEdit: $('moreEdit'),
+    moreRefreshSubs: $('moreRefreshSubs'), moreRefreshIPTV: $('moreRefreshIPTV'),
+    goTo: $('goToBtn'), shortcutsOverlay: $('shortcutsOverlay'),
+    closeShortcuts: $('closeShortcuts'), aboutOverlay: $('aboutOverlay'),
+    closeAbout: $('closeAbout'), videoContainer: $('videoContainer'),
+    radioVisualizer: $('radioVisualizer'), radioTitle: $('radioTitle'),
+    radioSub: $('radioSub'), loadingOverlay: $('loadingOverlay'),
+    iptvChips: $('iptvChips'), progressBuffer: $('progressBuffer')
+};
+
+// ============================================================
+// STATE
+// ============================================================
 const state = {
     groups: {}, playlists: [], groupNames: [],
     subscriptions: [], subCache: {},
+    iptvChannels: [], iptvGroups: {}, iptvGroupNames: [],
+    iptvLoaded: false, iptvTesting: false,
+    offlineChannels: new Set(), checkingChannels: new Set(),
     currentCategory: 'playlists',
     currentView: 'groups',
     currentGroup: null,
     currentPlaylist: null,
+    currentSubscription: null,
+    currentIPTVCategory: null,
+    selectedIPTVCategory: null,
     playingPlaylist: null,
     playingVideoIndex: -1,
     viewingPlaylist: null,
@@ -463,34 +555,15 @@ const state = {
     timerInterval: null,
     isSeeking: false,
     videoEndedManually: false,
-    autoPlayPending: false
-};
-
-// DOM refs
-const DOM = {
-    list: $('listContainer'), search: $('searchInput'), status: $('statusBadge'),
-    home: $('homeBtn'), back: $('backBtn'), translate: $('translateBtn'),
-    history: $('historyBtn'), historyClose: $('historyCloseBtn'),
-    historyOverlay: $('historyOverlay'), historyPanel: $('historyPanel'),
-    historyList: $('historyList'), iframe: $('playerIframe'),
-    placeholder: $('placeholder'), blank: $('blankScreen'),
-    playerInfo: $('playerInfo'), playerTimer: $('playerTimer'),
-    videoIdTile: $('videoIdTile'), prev: $('prevBtn'), next: $('nextBtn'),
-    play: $('playBtn'), mute: $('muteBtn'), shuffle: $('shuffleBtn'),
-    random: $('randomBtn'), tvMode: $('tvModeOption'), radioMode: $('radioModeOption'),
-    timerPreset: $('timerPresetBtn'), timerDisplay: $('timerDisplay'),
-    timerDropdown: $('timerPresetDropdown'), manualInput: $('manualInput'),
-    manualPlay: $('manualPlayBtn'), toast: $('toast'),
-    timeDisplay: $('timeDisplay'), dayDisplay: $('dayDisplay'),
-    progressBar: $('progressBar'), progressContainer: $('progressContainer'),
-    moreBtn: $('moreBtn'), moreDropdown: $('moreDropdown'),
-    moreRefresh: $('moreRefresh'), moreShortcuts: $('moreShortcuts'),
-    moreAbout: $('moreAbout'), moreTheme: $('moreTheme'),
-    moreThemeIcon: $('moreThemeIcon'), moreEdit: $('moreEdit'),
-    moreRefreshSubs: $('moreRefreshSubs'), goTo: $('goToBtn'),
-    shortcutsOverlay: $('shortcutsOverlay'), closeShortcuts: $('closeShortcuts'),
-    aboutOverlay: $('aboutOverlay'), closeAbout: $('closeAbout'),
-    iptvLink: $('iptvLinkBtn'), videoContainer: $('videoContainer')
+    autoPlayPending: false,
+    hls: null,
+    isIPTV: false,
+    isYoutubeMode: false,
+    currentIPTVUrl: null,
+    currentChannel: null,
+    currentChannelIndex: -1,
+    isLoadingMeta: false,
+    metaQueue: []
 };
 
 // ============================================================
@@ -520,6 +593,8 @@ function showToast(msg, duration = 2500, isError = false) {
     window.toastTimeout = setTimeout(() => { DOM.toast.style.display = 'none'; }, duration);
 }
 
+function showLoading(show) { DOM.loadingOverlay.classList.toggle('show', show); }
+
 function updateClock() {
     const now = new Date();
     let h = now.getHours();
@@ -545,6 +620,23 @@ if (localStorage.getItem('shafin-theme') === 'light') {
     if (DOM.moreThemeIcon) DOM.moreThemeIcon.textContent = '☀️';
 }
 
+function destroyHls() { 
+    if (state.hls) { 
+        try { state.hls.destroy(); } catch(e) {}
+        state.hls = null; 
+    }
+}
+
+function isYouTubeUrl(url) {
+    return url && (url.includes('youtube.com/watch') || url.includes('youtu.be/') || url.includes('youtube.com/live'));
+}
+
+function getYoutubeId(url) {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
+
 // ============================================================
 // PLAYBACK MODE
 // ============================================================
@@ -555,6 +647,7 @@ function updateShuffleButton() {
     const classes = ['', 'active-shuffle', 'active-loop'];
     if (state.playbackMode > 0) DOM.shuffle.classList.add(classes[state.playbackMode]);
 }
+
 function cyclePlaybackMode() {
     state.playbackMode = (state.playbackMode + 1) % 3;
     updateShuffleButton();
@@ -585,7 +678,16 @@ function createYouTubePlayer(videoId, autoplay = true, startPos = 0) {
         try { state.ytPlayer.destroy(); } catch(e) {}
         state.ytPlayer = null;
     }
+    
+    destroyHls();
+    state.isIPTV = false;
+    state.isYoutubeMode = false;
+    DOM.nativeVideo.pause();
+    DOM.nativeVideo.removeAttribute('src');
+    DOM.nativeVideo.load();
+    DOM.nativeVideo.style.display = 'none';
     DOM.iframe.style.display = 'none';
+    
     state.isStopped = false;
     state.videoEndedManually = false;
     state.autoPlayPending = false;
@@ -602,6 +704,11 @@ function createYouTubePlayer(videoId, autoplay = true, startPos = 0) {
     DOM.iframe.style.display = 'none';
     if (DOM.placeholder) DOM.placeholder.style.display = 'none';
     container.appendChild(playerDiv);
+    
+    if (state.currentMode === 'radio') {
+        DOM.radioVisualizer.classList.add('active');
+        DOM.radioVisualizer.classList.remove('paused');
+    }
     
     state.ytPlayer = new YT.Player('yt-player-container', {
         height: '100%', width: '100%', videoId: videoId,
@@ -622,6 +729,7 @@ function createYouTubePlayer(videoId, autoplay = true, startPos = 0) {
                 if (autoplay) e.target.playVideo();
                 startPlayerTimer();
                 if (state.isMuted && typeof e.target.setVolume === 'function') e.target.setVolume(0);
+                updateRadioUI();
             },
             onStateChange: function(e) {
                 if (gen !== state.playerGeneration) return;
@@ -630,10 +738,13 @@ function createYouTubePlayer(videoId, autoplay = true, startPos = 0) {
                     state.isPlaying = true; DOM.play.textContent = '⏸';
                     state.videoEndedManually = false;
                     startPlayerTimer();
+                    if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
                 } else if (s === YT.PlayerState.PAUSED) {
                     state.isPlaying = false; DOM.play.textContent = '▶';
+                    if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
                 } else if (s === YT.PlayerState.ENDED) {
                     state.isPlaying = false; DOM.play.textContent = '▶';
+                    if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
                     if (!state.videoEndedManually && !state.autoPlayPending && !state.isStopped) {
                         state.autoPlayPending = true;
                         setTimeout(() => {
@@ -650,58 +761,175 @@ function createYouTubePlayer(videoId, autoplay = true, startPos = 0) {
     });
 }
 
-function fallbackToIframe(videoId) {
+// ============================================================
+// IPTV PLAYER
+// ============================================================
+function playIPTV(url, channelName) {
+    if (state.ytPlayer && typeof state.ytPlayer.destroy === 'function') {
+        try { state.ytPlayer.destroy(); } catch(e) {}
+        state.ytPlayer = null;
+    }
+    const container = document.getElementById('yt-player-container');
+    if (container) container.style.display = 'none';
+    DOM.iframe.style.display = 'none';
+    
+    destroyHls();
+    state.isIPTV = true;
+    state.isYoutubeMode = false;
+    state.currentIPTVUrl = url;
     state.isStopped = false;
     state.videoEndedManually = false;
     if (DOM.blank) DOM.blank.classList.remove('show');
-    state.currentVideoId = videoId;
-    if (DOM.videoIdTile) { DOM.videoIdTile.textContent = 'ID: ' + videoId.substring(0,8)+'...'; DOM.videoIdTile.classList.add('show'); }
-    const container = document.getElementById('yt-player-container');
-    if (container) container.style.display = 'none';
-    if (DOM.iframe) {
-        DOM.iframe.style.display = 'block';
-        DOM.iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0&enablejsapi=1&playsinline=1';
+    if (DOM.placeholder) DOM.placeholder.style.display = 'none';
+    DOM.videoIdTile.textContent = '📡 ' + channelName.substring(0, 20) + '...';
+    DOM.videoIdTile.classList.add('show');
+    
+    if (state.currentMode === 'radio') {
+        DOM.radioVisualizer.classList.add('active');
+        DOM.radioVisualizer.classList.remove('paused');
+        DOM.radioTitle.textContent = channelName;
+        DOM.radioSub.textContent = 'IPTV • Radio Mode';
     }
+    
+    DOM.nativeVideo.style.display = 'block';
+    DOM.nativeVideo.pause();
+    DOM.nativeVideo.removeAttribute('src');
+    DOM.nativeVideo.load();
+    showLoading(true);
+    
+    if (url.includes('.m3u8') && Hls && Hls.isSupported()) {
+        state.hls = new Hls({ 
+            enableWorker: true, 
+            lowLatencyMode: true, 
+            maxBufferLength: 15,
+            manifestLoadingTimeOut: 5000,
+            levelLoadingTimeOut: 5000,
+            fragLoadingTimeOut: 10000
+        });
+        state.hls.loadSource(url);
+        state.hls.attachMedia(DOM.nativeVideo);
+        state.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            showLoading(false);
+            DOM.nativeVideo.play().catch(() => {});
+            state.isPlaying = true;
+            DOM.play.textContent = '⏸';
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
+            startPlayerTimer();
+        });
+        state.hls.on(Hls.Events.ERROR, (event, data) => {
+            showLoading(false);
+            if (data.fatal) {
+                showToast('Stream unavailable', 3000, true);
+                state.offlineChannels.add(url);
+                updateIPTVStatus();
+                if (state.currentCategory === 'iptv') renderIPTV();
+            }
+        });
+    } else {
+        DOM.nativeVideo.src = url;
+        DOM.nativeVideo.addEventListener('canplay', () => {
+            showLoading(false);
+            DOM.nativeVideo.play().catch(() => {});
+            state.isPlaying = true;
+            DOM.play.textContent = '⏸';
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
+            startPlayerTimer();
+        }, { once: true });
+        DOM.nativeVideo.onerror = () => {
+            showLoading(false);
+            showToast('Cannot play stream', 3000, true);
+            state.offlineChannels.add(url);
+            updateIPTVStatus();
+            if (state.currentCategory === 'iptv') renderIPTV();
+        };
+    }
+    setTimeout(() => showLoading(false), 10000);
+    DOM.playerInfo.textContent = '📡 ' + channelName;
+    updateRadioUI();
+}
+
+function playYoutubeStream(url, name = 'YouTube Live') {
+    const videoId = getYoutubeId(url);
+    if (!videoId) { showToast('Invalid YouTube URL', true); return; }
+    
+    destroyHls();
+    state.isIPTV = false;
+    state.isYoutubeMode = true;
+    state.currentIPTVUrl = url;
+    state.isStopped = false;
+    if (DOM.blank) DOM.blank.classList.remove('show');
+    if (DOM.placeholder) DOM.placeholder.style.display = 'none';
+    DOM.videoIdTile.textContent = '▶️ ' + name.substring(0, 20) + '...';
+    DOM.videoIdTile.classList.add('show');
+    
+    if (state.currentMode === 'radio') {
+        DOM.radioVisualizer.classList.add('active');
+        DOM.radioVisualizer.classList.remove('paused');
+        DOM.radioTitle.textContent = name;
+        DOM.radioSub.textContent = 'YouTube • Radio Mode';
+    }
+    
+    DOM.nativeVideo.style.display = 'none';
+    DOM.nativeVideo.pause();
+    DOM.iframe.style.display = 'block';
+    DOM.iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
     state.isPlaying = true;
     DOM.play.textContent = '⏸';
+    DOM.playerInfo.textContent = '▶️ ' + name;
+    updateRadioUI();
     startPlayerTimer();
 }
 
-function playVideo(playlist, videoIndex, startPos = 0) {
-    if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) return;
-    state.playingPlaylist = playlist;
-    state.playingVideoIndex = videoIndex;
-    state.viewingPlaylist = playlist;
-    state.viewingVideoIndex = videoIndex;
-    state.videoEndedManually = false;
-    if (DOM.blank) DOM.blank.classList.remove('show');
-    const videoId = playlist.videoIds[videoIndex];
-    if (!videoId) return;
-    const cache = state.metadataCache[playlist.name] || {};
-    const meta = cache[videoId];
-    let title = meta ? meta.title : 'Video ' + (videoIndex+1);
-    if (state.translateEnabled && meta && meta.translatedTitle) title = meta.translatedTitle;
-    let thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg';
-    if (!startPos) {
-        const entry = state.history.find(h => h.videoId === videoId && h.playlistName === playlist.name);
-        if (entry && entry.position > 0) startPos = entry.position;
+function playStream(url, name) {
+    if (isYouTubeUrl(url)) {
+        playYoutubeStream(url, name);
+        return;
     }
-    if (startPos < 0 || !isFinite(startPos)) startPos = 0;
-    addToHistory(playlist.name, videoId, title, thumb, startPos);
-    if (DOM.placeholder) DOM.placeholder.style.display = 'none';
-    if (typeof YT !== 'undefined' && YT.Player) {
-        createYouTubePlayer(videoId, true, startPos);
+    playIPTV(url, name);
+}
+
+// ============================================================
+// RADIO MODE UI
+// ============================================================
+function updateRadioUI() {
+    if (state.currentMode === 'radio') {
+        DOM.radioVisualizer.classList.add('active');
+        DOM.radioVisualizer.classList.toggle('paused', !state.isPlaying);
+        DOM.nativeVideo.style.display = 'none';
+        const container = document.getElementById('yt-player-container');
+        if (container) container.style.display = 'none';
+        DOM.iframe.style.display = 'none';
     } else {
-        fallbackToIframe(videoId);
+        DOM.radioVisualizer.classList.remove('active');
+        if (!state.isIPTV && !state.isYoutubeMode) {
+            const container = document.getElementById('yt-player-container');
+            if (container) container.style.display = 'block';
+            DOM.iframe.style.display = 'none';
+            DOM.nativeVideo.style.display = 'none';
+        } else if (state.isIPTV) {
+            DOM.nativeVideo.style.display = 'block';
+        } else if (state.isYoutubeMode) {
+            DOM.iframe.style.display = 'block';
+        }
     }
-    DOM.playerInfo.textContent = playlist.name + ' • ' + title;
-    if (DOM.progressBar) DOM.progressBar.style.width = '0%';
-    if (state.isPlaylistView && state.viewingPlaylist) renderVideos(state.viewingPlaylist);
+}
+
+function setMode(mode) {
+    if (mode === state.currentMode) return;
+    state.currentMode = mode;
+    DOM.tvMode.classList.toggle('active', mode === 'tv');
+    DOM.radioMode.classList.toggle('active', mode === 'radio');
+    updateRadioUI();
+    showToast(mode === 'tv' ? '📺 TV Mode' : '🎧 Radio Mode');
     saveState();
 }
 
+// ============================================================
+// VIDEO END HANDLER
+// ============================================================
 function handleVideoEnd() {
     if (state.videoEndedManually) { state.videoEndedManually = false; return; }
+    if (state.isIPTV || state.isYoutubeMode) return;
     const playlist = state.playingPlaylist;
     if (!playlist || playlist.videoIds.length === 0) return;
     const idx = state.playingVideoIndex;
@@ -724,25 +952,78 @@ function handleVideoEnd() {
 // PLAYER CONTROLS
 // ============================================================
 function togglePlayPause() {
-    if (state.isStopped) { showToast('Select a video first', 1500, true); return; }
+    if (state.isStopped) { showToast('Select content first', 1500, true); return; }
+    
+    if (state.isYoutubeMode) {
+        const vid = getYoutubeId(state.currentIPTVUrl);
+        if (vid) {
+            const isPlaying = DOM.play.textContent === '⏸';
+            DOM.iframe.src = `https://www.youtube.com/embed/${vid}?autoplay=${isPlaying?0:1}&rel=0&enablejsapi=1`;
+            DOM.play.textContent = isPlaying ? '▶' : '⏸';
+            state.isPlaying = !isPlaying;
+            if (DOM.radioVisualizer) {
+                state.isPlaying ? DOM.radioVisualizer.classList.remove('paused') : DOM.radioVisualizer.classList.add('paused');
+            }
+        }
+        return;
+    }
+    
+    if (state.isIPTV) {
+        if (DOM.nativeVideo.paused) {
+            DOM.nativeVideo.play().catch(() => {});
+            state.isPlaying = true;
+            DOM.play.textContent = '⏸';
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
+        } else {
+            DOM.nativeVideo.pause();
+            state.isPlaying = false;
+            DOM.play.textContent = '▶';
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
+        }
+        return;
+    }
+    
     if (state.ytPlayer && typeof state.ytPlayer.playVideo === 'function') {
         if (state.isPlaying) {
             state.ytPlayer.pauseVideo();
             state.isPlaying = false;
             DOM.play.textContent = '▶';
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
+            if (state.playingPlaylist && state.playingVideoIndex >= 0) {
+                const vid = state.playingPlaylist.videoIds[state.playingVideoIndex];
+                const pos = state.ytPlayer.getCurrentTime();
+                updateHistoryPosition(state.playingPlaylist.name, vid, pos);
+            }
         } else {
             state.videoEndedManually = false;
             state.ytPlayer.playVideo();
             state.isPlaying = true;
             DOM.play.textContent = '⏸';
+            if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
             startPlayerTimer();
         }
     }
 }
 
-function nextVideo() {
+function nextContent() {
+    if (state.isIPTV || state.isYoutubeMode) {
+        if (state.iptvChannels.length > 0 && state.currentIPTVUrl) {
+            const idx = state.iptvChannels.findIndex(c => c.url === state.currentIPTVUrl);
+            if (idx >= 0 && idx < state.iptvChannels.length - 1) {
+                const next = state.iptvChannels[idx + 1];
+                state.currentChannelIndex = idx + 1;
+                state.currentChannel = next;
+                playStream(next.url, next.name);
+                if (state.currentCategory === 'iptv') renderIPTV();
+                return;
+            }
+        }
+        showToast('No next channel', 1500, true);
+        return;
+    }
     if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
-        showToast('No playlist playing', 1500, true); return;
+        showToast('No playlist playing', 1500, true);
+        return;
     }
     state.videoEndedManually = false;
     const playlist = state.playingPlaylist;
@@ -757,9 +1038,25 @@ function nextVideo() {
     playVideo(playlist, idx);
 }
 
-function prevVideo() {
+function prevContent() {
+    if (state.isIPTV || state.isYoutubeMode) {
+        if (state.iptvChannels.length > 0 && state.currentIPTVUrl) {
+            const idx = state.iptvChannels.findIndex(c => c.url === state.currentIPTVUrl);
+            if (idx > 0) {
+                const prev = state.iptvChannels[idx - 1];
+                state.currentChannelIndex = idx - 1;
+                state.currentChannel = prev;
+                playStream(prev.url, prev.name);
+                if (state.currentCategory === 'iptv') renderIPTV();
+                return;
+            }
+        }
+        showToast('No previous channel', 1500, true);
+        return;
+    }
     if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
-        showToast('No playlist playing', 1500, true); return;
+        showToast('No playlist playing', 1500, true);
+        return;
     }
     state.videoEndedManually = false;
     const playlist = state.playingPlaylist;
@@ -774,9 +1071,26 @@ function prevVideo() {
     playVideo(playlist, idx);
 }
 
-function randomVideo() {
+function randomContent() {
+    if (state.isIPTV || state.isYoutubeMode) {
+        if (state.iptvChannels.length > 0) {
+            const online = state.iptvChannels.filter(ch => !state.offlineChannels.has(ch.url));
+            if (online.length > 0) {
+                const ch = online[Math.floor(Math.random() * online.length)];
+                state.currentChannel = ch;
+                state.currentChannelIndex = state.iptvChannels.indexOf(ch);
+                playStream(ch.url, ch.name);
+                if (state.currentCategory === 'iptv') renderIPTV();
+                showToast('✨ Random IPTV channel');
+                return;
+            }
+        }
+        showToast('No online channels', 1500, true);
+        return;
+    }
     if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
-        showToast('No playlist selected', 1500, true); return;
+        showToast('No playlist selected', 1500, true);
+        return;
     }
     const playlist = state.playingPlaylist;
     const idx = Math.floor(Math.random() * playlist.videoIds.length);
@@ -785,6 +1099,11 @@ function randomVideo() {
 }
 
 function seekVideo(seconds) {
+    if (state.isIPTV) {
+        const newTime = Math.max(0, Math.min(DOM.nativeVideo.duration || 0, DOM.nativeVideo.currentTime + seconds));
+        DOM.nativeVideo.currentTime = newTime;
+        return;
+    }
     if (state.isStopped || !state.ytPlayer || typeof state.ytPlayer.seekTo !== 'function') return;
     const current = state.ytPlayer.getCurrentTime();
     const duration = state.ytPlayer.getDuration();
@@ -794,6 +1113,14 @@ function seekVideo(seconds) {
 }
 
 function toggleMute() {
+    if (state.isIPTV) {
+        DOM.nativeVideo.muted = !DOM.nativeVideo.muted;
+        state.isMuted = DOM.nativeVideo.muted;
+        DOM.mute.textContent = state.isMuted ? '🔇' : '🔊';
+        DOM.mute.classList.toggle('muted', state.isMuted);
+        showToast(state.isMuted ? '🔇 Muted' : '🔊 Unmuted');
+        return;
+    }
     state.isMuted = !state.isMuted;
     if (state.ytPlayer && typeof state.ytPlayer.setVolume === 'function') {
         state.ytPlayer.setVolume(state.isMuted ? 0 : 70);
@@ -806,15 +1133,27 @@ function toggleMute() {
 function stopPlayback() {
     state.isStopped = true;
     state.videoEndedManually = false;
+    state.isIPTV = false;
+    state.isYoutubeMode = false;
+    state.currentIPTVUrl = null;
+    
     if (state.ytPlayer && typeof state.ytPlayer.pauseVideo === 'function') {
         state.ytPlayer.pauseVideo();
         state.ytPlayer.stopVideo();
     }
-    state.isPlaying = false;
-    DOM.play.textContent = '▶';
+    destroyHls();
+    DOM.nativeVideo.style.display = 'none';
+    DOM.nativeVideo.pause();
+    DOM.nativeVideo.removeAttribute('src');
+    DOM.nativeVideo.load();
+    DOM.iframe.style.display = 'none';
+    DOM.iframe.src = '';
     const container = document.getElementById('yt-player-container');
     if (container) container.style.display = 'none';
-    if (DOM.iframe) DOM.iframe.style.display = 'none';
+    
+    state.isPlaying = false;
+    DOM.play.textContent = '▶';
+    if (DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused');
     if (DOM.placeholder) DOM.placeholder.style.display = 'none';
     if (DOM.blank) DOM.blank.classList.add('show');
     DOM.playerInfo.textContent = 'Stopped';
@@ -827,23 +1166,46 @@ function stopPlayback() {
 }
 
 function copyVideoId() {
-    if (!state.currentVideoId) { showToast('No video playing', 1500, true); return; }
-    navigator.clipboard.writeText(state.currentVideoId).then(() => {
-        showToast('📋 Copied: ' + state.currentVideoId);
+    if (!state.currentVideoId && !state.currentIPTVUrl) { showToast('No content playing', 1500, true); return; }
+    const text = state.currentVideoId || state.currentIPTVUrl || '';
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('📋 Copied: ' + text.substring(0, 20) + '...');
         if (DOM.videoIdTile) DOM.videoIdTile.style.borderColor = 'var(--accent)';
         setTimeout(() => { if (DOM.videoIdTile) DOM.videoIdTile.style.borderColor = 'var(--border)'; }, 1500);
     }).catch(() => {
         const ta = document.createElement('textarea');
-        ta.value = state.currentVideoId;
+        ta.value = text;
         document.body.appendChild(ta);
         ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        showToast('📋 Copied: ' + state.currentVideoId);
+        showToast('📋 Copied');
     });
 }
 
 function goToCurrentList() {
+    if (state.isIPTV || state.isYoutubeMode) {
+        if (state.currentChannel) {
+            switchCategory('iptv');
+            setTimeout(() => {
+                renderIPTV();
+                setTimeout(() => {
+                    const items = DOM.list.querySelectorAll('.list-item[data-type="iptv"]');
+                    for (let item of items) {
+                        if (item.dataset.url === state.currentChannel.url) {
+                            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            item.classList.add('active');
+                            setTimeout(() => item.classList.remove('active'), 2000);
+                            break;
+                        }
+                    }
+                }, 200);
+            }, 100);
+            return;
+        }
+        switchCategory('iptv');
+        return;
+    }
     if (state.playingPlaylist) {
         const pl = state.playingPlaylist;
         for (const g in state.groups) {
@@ -897,6 +1259,14 @@ function stopPlayerTimer() {
 }
 
 function updatePlayerTimer() {
+    if (state.isIPTV) {
+        if (DOM.nativeVideo && DOM.nativeVideo.duration) {
+            const current = DOM.nativeVideo.currentTime;
+            const duration = DOM.nativeVideo.duration;
+            if (duration > 0) DOM.playerTimer.textContent = formatTime(current) + ' / ' + formatTime(duration);
+        }
+        return;
+    }
     if (!state.ytPlayer || typeof state.ytPlayer.getCurrentTime !== 'function') return;
     const current = state.ytPlayer.getCurrentTime();
     const duration = state.ytPlayer.getDuration();
@@ -910,6 +1280,14 @@ function updatePlayerTimer() {
 }
 
 function updateProgress() {
+    if (state.isIPTV) {
+        if (DOM.nativeVideo && DOM.nativeVideo.duration) {
+            const current = DOM.nativeVideo.currentTime;
+            const duration = DOM.nativeVideo.duration;
+            if (duration > 0) DOM.progressBar.style.width = Math.min((current / duration) * 100, 100) + '%';
+        }
+        return;
+    }
     if (!state.ytPlayer || typeof state.ytPlayer.getCurrentTime !== 'function') return;
     if (state.isSeeking) return;
     const current = state.ytPlayer.getCurrentTime();
@@ -922,6 +1300,12 @@ function updateProgress() {
 function setupProgressSeek() {
     let isDragging = false;
     DOM.progressContainer.addEventListener('mousedown', function(e) {
+        if (state.isIPTV) {
+            isDragging = true;
+            state.isSeeking = true;
+            seekIPTVFromEvent(e);
+            return;
+        }
         if (!state.ytPlayer || typeof state.ytPlayer.seekTo !== 'function') return;
         isDragging = true;
         state.isSeeking = true;
@@ -929,18 +1313,25 @@ function setupProgressSeek() {
     });
     document.addEventListener('mousemove', function(e) {
         if (!isDragging) return;
+        if (state.isIPTV) { seekIPTVFromEvent(e); return; }
         seekFromEvent(e);
     });
     document.addEventListener('mouseup', function() {
         if (isDragging) { isDragging = false; setTimeout(() => state.isSeeking = false, 300); }
     });
     DOM.progressContainer.addEventListener('touchstart', function(e) {
+        if (state.isIPTV) {
+            state.isSeeking = true;
+            seekIPTVFromTouch(e);
+            return;
+        }
         if (!state.ytPlayer || typeof state.ytPlayer.seekTo !== 'function') return;
         state.isSeeking = true;
         seekFromTouch(e);
     });
     DOM.progressContainer.addEventListener('touchmove', function(e) {
         e.preventDefault();
+        if (state.isIPTV) { seekIPTVFromTouch(e); return; }
         if (!state.ytPlayer) return;
         seekFromTouch(e);
     });
@@ -973,6 +1364,28 @@ function seekFromTouch(e) {
     }
 }
 
+function seekIPTVFromEvent(e) {
+    const rect = DOM.progressContainer.getBoundingClientRect();
+    const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const duration = DOM.nativeVideo.duration;
+    if (duration > 0) {
+        DOM.nativeVideo.currentTime = percent * duration;
+        DOM.progressBar.style.width = (percent * 100) + '%';
+    }
+}
+
+function seekIPTVFromTouch(e) {
+    const touch = e.touches[0];
+    if (!touch) return;
+    const rect = DOM.progressContainer.getBoundingClientRect();
+    const percent = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+    const duration = DOM.nativeVideo.duration;
+    if (duration > 0) {
+        DOM.nativeVideo.currentTime = percent * duration;
+        DOM.progressBar.style.width = (percent * 100) + '%';
+    }
+}
+
 let timerCountdown = null;
 function setTimerPreset(minutes) {
     if (timerCountdown) { clearInterval(timerCountdown); timerCountdown = null; }
@@ -993,10 +1406,10 @@ function setTimerPreset(minutes) {
             clearInterval(timerCountdown);
             timerCountdown = null;
             DOM.timerDisplay.textContent = '0:00';
-            if (state.playingPlaylist && state.playingPlaylist.videoIds.length > 0 && !state.autoPlayPending) {
+            if (!state.isStopped && !state.autoPlayPending) {
                 state.autoPlayPending = true;
-                randomVideo();
-                showToast('⏱️ Timer: Random video');
+                randomContent();
+                showToast('⏱️ Timer: Random content');
                 setTimeout(() => { if (minutes > 0) setTimerPreset(minutes); state.autoPlayPending = false; }, 1000);
             }
         } else {
@@ -1008,26 +1421,28 @@ function setTimerPreset(minutes) {
 }
 
 // ============================================================
-// MODE UI
+// CATEGORY SWITCHING
 // ============================================================
-function setMode(mode) {
-    state.currentMode = mode;
-    DOM.tvMode.classList.toggle('active', mode === 'tv');
-    DOM.radioMode.classList.toggle('active', mode === 'radio');
-    showToast(mode === 'tv' ? '📺 TV Mode' : '🎧 Radio Mode');
-    saveState();
+function switchCategory(category) {
+    state.currentCategory = category;
+    document.querySelectorAll('.header-btn.category-btn').forEach(b => b.classList.toggle('active', b.dataset.category === category));
+    DOM.iptvChips.style.display = category === 'iptv' ? 'flex' : 'none';
+    
+    if (category === 'playlists') { 
+        state.navigationStack = ['groups']; 
+        navigateToGroups(); 
+    } else if (category === 'subscriptions') { 
+        state.navigationStack = ['subscriptions']; 
+        navigateToSubscriptions(); 
+    } else if (category === 'iptv') { 
+        state.navigationStack = ['iptv']; 
+        navigateToIPTV(); 
+    }
 }
 
 // ============================================================
 // NAVIGATION
 // ============================================================
-function switchCategory(category) {
-    state.currentCategory = category;
-    document.querySelectorAll('.header-btn.category-btn').forEach(b => b.classList.toggle('active', b.dataset.category === category));
-    if (category === 'playlists') { state.navigationStack = ['groups']; navigateToGroups(); }
-    else if (category === 'subscriptions') { state.navigationStack = ['subscriptions']; navigateToSubscriptions(); }
-}
-
 function navigateToGroups() {
     state.currentView = 'groups';
     state.isGroupView = true;
@@ -1046,7 +1461,6 @@ function navigateToGroup(groupName) {
     DOM.back.classList.add('show');
     DOM.search.placeholder = '🔍 Search playlists...';
     DOM.search.value = '';
-    state.currentGroupName = groupName;
     if (state.navigationStack[state.navigationStack.length-1] !== 'group:'+groupName) {
         state.navigationStack.push('group:'+groupName);
     }
@@ -1090,10 +1504,36 @@ function navigateToSubscriptionVideos(channel) {
     renderSubscriptionVideos(channel);
 }
 
+function navigateToIPTV() {
+    state.currentView = 'iptv';
+    state.selectedIPTVCategory = null;
+    DOM.back.classList.add('show');
+    DOM.search.placeholder = '🔍 Search channels...';
+    DOM.search.value = '';
+    if (state.navigationStack[state.navigationStack.length-1] !== 'iptv') {
+        state.navigationStack.push('iptv');
+    }
+    renderIPTVChips();
+    renderIPTV();
+}
+
+function navigateToIPTVCategory(category) {
+    state.currentView = 'iptv_category';
+    state.currentIPTVCategory = category;
+    state.selectedIPTVCategory = category;
+    DOM.back.classList.add('show');
+    DOM.search.placeholder = '🔍 Search channels...';
+    DOM.search.value = '';
+    state.navigationStack.push('iptv_category:'+category);
+    renderIPTVChips(category);
+    renderIPTVCategory(category);
+}
+
 function goBack() {
     if (state.navigationStack.length <= 1) {
         if (state.currentCategory === 'playlists') navigateToGroups();
         else if (state.currentCategory === 'subscriptions') navigateToSubscriptions();
+        else if (state.currentCategory === 'iptv') navigateToIPTV();
         else navigateToGroups();
         return;
     }
@@ -1101,6 +1541,7 @@ function goBack() {
     const last = state.navigationStack[state.navigationStack.length-1];
     if (last === 'groups') navigateToGroups();
     else if (last === 'subscriptions') navigateToSubscriptions();
+    else if (last === 'iptv') navigateToIPTV();
     else if (last.startsWith('group:')) navigateToGroup(last.replace('group:', ''));
     else if (last.startsWith('playlist:')) {
         const pl = state.playlists.find(p => p.name === last.replace('playlist:', ''));
@@ -1110,11 +1551,13 @@ function goBack() {
         const ch = state.subscriptions.find(s => s.name === last.replace('sub_videos:', ''));
         if (ch) navigateToSubscriptionVideos(ch);
         else navigateToSubscriptions();
+    } else if (last.startsWith('iptv_category:')) {
+        navigateToIPTVCategory(last.replace('iptv_category:', ''));
     } else navigateToGroups();
 }
 
 // ============================================================
-// RENDER FUNCTIONS
+// PLAYLIST RENDER FUNCTIONS
 // ============================================================
 function getGroupIcon(name) {
     const l = name.toLowerCase();
@@ -1135,7 +1578,7 @@ function renderGroups() {
     let filtered = state.groupNames;
     if (search) filtered = filtered.filter(g => g.toLowerCase().includes(search));
     if (filtered.length === 0) {
-        DOM.list.innerHTML = '<div style="text-align:center;padding:30px 16px;font-size:0.7rem;color:var(--text2);">No groups found</div>';
+        DOM.list.innerHTML = '<div style="text-align:center;padding:25px 14px;font-size:0.65rem;color:var(--text2);">No groups found</div>';
         return;
     }
     let html = '';
@@ -1160,10 +1603,10 @@ function renderGroupPlaylists(groupName) {
     let filtered = pls;
     if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
     if (filtered.length === 0) {
-        DOM.list.innerHTML = '<div style="text-align:center;padding:30px 16px;font-size:0.7rem;color:var(--text2);">No playlists</div>';
+        DOM.list.innerHTML = '<div style="text-align:center;padding:25px 14px;font-size:0.65rem;color:var(--text2);">No playlists</div>';
         return;
     }
-    let html = '<div style="padding:3px 8px;font-size:0.65rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:3px;">'+
+    let html = '<div style="padding:2px 6px;font-size:0.6rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:2px;">'+
         getGroupIcon(groupName)+' '+escapeHtml(groupName)+' ('+filtered.length+')</div>';
     filtered.forEach((pl, idx) => {
         const active = state.viewingPlaylist === pl && state.isPlaylistView;
@@ -1178,7 +1621,7 @@ function renderGroupPlaylists(groupName) {
     DOM.list.querySelectorAll('.list-item[data-type="playlist"]').forEach(el => {
         el.addEventListener('click', function() {
             const pl = filtered[parseInt(this.dataset.index)];
-            if (pl) { navigateToPlaylist(pl); fetchPlaylistMetadata(pl); }
+            if (pl) { navigateToPlaylist(pl); queueMetadataFetch(pl); }
         });
     });
 }
@@ -1195,11 +1638,11 @@ function renderVideos(playlist) {
         }
         return false;
     });
-    let html = '<div style="padding:3px 8px;font-size:0.65rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:3px;display:flex;justify-content:space-between;">'+
+    let html = '<div style="padding:2px 6px;font-size:0.6rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:2px;display:flex;justify-content:space-between;">'+
         '<span>▶ '+escapeHtml(playlist.name)+' ('+playlist.videoIds.length+')</span>'+
         '<span>'+Object.keys(cache).length+'/'+playlist.videoIds.length+'</span></div>';
     if (videos.length === 0 && search) {
-        html += '<div style="text-align:center;padding:20px;font-size:0.65rem;color:var(--text2);">No matching videos</div>';
+        html += '<div style="text-align:center;padding:15px;font-size:0.6rem;color:var(--text2);">No matching videos</div>';
         DOM.list.innerHTML = html; return;
     }
     videos.forEach(v => {
@@ -1221,6 +1664,8 @@ function renderVideos(playlist) {
         el.addEventListener('click', function() {
             const idx = parseInt(this.dataset.videoIndex);
             state.videoEndedManually = false;
+            state.isIPTV = false;
+            state.isYoutubeMode = false;
             state.playingPlaylist = playlist;
             state.playingVideoIndex = idx;
             state.viewingPlaylist = playlist;
@@ -1228,6 +1673,71 @@ function renderVideos(playlist) {
             playVideo(playlist, idx);
         });
     });
+}
+
+// ============================================================
+// PLAYLIST VIDEO PLAYER
+// ============================================================
+function playVideo(playlist, videoIndex, startPos = 0) {
+    if (!playlist || videoIndex < 0 || videoIndex >= playlist.videoIds.length) return;
+    state.isIPTV = false;
+    state.isYoutubeMode = false;
+    state.playingPlaylist = playlist;
+    state.playingVideoIndex = videoIndex;
+    state.viewingPlaylist = playlist;
+    state.viewingVideoIndex = videoIndex;
+    state.videoEndedManually = false;
+    if (DOM.blank) DOM.blank.classList.remove('show');
+    const videoId = playlist.videoIds[videoIndex];
+    if (!videoId) return;
+    const cache = state.metadataCache[playlist.name] || {};
+    const meta = cache[videoId];
+    let title = meta ? meta.title : 'Video ' + (videoIndex+1);
+    if (state.translateEnabled && meta && meta.translatedTitle) title = meta.translatedTitle;
+    let thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg';
+    if (!startPos) {
+        const entry = state.history.find(h => h.videoId === videoId && h.playlistName === playlist.name);
+        if (entry && entry.position > 0) startPos = entry.position;
+    }
+    if (startPos < 0 || !isFinite(startPos)) startPos = 0;
+    addToHistory(playlist.name, videoId, title, thumb, startPos);
+    if (DOM.placeholder) DOM.placeholder.style.display = 'none';
+    
+    if (state.currentMode === 'radio') {
+        DOM.radioVisualizer.classList.add('active');
+        DOM.radioVisualizer.classList.remove('paused');
+        DOM.radioTitle.textContent = title;
+        DOM.radioSub.textContent = playlist.name + ' • Radio Mode';
+    }
+    DOM.playerInfo.textContent = playlist.name + ' • ' + title;
+    if (DOM.progressBar) DOM.progressBar.style.width = '0%';
+    
+    if (typeof YT !== 'undefined' && YT.Player) {
+        createYouTubePlayer(videoId, true, startPos);
+    } else {
+        fallbackToIframe(videoId);
+    }
+    if (state.isPlaylistView && state.viewingPlaylist) renderVideos(state.viewingPlaylist);
+    saveState();
+}
+
+function fallbackToIframe(videoId) {
+    state.isStopped = false;
+    state.videoEndedManually = false;
+    state.isIPTV = false;
+    state.isYoutubeMode = false;
+    if (DOM.blank) DOM.blank.classList.remove('show');
+    state.currentVideoId = videoId;
+    if (DOM.videoIdTile) { DOM.videoIdTile.textContent = 'ID: ' + videoId.substring(0,8)+'...'; DOM.videoIdTile.classList.add('show'); }
+    const container = document.getElementById('yt-player-container');
+    if (container) container.style.display = 'none';
+    DOM.nativeVideo.style.display = 'none';
+    DOM.iframe.style.display = 'block';
+    DOM.iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0&enablejsapi=1&playsinline=1';
+    state.isPlaying = true;
+    DOM.play.textContent = '⏸';
+    if (DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
+    startPlayerTimer();
 }
 
 // ============================================================
@@ -1248,7 +1758,6 @@ async function loadSubscriptions() {
             const group = fields[2]?.trim() || 'Uncategorized';
             if (name && channelId) state.subscriptions.push({name, channelId, group});
         }
-        // Load cached videos
         try {
             const cached = localStorage.getItem('shafin_sub_cache');
             if (cached) {
@@ -1256,15 +1765,13 @@ async function loadSubscriptions() {
                 if (data.videos) state.subCache = data.videos;
             }
         } catch(e) {}
-        // Fetch in background
+        // Fetch in background with delays
         for (let i = 0; i < state.subscriptions.length; i++) {
             await fetchChannelVideos(state.subscriptions[i]);
-            if (i % 3 === 0) await new Promise(r => setTimeout(r, 50));
+            if (i % 2 === 0) await new Promise(r => setTimeout(r, 10));
         }
         if (state.currentCategory === 'subscriptions') renderSubscriptions();
-    } catch(err) {
-        console.warn('Subscription load error:', err);
-    }
+    } catch(err) { console.warn('Subscription load error:', err); }
 }
 
 async function fetchChannelVideos(channel) {
@@ -1296,9 +1803,9 @@ async function fetchChannelVideos(channel) {
 function renderSubscriptions() {
     if (!DOM.list) return;
     const search = DOM.search.value.toLowerCase().trim();
-    let html = '<div style="padding:3px 8px;font-size:0.65rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:3px;">📺 Subscriptions ('+state.subscriptions.length+')</div>';
+    let html = '<div style="padding:2px 6px;font-size:0.6rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:2px;">📺 Subscriptions ('+state.subscriptions.length+')</div>';
     if (state.subscriptions.length === 0) {
-        html += '<div style="text-align:center;padding:30px;font-size:0.7rem;color:var(--text2);">No subscriptions</div>';
+        html += '<div style="text-align:center;padding:25px;font-size:0.65rem;color:var(--text2);">No subscriptions</div>';
         DOM.list.innerHTML = html; return;
     }
     let channels = state.subscriptions;
@@ -1307,7 +1814,7 @@ function renderSubscriptions() {
         const cache = state.subCache[ch.channelId];
         const count = cache && cache.videos ? cache.videos.length : 0;
         html += '<div class="list-item" data-channel-id="'+ch.channelId+'" data-type="subscription">'+
-            '<img class="thumb" style="border-radius:50%;width:32px;height:32px;" src="'+(cache && cache.videos && cache.videos[0] ? cache.videos[0].thumbnail : 'https://img.youtube.com/vi//mqdefault.jpg')+'" alt="" loading="lazy">'+
+            '<img class="thumb" style="border-radius:50%;width:28px;height:28px;" src="'+(cache && cache.videos && cache.videos[0] ? cache.videos[0].thumbnail : 'https://img.youtube.com/vi//mqdefault.jpg')+'" alt="" loading="lazy">'+
             '<div class="info"><div class="title">'+escapeHtml(ch.name)+'</div><div class="sub">'+count+' recent videos</div></div>'+
             '<span class="badge">'+count+'</span></div>';
     });
@@ -1325,9 +1832,9 @@ function renderSubscriptionVideos(channel) {
     let videos = cache && cache.videos ? cache.videos : [];
     const search = DOM.search.value.toLowerCase().trim();
     if (search) videos = videos.filter(v => v.title.toLowerCase().includes(search));
-    let html = '<div style="padding:3px 8px;font-size:0.65rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:3px;">📺 '+escapeHtml(channel.name)+' ('+videos.length+')</div>';
+    let html = '<div style="padding:2px 6px;font-size:0.6rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:2px;">📺 '+escapeHtml(channel.name)+' ('+videos.length+')</div>';
     if (videos.length === 0) {
-        html += '<div style="text-align:center;padding:30px;font-size:0.7rem;color:var(--text2);">No videos</div>';
+        html += '<div style="text-align:center;padding:25px;font-size:0.65rem;color:var(--text2);">No videos</div>';
         DOM.list.innerHTML = html; return;
     }
     videos.forEach((video, idx) => {
@@ -1348,6 +1855,8 @@ function renderSubscriptionVideos(channel) {
             const video = videos.find(v => v.videoId === videoId);
             if (video) {
                 const pl = { name: channel.name, videoIds: [videoId], group: 'Subscriptions' };
+                state.isIPTV = false;
+                state.isYoutubeMode = false;
                 state.playingPlaylist = pl;
                 state.playingVideoIndex = 0;
                 state.viewingPlaylist = pl;
@@ -1359,21 +1868,307 @@ function renderSubscriptionVideos(channel) {
 }
 
 // ============================================================
-// METADATA
+// IPTV - OPTIMIZED FOR SPEED
 // ============================================================
-async function fetchPlaylistMetadata(playlist, force = false) {
+function updateIPTVStatus() {
+    if (state.currentCategory === 'iptv') {
+        const total = state.iptvChannels.length;
+        const online = state.iptvChannels.filter(ch => !state.offlineChannels.has(ch.url) && !state.checkingChannels.has(ch.url)).length;
+        DOM.status.textContent = '📡 ' + online + '/' + total + ' online';
+    }
+}
+
+function renderIPTVChips(activeCategory) {
+    if (!DOM.iptvChips) return;
+    if (state.iptvGroupNames.length === 0) {
+        DOM.iptvChips.style.display = 'none';
+        return;
+    }
+    DOM.iptvChips.style.display = 'flex';
+    let html = '<button class="iptv-category-chip' + (!activeCategory ? ' active' : '') + '" data-category="all">All</button>';
+    state.iptvGroupNames.forEach(cat => {
+        const isActive = activeCategory === cat;
+        html += '<button class="iptv-category-chip' + (isActive ? ' active' : '') + '" data-category="' + escapeHtml(cat) + '">' + escapeHtml(cat) + '</button>';
+    });
+    DOM.iptvChips.innerHTML = html;
+    DOM.iptvChips.querySelectorAll('.iptv-category-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            const category = this.dataset.category;
+            if (category === 'all') navigateToIPTV();
+            else navigateToIPTVCategory(category);
+        });
+    });
+}
+
+function renderIPTV() {
+    if (!DOM.list) return;
+    if (!state.iptvLoaded && state.iptvChannels.length === 0) {
+        DOM.list.innerHTML = '<div style="text-align:center;padding:25px 14px;font-size:0.65rem;color:var(--text2);">Loading IPTV channels...</div>';
+        return;
+    }
+    const search = DOM.search.value.toLowerCase().trim();
+    let html = '<div style="padding:2px 6px;font-size:0.6rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:2px;">📡 IPTV Channels (' + state.iptvChannels.length + ')</div>';
+    let channels = state.iptvChannels;
+    if (search) channels = channels.filter(c => c.name.toLowerCase().includes(search) || c.category.toLowerCase().includes(search));
+    if (channels.length === 0) {
+        html += '<div style="text-align:center;padding:25px;font-size:0.65rem;color:var(--text2);">No channels found</div>';
+        DOM.list.innerHTML = html; return;
+    }
+    channels.forEach(ch => {
+        const isActive = state.currentIPTVUrl === ch.url;
+        const isOffline = state.offlineChannels.has(ch.url);
+        const isChecking = state.checkingChannels.has(ch.url);
+        const statusIcon = isOffline ? '<span class="status-icon status-offline">🔴</span>' : 
+                           isChecking ? '<span class="status-icon status-checking">🟠</span>' : 
+                           '<span class="status-icon status-online">🟢</span>';
+        const logoHtml = ch.logo ? 
+            '<img class="thumb live-tv" src="' + ch.logo + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' :
+            '<div class="live-logo-wrap"><div class="live-channel-fallback">📡</div></div>';
+        const ytBadge = isYouTubeUrl(ch.url) ? '<span style="font-size:0.5rem;color:#ff0000;">▶️</span>' : '';
+        html += '<div class="list-item ' + (isActive ? 'active' : '') + (isOffline ? ' offline' : '') + '" data-url="' + escapeHtml(ch.url) + '" data-type="iptv">' +
+            logoHtml +
+            '<div class="info"><div class="title">' + escapeHtml(ch.name) + ' ' + statusIcon + ' ' + ytBadge + '</div>' +
+            '<div class="sub">' + escapeHtml(ch.category) + '</div></div>' +
+            '<span class="badge">▶</span></div>';
+    });
+    DOM.list.innerHTML = html;
+    DOM.list.querySelectorAll('.list-item[data-type="iptv"]').forEach(el => {
+        el.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const ch = state.iptvChannels.find(c => c.url === url);
+            if (ch && !state.offlineChannels.has(url) && !state.checkingChannels.has(url)) {
+                state.currentChannel = ch;
+                state.currentChannelIndex = state.iptvChannels.indexOf(ch);
+                state.currentIPTVUrl = url;
+                playStream(url, ch.name);
+                DOM.list.querySelectorAll('.list-item[data-type="iptv"]').forEach(item => {
+                    item.classList.toggle('active', item.dataset.url === url);
+                });
+            } else if (ch && state.offlineChannels.has(url)) {
+                showToast('Channel offline', 1500, true);
+            } else if (ch && state.checkingChannels.has(url)) {
+                showToast('Still testing...', 1500, true);
+            }
+        });
+    });
+}
+
+function renderIPTVCategory(category) {
+    if (!DOM.list) return;
+    const channels = state.iptvGroups[category] || [];
+    const search = DOM.search.value.toLowerCase().trim();
+    let filtered = channels;
+    if (search) filtered = filtered.filter(c => c.name.toLowerCase().includes(search));
+    let html = '<div style="padding:2px 6px;font-size:0.6rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:2px;">📡 ' + escapeHtml(category) + ' (' + filtered.length + ')</div>';
+    if (filtered.length === 0) {
+        html += '<div style="text-align:center;padding:25px;font-size:0.65rem;color:var(--text2);">No channels</div>';
+        DOM.list.innerHTML = html; return;
+    }
+    filtered.forEach(ch => {
+        const isActive = state.currentIPTVUrl === ch.url;
+        const isOffline = state.offlineChannels.has(ch.url);
+        const isChecking = state.checkingChannels.has(ch.url);
+        const statusIcon = isOffline ? '<span class="status-icon status-offline">🔴</span>' : 
+                           isChecking ? '<span class="status-icon status-checking">🟠</span>' : 
+                           '<span class="status-icon status-online">🟢</span>';
+        const logoHtml = ch.logo ? 
+            '<img class="thumb live-tv" src="' + ch.logo + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' :
+            '<div class="live-logo-wrap"><div class="live-channel-fallback">📡</div></div>';
+        html += '<div class="list-item ' + (isActive ? 'active' : '') + (isOffline ? ' offline' : '') + '" data-url="' + escapeHtml(ch.url) + '" data-type="iptv">' +
+            logoHtml +
+            '<div class="info"><div class="title">' + escapeHtml(ch.name) + ' ' + statusIcon + '</div>' +
+            '<div class="sub">' + escapeHtml(ch.category) + '</div></div>' +
+            '<span class="badge">▶</span></div>';
+    });
+    DOM.list.innerHTML = html;
+    DOM.list.querySelectorAll('.list-item[data-type="iptv"]').forEach(el => {
+        el.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const ch = state.iptvChannels.find(c => c.url === url);
+            if (ch && !state.offlineChannels.has(url) && !state.checkingChannels.has(url)) {
+                state.currentChannel = ch;
+                state.currentChannelIndex = state.iptvChannels.indexOf(ch);
+                state.currentIPTVUrl = url;
+                playStream(url, ch.name);
+                DOM.list.querySelectorAll('.list-item[data-type="iptv"]').forEach(item => {
+                    item.classList.toggle('active', item.dataset.url === url);
+                });
+            } else if (ch && state.offlineChannels.has(url)) {
+                showToast('Channel offline', 1500, true);
+            } else if (ch && state.checkingChannels.has(url)) {
+                showToast('Still testing...', 1500, true);
+            }
+        });
+    });
+}
+
+// Fast stream test with timeout
+async function testStream(url) {
+    if (isYouTubeUrl(url)) return true;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2000);
+    try {
+        const resp = await fetch(url, { signal: controller.signal, headers: { 'Accept': 'application/vnd.apple.mpegurl, */*' } });
+        clearTimeout(timeout);
+        if (resp.ok) {
+            if (url.includes('.m3u8')) {
+                const text = await resp.text();
+                return text.includes('#EXTM3U') || text.includes('#EXTINF');
+            }
+            return true;
+        }
+        return false;
+    } catch(e) { clearTimeout(timeout); return false; }
+}
+
+// Optimized IPTV testing - uses requestIdleCallback for background processing
+function testIPTVChannels(channelArray) {
+    if (state.iptvTesting) return;
+    state.iptvTesting = true;
+    const total = channelArray.length;
+    let tested = 0, online = 0;
+    
+    channelArray.forEach(ch => { 
+        if (isYouTubeUrl(ch.url)) { online++; tested++; } 
+        else state.checkingChannels.add(ch.url); 
+    });
+    updateIPTVStatus();
+    
+    // Process in small batches with idle callback
+    const batchSize = 2;
+    let index = 0;
+    
+    function processNextBatch() {
+        if (index >= channelArray.length) {
+            state.iptvTesting = false;
+            updateIPTVStatus();
+            if (state.currentCategory === 'iptv') {
+                renderIPTV();
+                renderIPTVChips(state.selectedIPTVCategory);
+            }
+            showToast('✅ ' + online + '/' + total + ' channels online');
+            
+            // Auto-play first online channel
+            if (!state.currentChannel && state.iptvChannels.length > 0) {
+                const first = state.iptvChannels.find(ch => !state.offlineChannels.has(ch.url));
+                if (first) {
+                    state.currentChannel = first;
+                    state.currentChannelIndex = state.iptvChannels.indexOf(first);
+                    state.currentIPTVUrl = first.url;
+                    playStream(first.url, first.name);
+                }
+            }
+            return;
+        }
+        
+        const end = Math.min(index + batchSize, channelArray.length);
+        const batch = channelArray.slice(index, end);
+        index = end;
+        
+        // Test batch
+        Promise.all(batch.map(ch => isYouTubeUrl(ch.url) ? true : testStream(ch.url))).then(results => {
+            for (let j = 0; j < batch.length; j++) {
+                if (results[j]) online++;
+                else state.offlineChannels.add(batch[j].url);
+                state.checkingChannels.delete(batch[j].url);
+                tested++;
+            }
+            updateIPTVStatus();
+            if (state.currentCategory === 'iptv') {
+                renderIPTV();
+                renderIPTVChips(state.selectedIPTVCategory);
+            }
+            // Schedule next batch
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(processNextBatch, { timeout: 100 });
+            } else {
+                setTimeout(processNextBatch, 50);
+            }
+        });
+    }
+    
+    // Start processing
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(processNextBatch, { timeout: 100 });
+    } else {
+        setTimeout(processNextBatch, 50);
+    }
+}
+
+async function loadIPTV() {
+    try {
+        DOM.status.textContent = '📡 Loading IPTV...';
+        const resp = await fetch(CONFIG.IPTV_SHEET);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const csv = await resp.text();
+        const rows = csv.split(/\r?\n/).filter(r => r.trim());
+        state.iptvChannels = [];
+        state.iptvGroups = {};
+        state.iptvGroupNames = [];
+        state.offlineChannels.clear();
+        state.checkingChannels.clear();
+        
+        for (let i = 1; i < rows.length; i++) {
+            const fields = parseCSVLine(rows[i]);
+            if (fields.length < 2) continue;
+            const name = fields[0]?.trim() || '';
+            const url = fields[1]?.trim() || '';
+            const category = fields[2]?.trim() || 'Uncategorized';
+            const logo = fields[3]?.trim() || '';
+            if (name && url && url.startsWith('http')) {
+                const ch = { name, url, category, logo };
+                state.iptvChannels.push(ch);
+                if (!state.iptvGroups[category]) state.iptvGroups[category] = [];
+                state.iptvGroups[category].push(ch);
+            }
+        }
+        state.iptvGroupNames = Object.keys(state.iptvGroups).sort();
+        state.iptvLoaded = true;
+        DOM.status.textContent = '📡 ' + state.iptvChannels.length + ' channels';
+        
+        if (state.currentCategory === 'iptv') {
+            renderIPTVChips();
+            renderIPTV();
+        }
+        // Test in background with idle callback
+        testIPTVChannels(state.iptvChannels);
+    } catch(err) {
+        showToast('Error loading IPTV: ' + err.message, 3000, true);
+        DOM.status.textContent = '❌ IPTV failed';
+    }
+}
+
+// ============================================================
+// METADATA - OPTIMIZED WITH QUEUE
+// ============================================================
+async function queueMetadataFetch(playlist) {
     if (!playlist || !playlist.videoIds || playlist.videoIds.length === 0) return;
-    if (state.isLoadingMetadata) return;
     const key = playlist.name;
     if (!state.metadataCache[key]) state.metadataCache[key] = {};
     const cache = state.metadataCache[key];
-    state.isLoadingMetadata = true;
-    const pending = force ? playlist.videoIds : playlist.videoIds.filter(id => !cache[id]);
-    if (pending.length === 0) { state.isLoadingMetadata = false; return; }
-    const batchSize = 3;
+    const pending = playlist.videoIds.filter(id => !cache[id]);
+    if (pending.length === 0) return;
+    
+    // Add to queue
+    state.metaQueue.push({ playlist, pending });
+    if (state.isLoadingMeta) return;
+    processMetaQueue();
+}
+
+async function processMetaQueue() {
+    if (state.isLoadingMeta || state.metaQueue.length === 0) return;
+    state.isLoadingMeta = true;
+    
+    const batch = state.metaQueue.shift();
+    const { playlist, pending } = batch;
+    const key = playlist.name;
+    const cache = state.metadataCache[key];
+    
+    // Process in small batches with delays
+    const batchSize = 2;
     for (let i = 0; i < pending.length; i += batchSize) {
-        const batch = pending.slice(i, i + batchSize);
-        await Promise.all(batch.map(async id => {
+        const chunk = pending.slice(i, i + batchSize);
+        await Promise.all(chunk.map(async id => {
             try {
                 const url = 'https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v='+id+'&format=json';
                 const resp = await fetch(url);
@@ -1388,13 +2183,26 @@ async function fetchPlaylistMetadata(playlist, force = false) {
                 cache[id] = { title: 'Video '+id, author: 'Unknown', thumbnail: 'https://img.youtube.com/vi/'+id+'/mqdefault.jpg' };
             }
         }));
-        if (state.isPlaylistView && state.viewingPlaylist === playlist) renderVideos(playlist);
+        if (state.isPlaylistView && state.viewingPlaylist === playlist) {
+            renderVideos(playlist);
+        }
+        // Yield to browser
         await new Promise(r => setTimeout(r, 0));
     }
-    state.isLoadingMetadata = false;
+    
+    state.isLoadingMeta = false;
     try {
         localStorage.setItem('shafin_meta_cache', JSON.stringify({ metadataCache: state.metadataCache, timestamp: Date.now() }));
     } catch(e) {}
+    
+    // Process next in queue
+    if (state.metaQueue.length > 0) {
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(processMetaQueue, { timeout: 200 });
+        } else {
+            setTimeout(processMetaQueue, 100);
+        }
+    }
 }
 
 // ============================================================
@@ -1465,6 +2273,8 @@ function renderHistory() {
                 const idx = pl.videoIds.indexOf(vid);
                 if (idx >= 0) {
                     closeHistory();
+                    state.isIPTV = false;
+                    state.isYoutubeMode = false;
                     state.playingPlaylist = pl;
                     state.playingVideoIndex = idx;
                     state.viewingPlaylist = pl;
@@ -1529,7 +2339,7 @@ function toggleTranslation() {
 }
 
 // ============================================================
-// PLAYLIST LOADING
+// PLAYLIST LOADING - FAST
 // ============================================================
 async function loadPlaylists() {
     try {
@@ -1556,7 +2366,6 @@ async function loadPlaylists() {
         }
         state.groupNames = Object.keys(state.groups).sort();
         DOM.status.textContent = '✅ '+state.playlists.length+' playlists';
-        // Load cached metadata
         try {
             const raw = localStorage.getItem('shafin_meta_cache');
             if (raw) {
@@ -1564,7 +2373,6 @@ async function loadPlaylists() {
                 if (data.metadataCache) state.metadataCache = data.metadataCache;
             }
         } catch(e) {}
-        // Load cached translations
         try {
             const raw = localStorage.getItem('shafin_translate');
             if (raw) state.translateCache = JSON.parse(raw);
@@ -1619,8 +2427,20 @@ function extractVideoId(url) {
 function playManualInput() {
     const url = DOM.manualInput.value.trim();
     if (!url) { showToast('Enter a URL', 1500, true); return; }
+    
+    if (!isYouTubeUrl(url) && (url.includes('.m3u8') || url.includes('.ts') || url.includes('http'))) {
+        const fakeChannel = { name: 'Custom Stream', url: url, category: 'Custom' };
+        state.currentChannel = fakeChannel;
+        state.currentIPTVUrl = url;
+        state.isIPTV = true;
+        state.isYoutubeMode = false;
+        playStream(url, 'Custom Stream');
+        return;
+    }
+    
     const videoId = extractVideoId(url);
-    if (!videoId) { showToast('Invalid YouTube URL', 2000, true); return; }
+    if (!videoId) { showToast('Invalid URL', 2000, true); return; }
+    
     let pl = state.playlists.find(p => p.name === 'Custom' && p.videoIds[0] === videoId);
     if (!pl) {
         pl = { name: 'Custom', videoIds: [videoId], group: 'Custom' };
@@ -1635,21 +2455,23 @@ function playManualInput() {
             else pl = existing;
         }
     }
+    state.isIPTV = false;
+    state.isYoutubeMode = false;
     state.playingPlaylist = pl;
     state.playingVideoIndex = 0;
     state.viewingPlaylist = pl;
     state.viewingVideoIndex = 0;
     navigateToPlaylist(pl);
-    fetchPlaylistMetadata(pl);
+    queueMetadataFetch(pl);
     setTimeout(() => playVideo(pl, 0), 300);
-    showToast('▶ Playing: '+url);
+    showToast('▶ Playing: ' + url);
 }
 
 // ============================================================
-// INITIALIZATION
+// INITIALIZATION - OPTIMIZED
 // ============================================================
 async function init() {
-    console.log('🔄 Shafin Tube v3 starting...');
+    console.log('🔄 Shafin Tube v5 starting...');
     loadHistory();
     restoreState();
     updateShuffleButton();
@@ -1657,19 +2479,22 @@ async function init() {
     setupProgressSeek();
     loadYouTubeAPI();
     
-    // Load playlists first (fastest)
+    // Load playlists first (fastest, most important)
     await loadPlaylists();
     
-    // Load subscriptions in background
-    loadSubscriptions();
-    
-    // Show groups
+    // Show groups immediately
     navigateToGroups();
+    
+    // Load subscriptions in background with delay
+    setTimeout(() => loadSubscriptions(), 500);
+    
+    // Load IPTV in background with delay
+    setTimeout(() => loadIPTV(), 1000);
     
     // Setup event listeners
     setupEventListeners();
     
-    console.log('✅ Shafin Tube ready');
+    console.log('✅ Shafin Tube v5 ready');
 }
 
 function setupEventListeners() {
@@ -1678,25 +2503,18 @@ function setupEventListeners() {
         btn.addEventListener('click', () => switchCategory(btn.dataset.category));
     });
     
-    // IPTV link
-    DOM.iptvLink.addEventListener('click', () => {
-        window.open('iptv.html', '_blank');
-    });
-    
-    // Home
     DOM.home.addEventListener('click', () => {
         if (DOM.historyPanel.classList.contains('open')) closeHistory();
         if (state.currentCategory === 'playlists') navigateToGroups();
         else if (state.currentCategory === 'subscriptions') navigateToSubscriptions();
+        else if (state.currentCategory === 'iptv') navigateToIPTV();
         else navigateToGroups();
         DOM.search.value = '';
         showToast('🏠 Home');
     });
     
-    // Back
     DOM.back.addEventListener('click', goBack);
     
-    // Search
     DOM.search.addEventListener('input', () => {
         clearTimeout(window.searchTimeout);
         window.searchTimeout = setTimeout(() => {
@@ -1706,20 +2524,21 @@ function setupEventListeners() {
             else if (state.currentView === 'subscriptions') renderSubscriptions();
             else if (state.currentView === 'subscription_videos' && state.currentSubscription) {
                 renderSubscriptionVideos(state.currentSubscription);
+            } else if (state.currentView === 'iptv') renderIPTV();
+            else if (state.currentView === 'iptv_category' && state.currentIPTVCategory) {
+                renderIPTVCategory(state.currentIPTVCategory);
             }
         }, 150);
     });
     
-    // More dropdown
     DOM.moreBtn.addEventListener('click', (e) => { e.stopPropagation(); DOM.moreDropdown.classList.toggle('open'); });
     document.addEventListener('click', () => DOM.moreDropdown.classList.remove('open'));
     
-    // More items
     DOM.moreRefresh.addEventListener('click', () => {
         if (state.viewingPlaylist && state.isPlaylistView) {
             const key = state.viewingPlaylist.name;
             if (state.metadataCache[key]) delete state.metadataCache[key];
-            fetchPlaylistMetadata(state.viewingPlaylist, true);
+            queueMetadataFetch(state.viewingPlaylist);
             showToast('Refreshing metadata...');
         } else showToast('Open a playlist first', 1500, true);
         DOM.moreDropdown.classList.remove('open');
@@ -1729,6 +2548,18 @@ function setupEventListeners() {
         state.subCache = {};
         loadSubscriptions();
         showToast('Refreshing subscriptions...');
+        DOM.moreDropdown.classList.remove('open');
+    });
+    
+    DOM.moreRefreshIPTV.addEventListener('click', () => {
+        state.iptvChannels = [];
+        state.iptvGroups = {};
+        state.iptvGroupNames = [];
+        state.iptvLoaded = false;
+        state.offlineChannels.clear();
+        state.checkingChannels.clear();
+        loadIPTV();
+        showToast('Refreshing IPTV...');
         DOM.moreDropdown.classList.remove('open');
     });
     
@@ -1753,12 +2584,10 @@ function setupEventListeners() {
     DOM.closeAbout.addEventListener('click', () => DOM.aboutOverlay.classList.remove('open'));
     DOM.aboutOverlay.addEventListener('click', (e) => { if (e.target === DOM.aboutOverlay) DOM.aboutOverlay.classList.remove('open'); });
     
-    // History
     DOM.history.addEventListener('click', openHistory);
     DOM.historyClose.addEventListener('click', closeHistory);
     DOM.historyOverlay.addEventListener('click', closeHistory);
     
-    // Timer
     DOM.timerPreset.addEventListener('click', (e) => {
         e.stopPropagation();
         DOM.timerDropdown.classList.toggle('open');
@@ -1772,19 +2601,17 @@ function setupEventListeners() {
     });
     document.addEventListener('click', () => DOM.timerDropdown.classList.remove('open'));
     
-    // Controls
     DOM.play.addEventListener('click', togglePlayPause);
-    DOM.prev.addEventListener('click', prevVideo);
-    DOM.next.addEventListener('click', nextVideo);
+    DOM.prev.addEventListener('click', prevContent);
+    DOM.next.addEventListener('click', nextContent);
     DOM.shuffle.addEventListener('click', cyclePlaybackMode);
     DOM.mute.addEventListener('click', toggleMute);
-    DOM.random.addEventListener('click', randomVideo);
+    DOM.random.addEventListener('click', randomContent);
     DOM.goTo.addEventListener('click', goToCurrentList);
     DOM.videoIdTile.addEventListener('click', copyVideoId);
     DOM.manualPlay.addEventListener('click', playManualInput);
     DOM.manualInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') playManualInput(); });
     
-    // Mode
     DOM.tvMode.addEventListener('click', () => setMode('tv'));
     DOM.radioMode.addEventListener('click', () => setMode('radio'));
     
@@ -1804,14 +2631,14 @@ function setupEventListeners() {
         else { mobileMoreSheet?.classList.add('open'); mobileMoreOverlay?.classList.add('open'); }
     });
     mobileMoreOverlay?.addEventListener('click', closeMobileMore);
-    document.getElementById('mobileRandomAction')?.addEventListener('click', () => { closeMobileMore(); randomVideo(); });
+    document.getElementById('mobileRandomAction')?.addEventListener('click', () => { closeMobileMore(); randomContent(); });
     document.getElementById('mobileTranslateAction')?.addEventListener('click', () => { closeMobileMore(); toggleTranslation(); });
     document.getElementById('mobileRefreshAction')?.addEventListener('click', () => {
         closeMobileMore();
         if (state.viewingPlaylist && state.isPlaylistView) {
             const key = state.viewingPlaylist.name;
             if (state.metadataCache[key]) delete state.metadataCache[key];
-            fetchPlaylistMetadata(state.viewingPlaylist, true);
+            queueMetadataFetch(state.viewingPlaylist);
             showToast('Refreshing...');
         } else showToast('Open a playlist first', 1500, true);
     });
@@ -1834,17 +2661,17 @@ function setupEventListeners() {
             else if (DOM.shortcutsOverlay.classList.contains('open')) DOM.shortcutsOverlay.classList.remove('open');
             else if (DOM.aboutOverlay.classList.contains('open')) DOM.aboutOverlay.classList.remove('open');
             else if (DOM.moreDropdown.classList.contains('open')) DOM.moreDropdown.classList.remove('open');
-            else if (state.currentView !== 'groups' && state.currentView !== 'subscriptions') goBack();
+            else if (state.currentView !== 'groups' && state.currentView !== 'subscriptions' && state.currentView !== 'iptv') goBack();
         }
         else if (e.key === 's' || e.key === 'S') { cyclePlaybackMode(); }
-        else if (e.key === 'r' || e.key === 'R') { randomVideo(); }
+        else if (e.key === 'r' || e.key === 'R') { randomContent(); }
         else if (e.key === 'm' || e.key === 'M') { toggleMute(); }
         else if (e.key === 'h' || e.key === 'H') { openHistory(); }
-        else if (e.key === 'n' || e.key === 'N') { e.preventDefault(); nextVideo(); }
-        else if (e.key === 'b' || e.key === 'B') { e.preventDefault(); prevVideo(); }
+        else if (e.key === 'n' || e.key === 'N') { e.preventDefault(); nextContent(); }
+        else if (e.key === 'b' || e.key === 'B') { e.preventDefault(); prevContent(); }
         else if (e.key === 't' || e.key === 'T') { toggleTranslation(); }
         else if (e.key === 'x' || e.key === 'X') { stopPlayback(); }
-        else if (e.key === 'f' || e.key === 'F') { randomVideo(); }
+        else if (e.key === 'f' || e.key === 'F') { randomContent(); }
         else if (e.key === 'c' || e.key === 'C') { copyVideoId(); }
         else if (e.key === 'l' || e.key === 'L') { goToCurrentList(); }
         else if (e.key === 'Home') { e.preventDefault(); DOM.home.click(); }
