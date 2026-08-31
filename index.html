@@ -57,8 +57,10 @@
         .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.more-btn { font-size: 0.85rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
         .header-btn.more-btn:hover { background: var(--bg4); }
-        .header-btn.category-btn { font-size: 0.75rem; background: var(--bg3); border-color: var(--border); color: var(--text); }
+        .header-btn.category-btn { font-size: 0.7rem; padding: 0 10px; border-radius: 16px; width: auto; background: var(--bg3); border-color: var(--border); color: var(--text2); }
+        .header-btn.category-btn:hover { background: var(--bg4); color: var(--text); }
         .header-btn.category-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .header-btn.category-btn .seg-icon { margin-right: 3px; }
         
         .status-badge { font-size: 0.5rem; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
         .timer-display { font-size: 0.6rem; font-weight: 600; color: var(--text2); background: var(--bg3); padding: 2px 8px; border-radius: 16px; border: 1px solid var(--border); min-width: 40px; text-align: center; font-variant-numeric: tabular-nums; flex-shrink: 0; }
@@ -79,15 +81,6 @@
         .clock-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 8px; min-width: 98px; width: 98px; min-height: 34px; flex-shrink: 0; line-height: 1.2; text-align: center; }
         .clock-tile .time { font-size: 0.7rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; white-space: nowrap; }
         .clock-tile .day { font-size: 0.45rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
-        
-        /* Category Tabs */
-        .category-tabs { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 4px 8px; display: flex; gap: 6px; flex-shrink: 0; overflow-x: auto; }
-        .category-tabs::-webkit-scrollbar { height: 2px; }
-        .category-tabs::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
-        .category-tab { padding: 5px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 500; cursor: pointer; transition: all var(--transition); white-space: nowrap; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); flex-shrink: 0; }
-        .category-tab:hover { background: var(--bg4); color: var(--text); }
-        .category-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
-        .category-tab .tab-icon { margin-right: 4px; }
         
         .main-content { display: flex; flex: 1; overflow: hidden; min-height: 0; }
         
@@ -126,14 +119,6 @@
         .list-item .translated-badge { font-size: 0.5rem; background: var(--accent-glow); color: var(--accent); padding: 1px 6px; border-radius: 12px; flex-shrink: 0; border: 1px solid var(--accent); }
         .list-item .group-icon { font-size: 1.2rem; flex-shrink: 0; width: 28px; text-align: center; }
         .list-item .channel-icon { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--bg4); }
-        
-        /* Category Grid View */
-        .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; padding: 8px; }
-        .category-grid .category-card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 12px; text-align: center; cursor: pointer; transition: all var(--transition); }
-        .category-grid .category-card:hover { background: var(--bg4); transform: translateY(-2px); }
-        .category-grid .category-card .cat-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
-        .category-grid .category-card .cat-name { font-size: 0.7rem; font-weight: 500; color: var(--text); }
-        .category-grid .category-card .cat-count { font-size: 0.55rem; color: var(--text2); }
         
         /* IPTV Category Chips */
         .iptv-category-chips { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 8px; border-bottom: 1px solid var(--border); background: var(--bg2); }
@@ -244,6 +229,7 @@
             .logo-text { font-size: 0.8rem; }
             .logo-img { width: 24px; height: 24px; }
             .header-btn { width: 24px; height: 24px; font-size: 0.65rem; }
+            .header-btn.category-btn { font-size: 0.6rem; padding: 0 8px; height: 24px; }
             .clock-tile { min-width: 92px; width: 92px; min-height: 28px; padding: 1px 5px; }
             .clock-tile .time { font-size: 0.6rem; }
             .clock-tile .day { font-size: 0.4rem; }
@@ -268,11 +254,6 @@
             .sidebar-header .home-btn { width: 24px; height: 24px; font-size: 0.7rem; }
             .more-dropdown { right: -10px; min-width: 180px; }
             .more-dropdown .more-item { font-size: 0.65rem; padding: 7px 14px; }
-            .category-tabs { padding: 3px 6px; gap: 4px; }
-            .category-tab { font-size: 0.6rem; padding: 4px 10px; }
-            .category-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px; padding: 6px; }
-            .category-grid .category-card { padding: 12px 8px; }
-            .category-grid .category-card .cat-icon { font-size: 1.5rem; }
             .iptv-category-chips { padding: 3px 6px; gap: 3px; }
             .iptv-category-chip { font-size: 0.5rem; padding: 2px 8px; }
             
@@ -286,6 +267,7 @@
             .header-right .more-btn,
             .header-right .history-btn,
             .header-right #themeToggle { display: none; }
+            .header-right .category-btn { display: flex; }
             
             .main-content { flex-direction: column; overflow-y: auto; }
             .player-area { order: 1; flex: 0 0 auto; }
@@ -325,9 +307,6 @@
             .timer-preset-btn { font-size: 0.45rem; padding: 2px 6px; height: 22px; min-width: 28px; }
             .history-panel { width: 280px; right: -280px; }
             .more-dropdown { min-width: 160px; }
-            .category-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
-            .category-grid .category-card .cat-icon { font-size: 1.2rem; }
-            .category-grid .category-card .cat-name { font-size: 0.6rem; }
             .iptv-category-chips { gap: 2px; }
             .iptv-category-chip { font-size: 0.45rem; padding: 2px 6px; }
         }
@@ -381,8 +360,11 @@
             </div>
         </div>
         <div class="header-right">
+            <!-- Segment Buttons on Main Bar -->
+            <button class="header-btn category-btn active" data-category="playlists"><span class="seg-icon">📋</span>Playlists</button>
+            <button class="header-btn category-btn" data-category="subscriptions"><span class="seg-icon">📺</span>Subs</button>
+            <button class="header-btn category-btn" data-category="iptv"><span class="seg-icon">📡</span>IPTV</button>
             <button class="header-btn go-to-btn" id="goToBtn" title="Go to current list">↪</button>
-            <button class="header-btn category-btn" id="categoryBtn" title="Categories">📂</button>
             <span class="status-badge" id="statusBadge">📡 Loading...</span>
             <span class="timer-display" id="timerDisplay">∞</span>
             <div class="timer-preset-wrap">
@@ -422,17 +404,10 @@
         </div>
     </header>
 
-    <!-- Category Tabs -->
-    <div class="category-tabs" id="categoryTabs">
-        <button class="category-tab active" data-category="playlists"><span class="tab-icon">📋</span> Playlists</button>
-        <button class="category-tab" data-category="subscriptions"><span class="tab-icon">📺</span> Subscriptions</button>
-        <button class="category-tab" data-category="iptv"><span class="tab-icon">📡</span> Live IPTV</button>
-    </div>
-
     <div class="main-content">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <button class="home-btn" id="homeBtn" title="Go to Categories">🏠</button>
+                <button class="home-btn" id="homeBtn" title="Go to Groups">🏠</button>
                 <input class="sidebar-search" id="searchInput" type="text" placeholder="🔍 Search...">
                 <button class="back-btn" id="backBtn" aria-label="Go back" title="Go back">⬅</button>
             </div>
@@ -623,8 +598,6 @@
         moreEdit: $('moreEdit'),
         moreRefreshSubs: $('moreRefreshSubs'),
         moreRefreshIPTV: $('moreRefreshIPTV'),
-        categoryTabs: $('categoryTabs'),
-        categoryBtn: $('categoryBtn'),
         goToBtn: $('goToBtn'),
         iptvChips: $('iptvChips')
     };
@@ -645,6 +618,7 @@
         subscriptionVideos: {},
         subscriptionCache: {},
         isLoadingSubs: false,
+        subsLoaded: false,
         
         // IPTV
         iptvChannels: [],
@@ -652,10 +626,11 @@
         iptvGroupNames: [],
         iptvCache: {},
         selectedIPTVCategory: null,
+        iptvLoaded: false,
         
         // Current view
         currentCategory: 'playlists',
-        currentView: 'categories', // 'categories', 'groups', 'playlist', 'subscriptions', 'subscription_videos', 'iptv', 'iptv_category'
+        currentView: 'groups', // 'groups', 'playlist', 'subscriptions', 'subscription_videos', 'iptv', 'iptv_category'
         currentGroup: null,
         currentPlaylist: null,
         currentSubscription: null,
@@ -680,7 +655,7 @@
         isMuted: false,
         autoPlayPending: false,
         videoEndDetected: false,
-        navigationStack: ['categories'],
+        navigationStack: ['groups'],
         currentGroupName: null,
         currentVideoId: null,
         timerSeconds: 0,
@@ -693,9 +668,10 @@
         isSeeking: false,
         videoEndedManually: false,
         playerGeneration: 0,
-        currentSource: null, // 'youtube', 'iptv'
+        currentSource: null,
         isIPTV: false,
-        currentIPTVUrl: null
+        currentIPTVUrl: null,
+        isInitialized: false
     };
 
     // ============================================================
@@ -858,63 +834,67 @@
     // ============================================================
     function goToCurrentList() {
         if (state.isIPTV && state.currentIPTVUrl) {
-            // Find the channel and navigate to it
             const channel = state.iptvChannels.find(function(c) { return c.url === state.currentIPTVUrl; });
             if (channel) {
                 if (channel.category && state.iptvGroups[channel.category]) {
-                    navigateToIPTVCategory(channel.category);
-                    // Scroll to the channel
+                    switchCategory('iptv');
                     setTimeout(function() {
-                        const items = DOM.listContainer.querySelectorAll('.list-item[data-type="iptv"]');
-                        for (let item of items) {
-                            if (item.dataset.channelUrl === channel.url) {
-                                item.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                item.classList.add('active');
-                                setTimeout(function() { item.classList.remove('active'); }, 2000);
-                                break;
+                        navigateToIPTVCategory(channel.category);
+                        setTimeout(function() {
+                            const items = DOM.listContainer.querySelectorAll('.list-item[data-type="iptv"]');
+                            for (let item of items) {
+                                if (item.dataset.channelUrl === channel.url) {
+                                    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    item.classList.add('active');
+                                    setTimeout(function() { item.classList.remove('active'); }, 2000);
+                                    break;
+                                }
                             }
-                        }
-                    }, 200);
+                        }, 200);
+                    }, 100);
                 } else {
+                    switchCategory('iptv');
                     navigateToIPTV();
                 }
                 showToast('↪ Navigated to: ' + channel.name);
                 return;
             }
+            switchCategory('iptv');
             navigateToIPTV();
             return;
         }
         
         if (state.playingPlaylist) {
             const playlist = state.playingPlaylist;
-            // Find the playlist in groups
             let found = false;
             for (const groupName in state.groups) {
                 const pls = state.groups[groupName];
                 for (const pl of pls) {
                     if (pl.name === playlist.name && pl.group === playlist.group) {
-                        navigateToGroup(groupName);
-                        // Then navigate to the playlist
+                        switchCategory('playlists');
                         setTimeout(function() {
-                            const items = DOM.listContainer.querySelectorAll('.list-item[data-type="playlist"]');
-                            for (let item of items) {
-                                const idx = parseInt(item.dataset.index);
-                                const pls2 = state.groups[groupName] || [];
-                                if (pls2[idx] && pls2[idx].name === playlist.name) {
-                                    item.click();
-                                    setTimeout(function() {
-                                        const videos = DOM.listContainer.querySelectorAll('.list-item[data-type="video"]');
-                                        const vidIdx = state.playingVideoIndex;
-                                        if (videos[vidIdx]) {
-                                            videos[vidIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                            videos[vidIdx].classList.add('active');
-                                            setTimeout(function() { videos[vidIdx].classList.remove('active'); }, 2000);
-                                        }
-                                    }, 200);
-                                    break;
+                            navigateToGroup(groupName);
+                            setTimeout(function() {
+                                const items = DOM.listContainer.querySelectorAll('.list-item[data-type="playlist"]');
+                                for (let item of items) {
+                                    const idx = parseInt(item.dataset.index);
+                                    const pls2 = state.groups[groupName] || [];
+                                    if (pls2[idx] && pls2[idx].name === playlist.name) {
+                                        item.click();
+                                        setTimeout(function() {
+                                            const videos = DOM.listContainer.querySelectorAll('.list-item[data-type="video"]');
+                                            const vidIdx = state.playingVideoIndex;
+                                            if (videos[vidIdx]) {
+                                                videos[vidIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                videos[vidIdx].classList.add('active');
+                                                setTimeout(function() { videos[vidIdx].classList.remove('active'); }, 2000);
+                                            }
+                                        }, 200);
+                                        break;
+                                    }
                                 }
-                            }
-                        }, 200);
+                            }, 200);
+                        }, 100);
                         found = true;
                         break;
                     }
@@ -943,14 +923,47 @@
     }
 
     // ============================================================
+    // SEGMENT SWITCHING
+    // ============================================================
+    function switchCategory(category) {
+        state.currentCategory = category;
+        document.querySelectorAll('.header-btn.category-btn').forEach(function(btn) {
+            btn.classList.toggle('active', btn.dataset.category === category);
+        });
+        
+        if (category === 'playlists') {
+            if (state.navigationStack.length === 0 || state.navigationStack[state.navigationStack.length - 1] !== 'groups') {
+                state.navigationStack = ['groups'];
+            }
+            navigateToGroups();
+        } else if (category === 'subscriptions') {
+            if (state.navigationStack.length === 0 || state.navigationStack[state.navigationStack.length - 1] !== 'subscriptions') {
+                state.navigationStack = ['subscriptions'];
+            }
+            navigateToSubscriptions();
+        } else if (category === 'iptv') {
+            if (state.navigationStack.length === 0 || state.navigationStack[state.navigationStack.length - 1] !== 'iptv') {
+                state.navigationStack = ['iptv'];
+            }
+            navigateToIPTV();
+        }
+    }
+
+    // ============================================================
     // YOUTUBE PLAYER
     // ============================================================
+    let ytApiLoaded = false;
+
     function loadYouTubeAPI() {
-        if (typeof YT === 'undefined') {
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            document.head.appendChild(tag);
+        if (ytApiLoaded) return;
+        if (typeof YT !== 'undefined' && YT.Player) {
+            ytApiLoaded = true;
+            return;
         }
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        tag.onload = function() { ytApiLoaded = true; };
+        document.head.appendChild(tag);
     }
 
     function createYouTubePlayer(videoId, autoplay, startPosition) {
@@ -969,7 +982,6 @@
             state.ytPlayer = null;
         }
 
-        // Hide native video
         DOM.nativeVideo.style.display = 'none';
         DOM.nativeVideo.pause();
         DOM.iframe.style.display = 'none';
@@ -1089,12 +1101,10 @@
         if (DOM.blankScreen) DOM.blankScreen.classList.remove('show');
         if (DOM.placeholder) DOM.placeholder.style.display = 'none';
         
-        // Hide YouTube player
         const container = document.getElementById('yt-player-container');
         if (container) container.style.display = 'none';
         if (DOM.iframe) DOM.iframe.style.display = 'none';
         
-        // Show native video
         DOM.nativeVideo.style.display = 'block';
         DOM.nativeVideo.src = url;
         DOM.nativeVideo.load();
@@ -1312,18 +1322,6 @@
     // ============================================================
     // NAVIGATION
     // ============================================================
-    function navigateToCategories() {
-        state.currentView = 'categories';
-        state.navigationStack = ['categories'];
-        if (DOM.backBtn) DOM.backBtn.classList.remove('show');
-        if (DOM.searchInput) {
-            DOM.searchInput.placeholder = '🔍 Search...';
-            DOM.searchInput.value = '';
-        }
-        DOM.iptvChips.style.display = 'none';
-        renderCategoryGrid();
-    }
-
     function navigateToGroups() {
         state.currentView = 'groups';
         state.isGroupView = true;
@@ -1334,7 +1332,9 @@
             DOM.searchInput.value = '';
         }
         state.currentGroupName = null;
-        state.navigationStack = ['groups'];
+        if (state.navigationStack.length === 0 || state.navigationStack[state.navigationStack.length - 1] !== 'groups') {
+            state.navigationStack = ['groups'];
+        }
         DOM.iptvChips.style.display = 'none';
         renderGroups();
     }
@@ -1376,7 +1376,6 @@
         renderVideos(playlist);
     }
 
-    // Subscriptions
     function navigateToSubscriptions() {
         state.currentView = 'subscriptions';
         if (DOM.backBtn) DOM.backBtn.classList.add('show');
@@ -1384,7 +1383,9 @@
             DOM.searchInput.placeholder = '🔍 Search subscriptions...';
             DOM.searchInput.value = '';
         }
-        state.navigationStack.push('subscriptions');
+        if (state.navigationStack.length === 0 || state.navigationStack[state.navigationStack.length - 1] !== 'subscriptions') {
+            state.navigationStack.push('subscriptions');
+        }
         DOM.iptvChips.style.display = 'none';
         renderSubscriptions();
     }
@@ -1402,7 +1403,6 @@
         renderSubscriptionVideos(channel);
     }
 
-    // IPTV
     function navigateToIPTV() {
         state.currentView = 'iptv';
         state.selectedIPTVCategory = null;
@@ -1411,7 +1411,9 @@
             DOM.searchInput.placeholder = '🔍 Search channels...';
             DOM.searchInput.value = '';
         }
-        state.navigationStack.push('iptv');
+        if (state.navigationStack.length === 0 || state.navigationStack[state.navigationStack.length - 1] !== 'iptv') {
+            state.navigationStack.push('iptv');
+        }
         renderIPTVChips();
         renderIPTV();
     }
@@ -1431,12 +1433,18 @@
     }
 
     function goBack() {
-        if (state.navigationStack.length <= 1) { navigateToCategories(); return; }
+        if (state.navigationStack.length <= 1) { 
+            // Go to the current category's home view
+            if (state.currentCategory === 'playlists') navigateToGroups();
+            else if (state.currentCategory === 'subscriptions') navigateToSubscriptions();
+            else if (state.currentCategory === 'iptv') navigateToIPTV();
+            else navigateToGroups();
+            return; 
+        }
         state.navigationStack.pop();
         const last = state.navigationStack[state.navigationStack.length - 1];
         
-        if (last === 'categories') navigateToCategories();
-        else if (last === 'groups') navigateToGroups();
+        if (last === 'groups') navigateToGroups();
         else if (last === 'subscriptions') navigateToSubscriptions();
         else if (last === 'iptv') navigateToIPTV();
         else if (last.startsWith('group:')) {
@@ -1456,62 +1464,23 @@
             const categoryName = last.replace('iptv_category:', '');
             navigateToIPTVCategory(categoryName);
         } else {
-            navigateToCategories();
+            navigateToGroups();
         }
     }
 
     // ============================================================
     // RENDER FUNCTIONS
     // ============================================================
-    function renderCategoryGrid() {
-        if (!DOM.listContainer) return;
-        
-        const categories = [
-            { id: 'playlists', icon: '📋', name: 'Playlists', count: state.groupNames.length + ' groups' },
-            { id: 'subscriptions', icon: '📺', name: 'Subscriptions', count: state.subscriptions.length + ' channels' },
-            { id: 'iptv', icon: '📡', name: 'Live IPTV', count: state.iptvChannels.length + ' channels' }
-        ];
-        
-        let html = '<div class="category-grid">';
-        categories.forEach(function(cat) {
-            html += '<div class="category-card" data-category="' + cat.id + '">' +
-                '<span class="cat-icon">' + cat.icon + '</span>' +
-                '<div class="cat-name">' + cat.name + '</div>' +
-                '<div class="cat-count">' + cat.count + '</div>' +
-                '</div>';
-        });
-        html += '</div>';
-        
-        DOM.listContainer.innerHTML = html;
-        
-        DOM.listContainer.querySelectorAll('.category-card').forEach(function(el) {
-            el.addEventListener('click', function() {
-                const cat = el.dataset.category;
-                if (cat === 'playlists') {
-                    navigateToGroups();
-                    highlightCategoryTab('playlists');
-                } else if (cat === 'subscriptions') {
-                    navigateToSubscriptions();
-                    highlightCategoryTab('subscriptions');
-                } else if (cat === 'iptv') {
-                    navigateToIPTV();
-                    highlightCategoryTab('iptv');
-                }
-            });
-        });
-    }
-
-    function highlightCategoryTab(category) {
-        document.querySelectorAll('.category-tab').forEach(function(tab) {
-            tab.classList.toggle('active', tab.dataset.category === category);
-        });
-    }
-
     function renderGroups() {
         if (!DOM.listContainer) return;
         const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         let filtered = state.groupNames;
         if (search) filtered = state.groupNames.filter(function(g) { return g.toLowerCase().includes(search); });
+
+        if (state.groupNames.length === 0) {
+            DOM.listContainer.innerHTML = '<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">No groups found. Loading playlists...</div>';
+            return;
+        }
 
         if (filtered.length === 0) {
             DOM.listContainer.innerHTML = '<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">No groups found</div>';
@@ -1741,7 +1710,6 @@
             }
             
             state.subscriptionGroupNames = Object.keys(state.subscriptionGroups).sort();
-            showToast('Loaded ' + state.subscriptions.length + ' subscriptions');
             
             // Load cached videos
             try {
@@ -1752,16 +1720,17 @@
                 }
             } catch (e) {}
             
-            // Fetch latest videos for each channel - one at a time to avoid infinite loop
+            // Fetch latest videos for each channel - one at a time with delays
             for (let i = 0; i < state.subscriptions.length; i++) {
                 await fetchChannelVideos(state.subscriptions[i]);
                 // Yield to browser to prevent infinite loop detection
                 if (i % 3 === 0) {
-                    await new Promise(function(resolve) { setTimeout(resolve, 0); });
+                    await new Promise(function(resolve) { setTimeout(resolve, 50); });
                 }
             }
             
-            if (state.currentView === 'subscriptions') renderSubscriptions();
+            state.subsLoaded = true;
+            if (state.currentCategory === 'subscriptions') renderSubscriptions();
             
         } catch (err) {
             showToast('Error loading subscriptions: ' + err.message, 3000, true);
@@ -1800,7 +1769,7 @@
                 };
             }
             
-            // Save cache
+            // Save cache periodically
             try {
                 localStorage.setItem('shafin_subscription_cache', JSON.stringify({ 
                     videos: state.subscriptionCache,
@@ -1815,12 +1784,23 @@
 
     function renderSubscriptions() {
         if (!DOM.listContainer) return;
+        
+        if (!state.subsLoaded && state.subscriptions.length === 0) {
+            DOM.listContainer.innerHTML = '<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">Loading subscriptions...</div>';
+            return;
+        }
+        
         const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         
         let html = '<div style="padding:4px 8px;font-size:0.7rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:4px;">📺 Subscriptions (' + state.subscriptions.length + ' channels)</div>';
         
+        if (state.subscriptions.length === 0) {
+            html += '<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">No subscriptions found</div>';
+            DOM.listContainer.innerHTML = html;
+            return;
+        }
+        
         if (state.subscriptionGroupNames.length > 0) {
-            // Show groups
             let groups = state.subscriptionGroupNames;
             if (search) {
                 groups = groups.filter(function(g) { return g.toLowerCase().includes(search); });
@@ -1843,7 +1823,6 @@
                 });
             });
         } else {
-            // Show channels directly
             let channels = state.subscriptions;
             if (search) {
                 channels = channels.filter(function(c) { return c.name.toLowerCase().includes(search); });
@@ -1920,7 +1899,6 @@
                     state.currentSource = 'youtube';
                     state.currentIPTVUrl = null;
                     
-                    // Create a temporary playlist for this video
                     const tempPlaylist = { 
                         name: channel.name, 
                         videoIds: [videoId], 
@@ -1972,9 +1950,9 @@
             }
             
             state.iptvGroupNames = Object.keys(state.iptvGroups).sort();
-            showToast('Loaded ' + state.iptvChannels.length + ' IPTV channels');
+            state.iptvLoaded = true;
             
-            if (state.currentView === 'iptv') {
+            if (state.currentCategory === 'iptv') {
                 renderIPTVChips();
                 renderIPTV();
             }
@@ -1987,6 +1965,12 @@
 
     function renderIPTV() {
         if (!DOM.listContainer) return;
+        
+        if (!state.iptvLoaded && state.iptvChannels.length === 0) {
+            DOM.listContainer.innerHTML = '<div style="text-align:center;padding:40px 16px;font-size:0.75rem;color:var(--text2);">Loading IPTV channels...</div>';
+            return;
+        }
+        
         const search = DOM.searchInput ? DOM.searchInput.value.toLowerCase().trim() : '';
         
         let html = '<div style="padding:4px 8px;font-size:0.7rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:4px;">📡 Live IPTV (' + state.iptvChannels.length + ' channels)</div>';
@@ -2032,7 +2016,6 @@
                     state.playingPlaylist = null;
                     state.playingVideoIndex = -1;
                     playIPTV(url, name);
-                    // Update active state
                     DOM.listContainer.querySelectorAll('.list-item[data-type="iptv"]').forEach(function(item) {
                         item.classList.toggle('active', item.dataset.channelUrl === url);
                     });
@@ -2129,7 +2112,6 @@
         const cache = state.metadataCache[cacheKey];
 
         state.isLoadingMetadata = true;
-        showToast('Fetching metadata for ' + playlist.name + '...');
 
         const ids = playlist.videoIds.slice();
         const pendingIds = force ? ids : ids.filter(function(id) { return !cache[id]; });
@@ -2257,7 +2239,6 @@
         addToHistory(playlist.name, videoId, title, thumb, startPosition);
         if (DOM.placeholder) DOM.placeholder.style.display = 'none';
 
-        // Hide native video
         DOM.nativeVideo.style.display = 'none';
         DOM.nativeVideo.pause();
 
@@ -2303,7 +2284,21 @@
     }
 
     function nextVideo() {
-        if (state.isIPTV) return;
+        if (state.isIPTV) {
+            // Try to play next IPTV channel
+            if (state.iptvChannels.length > 0 && state.currentIPTVUrl) {
+                const currentIdx = state.iptvChannels.findIndex(function(c) { return c.url === state.currentIPTVUrl; });
+                if (currentIdx >= 0 && currentIdx < state.iptvChannels.length - 1) {
+                    const next = state.iptvChannels[currentIdx + 1];
+                    state.currentIPTVUrl = next.url;
+                    playIPTV(next.url, next.name);
+                    return;
+                }
+            }
+            showToast('No next channel', 1500, true);
+            return;
+        }
+        
         if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist playing', 2000, true);
             return;
@@ -2332,7 +2327,21 @@
     }
 
     function prevVideo() {
-        if (state.isIPTV) return;
+        if (state.isIPTV) {
+            // Try to play previous IPTV channel
+            if (state.iptvChannels.length > 0 && state.currentIPTVUrl) {
+                const currentIdx = state.iptvChannels.findIndex(function(c) { return c.url === state.currentIPTVUrl; });
+                if (currentIdx > 0) {
+                    const prev = state.iptvChannels[currentIdx - 1];
+                    state.currentIPTVUrl = prev.url;
+                    playIPTV(prev.url, prev.name);
+                    return;
+                }
+            }
+            showToast('No previous channel', 1500, true);
+            return;
+        }
+        
         if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist playing', 2000, true);
             return;
@@ -2362,7 +2371,16 @@
     }
 
     function randomVideoFromStart() {
-        if (state.isIPTV) return;
+        if (state.isIPTV) {
+            if (state.iptvChannels.length > 0) {
+                const idx = Math.floor(Math.random() * state.iptvChannels.length);
+                const channel = state.iptvChannels[idx];
+                state.currentIPTVUrl = channel.url;
+                playIPTV(channel.url, channel.name);
+                showToast('✨ Random IPTV channel');
+            }
+            return;
+        }
         if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist selected', 2000, true);
             return;
@@ -2378,7 +2396,10 @@
     }
 
     function randomVideoWithPosition() {
-        if (state.isIPTV) return;
+        if (state.isIPTV) {
+            randomVideoFromStart();
+            return;
+        }
         if (!state.playingPlaylist || state.playingPlaylist.videoIds.length === 0) {
             showToast('No playlist selected', 2000, true);
             return;
@@ -2882,7 +2903,6 @@
             state.groupNames = Object.keys(state.groups).sort();
             
             if (DOM.statusBadge) DOM.statusBadge.textContent = '✅ ' + validPlaylists + ' playlists';
-            showToast('Loaded ' + validPlaylists + ' playlists in ' + state.groupNames.length + ' groups');
             
             try {
                 const raw = localStorage.getItem('shafin_tube_cache');
@@ -2892,7 +2912,10 @@
                 }
             } catch (e) {}
             
-            if (state.currentView === 'groups') renderGroups();
+            if (state.currentCategory === 'playlists') {
+                navigateToGroups();
+                renderGroups();
+            }
             
         } catch (err) {
             if (DOM.statusBadge) DOM.statusBadge.textContent = '❌ Failed';
@@ -2956,7 +2979,6 @@
             return;
         }
         
-        // Check if it's an IPTV stream URL
         if (url.includes('.m3u8') || url.includes('.ts') || url.includes('http') && !url.includes('youtube.com') && !url.includes('youtu.be')) {
             state.isIPTV = true;
             state.currentSource = 'iptv';
@@ -2998,6 +3020,9 @@
     // INITIALIZATION
     // ============================================================
     async function init() {
+        if (state.isInitialized) return;
+        state.isInitialized = true;
+        
         console.log('🔄 Initializing Shafin Tube...');
         
         loadHistory();
@@ -3010,13 +3035,17 @@
         
         setupProgressSeek();
         
-        // Load all data
+        // Load playlists first (fastest)
         await loadPlaylists();
-        await loadSubscriptions();
-        await loadIPTV();
         
-        // Show categories by default
-        navigateToCategories();
+        // Load subscriptions in background
+        loadSubscriptions();
+        
+        // Load IPTV in background
+        loadIPTV();
+        
+        // Show groups by default
+        navigateToGroups();
         
         // Restore state
         const savedState = restoreState();
@@ -3050,27 +3079,13 @@
         // EVENT LISTENERS
         // ============================================================
         
-        // Category tabs
-        document.querySelectorAll('.category-tab').forEach(function(tab) {
-            tab.addEventListener('click', function() {
-                const category = tab.dataset.category;
-                highlightCategoryTab(category);
-                if (category === 'playlists') {
-                    navigateToGroups();
-                } else if (category === 'subscriptions') {
-                    navigateToSubscriptions();
-                } else if (category === 'iptv') {
-                    navigateToIPTV();
-                }
+        // Segment buttons on main bar
+        document.querySelectorAll('.header-btn.category-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const category = btn.dataset.category;
+                switchCategory(category);
             });
         });
-
-        if (DOM.categoryBtn) {
-            DOM.categoryBtn.addEventListener('click', function() {
-                navigateToCategories();
-                highlightCategoryTab(state.currentCategory);
-            });
-        }
 
         if (DOM.goToBtn) {
             DOM.goToBtn.addEventListener('click', goToCurrentList);
@@ -3081,19 +3096,19 @@
                 if (DOM.historyPanel && DOM.historyPanel.classList.contains('open')) {
                     closeHistory();
                 }
-                navigateToCategories();
+                // Go to current category home
+                if (state.currentCategory === 'playlists') navigateToGroups();
+                else if (state.currentCategory === 'subscriptions') navigateToSubscriptions();
+                else if (state.currentCategory === 'iptv') navigateToIPTV();
+                else navigateToGroups();
                 showToast('🏠 Returned to Home');
                 if (DOM.searchInput) DOM.searchInput.value = '';
-                document.querySelectorAll('.category-tab').forEach(function(tab) {
-                    tab.classList.remove('active');
-                });
             });
         }
         
         if (DOM.searchInput) {
             DOM.searchInput.addEventListener('input', function() {
-                if (state.currentView === 'categories') renderCategoryGrid();
-                else if (state.currentView === 'groups') renderGroups();
+                if (state.currentView === 'groups') renderGroups();
                 else if (state.currentView === 'group' && state.currentGroup) renderGroupPlaylists(state.currentGroup);
                 else if (state.currentView === 'playlist' && state.viewingPlaylist) renderVideos(state.viewingPlaylist);
                 else if (state.currentView === 'subscriptions') renderSubscriptions();
@@ -3122,6 +3137,7 @@
         if (DOM.moreRefreshSubs) {
             DOM.moreRefreshSubs.addEventListener('click', function() {
                 state.subscriptionCache = {};
+                state.subsLoaded = false;
                 loadSubscriptions();
                 showToast('Refreshing subscriptions...');
                 closeMoreDropdown();
@@ -3132,6 +3148,7 @@
                 state.iptvChannels = [];
                 state.iptvGroups = {};
                 state.iptvGroupNames = [];
+                state.iptvLoaded = false;
                 loadIPTV();
                 showToast('Refreshing IPTV channels...');
                 closeMoreDropdown();
@@ -3207,7 +3224,6 @@
                 state.autoPlayPending = true;
                 setTimeout(function() {
                     if (!state.isStopped) {
-                        // Try to play next IPTV channel or loop
                         if (state.iptvChannels.length > 0 && state.currentIPTVUrl) {
                             const currentIdx = state.iptvChannels.findIndex(function(c) { 
                                 return c.url === state.currentIPTVUrl; 
@@ -3217,7 +3233,6 @@
                                 state.currentIPTVUrl = next.url;
                                 playIPTV(next.url, next.name);
                             } else if (state.playbackMode === 2) {
-                                // Loop mode - replay current
                                 DOM.nativeVideo.currentTime = 0;
                                 DOM.nativeVideo.play();
                             }
@@ -3245,7 +3260,9 @@
                 else if (DOM.shortcutsOverlay && DOM.shortcutsOverlay.classList.contains('open')) closeShortcuts();
                 else if (DOM.aboutOverlay && DOM.aboutOverlay.classList.contains('open')) closeAbout();
                 else if (DOM.moreDropdown && DOM.moreDropdown.classList.contains('open')) closeMoreDropdown();
-                else if (state.currentView !== 'categories') goBack();
+                else if (state.currentView !== 'groups' && state.currentView !== 'subscriptions' && state.currentView !== 'iptv') {
+                    goBack();
+                }
             }
             else if (e.key === 's' || e.key === 'S') { cyclePlaybackMode(); }
             else if (e.key === 'r' || e.key === 'R') { randomVideoFromStart(); }
