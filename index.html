@@ -78,14 +78,14 @@
         .back-btn:hover { background: var(--bg4); }
         .back-btn.show { display: flex; }
         
-        .sidebar-bottom { padding: 4px 8px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
-        .sidebar-bottom .sb-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 4px 10px; border-radius: 14px; cursor: pointer; font-size: 0.55rem; font-weight: 500; display: flex; align-items: center; gap: 4px; transition: all var(--transition); flex: 1; justify-content: center; min-width: 50px; }
-        .sidebar-bottom .sb-btn:hover { background: var(--bg4); color: var(--text); }
-        .sidebar-bottom .sb-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .sidebar-bottom .sb-btn .sbi { font-size: 0.7rem; }
-        .sidebar-bottom .sb-refresh { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 4px 10px; border-radius: 14px; cursor: pointer; font-size: 0.55rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); min-width: 32px; }
-        .sidebar-bottom .sb-refresh:hover { background: var(--bg4); color: var(--text); }
-        .sidebar-bottom .sb-refresh .sbi { font-size: 0.7rem; }
+        /* Segment buttons under search - in sidebar header */
+        .sidebar-segments { display: flex; gap: 3px; padding: 3px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; background: var(--bg2); }
+        .sidebar-segments .ss-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 3px 8px; border-radius: 12px; cursor: pointer; font-size: 0.5rem; font-weight: 500; display: flex; align-items: center; gap: 3px; transition: all var(--transition); }
+        .sidebar-segments .ss-btn:hover { background: var(--bg4); color: var(--text); }
+        .sidebar-segments .ss-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .sidebar-segments .ss-btn .ssi { font-size: 0.65rem; }
+        .sidebar-segments .ss-refresh { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 3px 8px; border-radius: 12px; cursor: pointer; font-size: 0.5rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); min-width: 28px; }
+        .sidebar-segments .ss-refresh:hover { background: var(--bg4); color: var(--text); }
         
         .list-container { flex: 1; overflow-y: auto; padding: 3px 5px; -webkit-overflow-scrolling: touch; }
         .list-container::-webkit-scrollbar { width: 3px; }
@@ -100,9 +100,6 @@
         .list-item .badge { font-size: 0.4rem; background: var(--bg4); padding: 1px 5px; border-radius: 8px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
         .list-item .group-icon { font-size: 0.9rem; flex-shrink: 0; width: 22px; text-align: center; }
         .list-item .translated-badge { font-size: 0.4rem; background: var(--accent); color: #fff; padding: 0 4px; border-radius: 8px; flex-shrink: 0; }
-        
-        .yt-icon { width: 18px; height: 18px; flex-shrink: 0; }
-        .yt-icon svg { width: 100%; height: 100%; fill: #ff0000; display: block; }
         
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
         .video-container { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden; }
@@ -235,9 +232,9 @@
             .header-right .translate-btn,
             .header-right .more-btn,
             .header-right .clock-tile { display: none; }
-            .sidebar-bottom .sb-btn { font-size: 0.5rem; padding: 3px 6px; min-width: 40px; }
-            .sidebar-bottom .sb-btn .sbi { font-size: 0.6rem; }
-            .sidebar-bottom .sb-refresh { padding: 3px 6px; min-width: 28px; }
+            .sidebar-segments .ss-btn { font-size: 0.45rem; padding: 2px 6px; }
+            .sidebar-segments .ss-btn .ssi { font-size: 0.55rem; }
+            .sidebar-segments .ss-refresh { padding: 2px 6px; min-width: 24px; font-size: 0.45rem; }
             .iptv-live-indicator { font-size: 0.4rem; padding: 2px 6px; }
             .control-btn.go-to-btn { font-size: 0.65rem; min-width: 26px; }
         }
@@ -251,6 +248,9 @@
             .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 6px; }
             .sidebar-header { padding: 2px 4px; }
             .sidebar-search { font-size: 0.5rem; padding: 2px 6px; min-width: 40px; }
+            .sidebar-segments { padding: 2px 4px; }
+            .sidebar-segments .ss-btn { font-size: 0.4rem; padding: 2px 4px; }
+            .sidebar-segments .ss-refresh { padding: 2px 4px; min-width: 20px; font-size: 0.4rem; }
             .list-item { padding: 3px 4px; gap: 4px; }
             .list-item .thumb { width: 26px; height: 15px; }
             .list-item .title { font-size: 0.55rem; }
@@ -262,8 +262,6 @@
             .clock-tile { min-width: 60px; width: 60px; min-height: 20px; }
             .clock-tile .time { font-size: 0.5rem; }
             .clock-tile .day { font-size: 0.3rem; }
-            .sidebar-bottom { padding: 2px 4px; }
-            .sidebar-bottom .sb-btn { font-size: 0.45rem; padding: 2px 4px; min-width: 30px; }
             .history-panel { width: 260px; right: -260px; }
             .iptv-live-indicator { font-size: 0.35rem; padding: 2px 4px; }
         }
@@ -325,14 +323,15 @@
                 <input class="sidebar-search" id="searchInput" type="text" placeholder="Search...">
                 <button class="back-btn" id="backBtn">⬅</button>
             </div>
+            <!-- Segment buttons under search bar -->
+            <div class="sidebar-segments" id="sidebarSegments">
+                <button class="ss-btn active" data-category="playlists"><span class="ssi">📽</span> Playlists</button>
+                <button class="ss-btn" data-category="subscriptions"><span class="ssi">🔥</span> Subs</button>
+                <button class="ss-btn" data-category="iptv"><span class="ssi">📡</span> IPTV</button>
+                <button class="ss-refresh" id="refreshSegmentBtn" title="Refresh current segment">⟳</button>
+            </div>
             <div class="list-container" id="listContainer">
                 <div style="text-align:center;padding:30px 16px;font-size:0.6rem;color:var(--text2);">Loading...</div>
-            </div>
-            <div class="sidebar-bottom" id="sidebarBottom">
-                <button class="sb-btn active" data-category="playlists"><span class="sbi">▶️</span> Playlists</button>
-                <button class="sb-btn" data-category="subscriptions"><span class="sbi">🔥</span> Subs</button>
-                <button class="sb-btn" data-category="iptv"><span class="sbi">📡</span> IPTV</button>
-                <button class="sb-refresh" id="refreshSegmentBtn" title="Refresh current segment">⟳</button>
             </div>
         </div>
 
@@ -403,7 +402,7 @@
 
 <script>
 // ============================================================
-// SHAFIN TUBE v12 - FIXED STARTUP & INFINITE LOOPS
+// SHAFIN TUBE v13 - FIXED SUBSCRIPTIONS & HISTORY
 // ============================================================
 
 const CONFIG = {
@@ -442,7 +441,7 @@ const DOM = {
     shortcutsOverlay: $('shortcutsOverlay'), closeShortcuts: $('closeShortcuts'),
     aboutOverlay: $('aboutOverlay'), closeAbout: $('closeAbout'),
     groupShuffleBtn: $('groupShuffleBtn'), goToBtn: $('goToBtn'),
-    sidebarBottom: $('sidebarBottom'), refreshSegmentBtn: $('refreshSegmentBtn'),
+    sidebarSegments: $('sidebarSegments'), refreshSegmentBtn: $('refreshSegmentBtn'),
     iptvLiveIndicator: $('iptvLiveIndicator')
 };
 
@@ -482,8 +481,7 @@ const state = {
     isSeeking: false,
     videoEndedManually: false,
     _gen: 0,
-    groupShuffleEnabled: false,
-    initialized: false
+    groupShuffleEnabled: false
 };
 
 // ============================================================
@@ -492,6 +490,11 @@ const state = {
 function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]); }
 
 function formatTime(s) { if (!s || isNaN(s)) return '--:--'; const m=Math.floor(s/60), sec=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+
+function formatDate(ts) {
+    const d = new Date(ts);
+    return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(-2);
+}
 
 function parseCSV(line) {
     const f=[]; let c='', q=false;
@@ -601,8 +604,8 @@ function loadYT() {
     document.head.appendChild(t);
 }
 
-function createYT(videoId, autoplay=true, start=0) {
-    if(typeof YT==='undefined'||!YT.Player) { setTimeout(()=>createYT(videoId,autoplay,start),300); return; }
+function createYT(videoId, autoplay=true, start=0, playlistName='', videoTitle='') {
+    if(typeof YT==='undefined'||!YT.Player) { setTimeout(()=>createYT(videoId,autoplay,start,playlistName,videoTitle),300); return; }
     const gen=++state._gen;
     if(state.ytPlayer&&typeof state.ytPlayer.destroy==='function') try{state.ytPlayer.destroy()}catch(e){}
     state.ytPlayer=null;
@@ -628,6 +631,10 @@ function createYT(videoId, autoplay=true, start=0) {
     
     if(state.currentMode==='radio') { DOM.radioVisualizer.classList.add('active'); DOM.radioVisualizer.classList.remove('paused'); }
     
+    // Store current video info for history
+    const currentTitle = videoTitle || 'Video ' + (state.playingIndex + 1);
+    const currentPlaylist = playlistName || (state.playingPlaylist ? state.playingPlaylist.name : 'Unknown');
+    
     state.ytPlayer=new YT.Player('yt-player-container', {
         height:'100%',width:'100%',videoId:videoId,
         playerVars:{rel:0,modestbranding:1,controls:1,fs:1,iv_load_policy:3,playsinline:1},
@@ -642,14 +649,12 @@ function createYT(videoId, autoplay=true, start=0) {
                 startTimer();
                 if(state.isMuted&&typeof e.target.setVolume==='function') e.target.setVolume(0);
                 updateRadioUI();
-                if(state.playingPlaylist && state.playingIndex >= 0) {
-                    const id = state.playingPlaylist.videoIds[state.playingIndex];
-                    const cache = state.metadata[state.playingPlaylist.name] || {};
-                    const meta = cache[id];
-                    let title = meta ? meta.title : 'Video ' + (state.playingIndex + 1);
-                    let thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg';
-                    addToHistory(state.playingPlaylist.name, id, title, thumb, 0);
-                }
+                // Add to history
+                const cache = state.metadata[currentPlaylist] || {};
+                const meta = cache[videoId];
+                let title = meta ? meta.title : currentTitle;
+                let thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg';
+                addToHistory(currentPlaylist, videoId, title, thumb, 0);
             },
             onStateChange:function(e){
                 if(gen!==state._gen) return;
@@ -1237,13 +1242,13 @@ function playVideo(playlist, index, start=0) {
     DOM.playerInfo.textContent=playlist.name+' • '+title;
     DOM.progressBar.style.width='0%';
     
-    if(typeof YT!=='undefined'&&YT.Player) createYT(id,true,start);
-    else fallbackIframe(id);
+    if(typeof YT!=='undefined'&&YT.Player) createYT(id,true,start,playlist.name,title);
+    else fallbackIframe(id,playlist.name,title);
     if(state.viewingPlaylist===playlist) renderVideos(playlist);
     saveState();
 }
 
-function fallbackIframe(id) {
+function fallbackIframe(id, playlistName, title) {
     state.isStopped=false; state.videoEndedManually=false;
     if(DOM.blank) DOM.blank.classList.remove('show');
     DOM.videoIdTile.textContent='ID: '+id.substring(0,8)+'...';
@@ -1256,6 +1261,12 @@ function fallbackIframe(id) {
     state.isPlaying=true; DOM.play.textContent='⏸';
     if(DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
     startTimer();
+    // Add to history
+    const cache = state.metadata[playlistName] || {};
+    const meta = cache[id];
+    let t = meta ? meta.title : title || 'Video';
+    let thumb = meta ? meta.thumbnail : 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg';
+    addToHistory(playlistName || 'Unknown', id, t, thumb, 0);
 }
 
 // ============================================================
@@ -1271,10 +1282,6 @@ function getIcon(name) {
     if(l.includes('news')) return '📰';
     if(l.includes('sports')) return '⚽';
     return '📁';
-}
-
-function getYoutubeIcon() {
-    return `<span class="yt-icon"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span>`;
 }
 
 function renderGroups() {
@@ -1307,7 +1314,7 @@ function renderGroupPlaylists(group) {
     filtered.forEach((pl,idx)=>{
         const active=state.viewingPlaylist===pl;
         html+='<div class="list-item '+(active?'active':'')+'" data-index="'+idx+'" data-type="playlist">'+
-            getYoutubeIcon()+
+            '<span class="group-icon" style="font-size:1rem;">📽</span>'+
             '<div class="info"><div class="title">'+escapeHtml(pl.name)+'</div><div class="sub">'+pl.videoIds.length+' videos</div></div>'+
             '<span class="badge" style="background:var(--bg3);color:var(--text);font-weight:500;">'+pl.videoIds.length+'</span></div>';
     });
@@ -1333,7 +1340,7 @@ function renderVideos(playlist) {
         return false;
     });
     let html='<div style="padding:2px 6px;font-size:0.55rem;color:var(--text2);border-bottom:1px solid var(--border);margin-bottom:2px;display:flex;justify-content:space-between;">'+
-        '<span>▶ '+escapeHtml(playlist.name)+' ('+playlist.videoIds.length+')</span>'+
+        '<span>📽 '+escapeHtml(playlist.name)+' ('+playlist.videoIds.length+')</span>'+
         '<span>'+Object.keys(cache).length+'/'+playlist.videoIds.length+'</span></div>';
     if(!videos.length&&search){ html+='<div style="text-align:center;padding:15px;font-size:0.55rem;color:var(--text2);">No matches</div>'; DOM.list.innerHTML=html; return; }
     videos.forEach(v=>{
@@ -1344,10 +1351,11 @@ function renderVideos(playlist) {
         if(state.translateEnabled&&m&&m.translatedTitle){ title=m.translatedTitle; translated=true; }
         const thumb=m?m.thumbnail:'https://img.youtube.com/vi/'+v.id+'/mqdefault.jpg';
         const badge=translated?'<span class="translated-badge">🌐</span>':'';
+        const dateStr = m && m.published ? ' • '+formatDate(m.published) : '';
         html+='<div class="list-item '+(active?'active':'')+'" data-video-index="'+v.index+'" data-type="video">'+
             '<img class="thumb" src="'+thumb+'" alt="" loading="lazy">'+
             '<div class="info"><div class="title" title="'+escapeHtml(title)+'">'+escapeHtml(title)+' '+badge+'</div>'+
-            '<div class="sub">'+escapeHtml(m?m.author:'')+'</div></div>'+
+            '<div class="sub">'+escapeHtml(m?m.author:'')+dateStr+'</div></div>'+
             '<span class="badge" style="background:var(--bg3);color:var(--text);font-weight:500;">'+(v.index+1)+'</span></div>';
     });
     DOM.list.innerHTML=html;
@@ -1370,7 +1378,7 @@ function renderVideos(playlist) {
 // ============================================================
 function switchCategory(cat) {
     state.category=cat;
-    DOM.sidebarBottom.querySelectorAll('.sb-btn').forEach(b=>b.classList.toggle('active',b.dataset.category===cat));
+    DOM.sidebarSegments.querySelectorAll('.ss-btn').forEach(b=>b.classList.toggle('active',b.dataset.category===cat));
     if(cat==='playlists'){state.navStack=['groups']; navigateGroups();}
     else if(cat==='subscriptions'){state.navStack=['subscriptions']; navigateSubs();}
     else if(cat==='iptv'){state.navStack=['iptv']; navigateIPTV();}
@@ -1454,13 +1462,12 @@ function goBack() {
 }
 
 // ============================================================
-// SUBSCRIPTIONS - NO INFINITE LOOP
+// SUBSCRIPTIONS - FIXED
 // ============================================================
 async function loadSubs() {
     try {
-        // Load from cache immediately
         try {
-            const cached = localStorage.getItem('shafin_subs_v6');
+            const cached = localStorage.getItem('shafin_subs_v7');
             if (cached) {
                 const data = JSON.parse(cached);
                 if (data.channels && data.channels.length > 0) {
@@ -1473,7 +1480,6 @@ async function loadSubs() {
             }
         } catch (e) {}
         
-        // Fetch fresh with controlled async
         const resp = await fetch(CONFIG.SUBSCRIPTIONS);
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const csv = await resp.text();
@@ -1488,15 +1494,13 @@ async function loadSubs() {
         
         if (newSubs.length > 0) {
             state.subs = newSubs;
-            // Use for loop with await and yield - properly controlled
             for (let i = 0; i < state.subs.length; i++) {
                 await fetchChannelVideos(state.subs[i]);
-                // Yield every time to prevent infinite loop
                 await new Promise(r => setTimeout(r, 5));
             }
             state.subLoaded = true;
             try {
-                localStorage.setItem('shafin_subs_v6', JSON.stringify({ channels: state.subs, videos: state.subCache, time: Date.now() }));
+                localStorage.setItem('shafin_subs_v7', JSON.stringify({ channels: state.subs, videos: state.subCache, time: Date.now() }));
             } catch (e) {}
             DOM.status.textContent = '📺 ' + state.subs.length + ' subs';
             if (state.category === 'subscriptions') renderSubs();
@@ -1523,7 +1527,7 @@ async function fetchChannelVideos(channel) {
                     title: item.title,
                     link: item.link,
                     thumbnail: item.thumbnail || 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg',
-                    published: item.pubDate
+                    published: item.pubDate ? new Date(item.pubDate).getTime() : Date.now()
                 };
             }).filter(v => v.videoId);
             state.subCache[channel.channelId] = { channelName: channel.name, videos: videos.slice(0, 20) };
@@ -1566,24 +1570,41 @@ function renderSubVideos(ch) {
         let title = v.title;
         if (state.translateEnabled && state.translate[v.title]) title = state.translate[v.title];
         const badge = state.translateEnabled && state.translate[v.title] ? '<span class="translated-badge">🌐</span>' : '';
-        html += '<div class="list-item" data-vid="' + v.videoId + '" data-type="sub-video">' +
+        const dateStr = v.published ? ' • ' + formatDate(v.published) : '';
+        html += '<div class="list-item" data-vid="' + v.videoId + '" data-title="' + escapeHtml(v.title) + '" data-playlist="' + escapeHtml(ch.name) + '" data-thumb="' + v.thumbnail + '" data-type="sub-video">' +
             '<img class="thumb" src="' + v.thumbnail + '" alt="" loading="lazy">' +
-            '<div class="info"><div class="title">' + escapeHtml(title) + ' ' + badge + '</div><div class="sub">' + escapeHtml(ch.name) + '</div></div>' +
+            '<div class="info"><div class="title">' + escapeHtml(title) + ' ' + badge + '</div>' +
+            '<div class="sub">' + escapeHtml(ch.name) + dateStr + '</div></div>' +
             '<span class="badge" style="background:var(--bg3);color:var(--text);font-weight:500;">' + (idx + 1) + '</span></div>';
     });
     DOM.list.innerHTML = html;
     DOM.list.querySelectorAll('.list-item[data-type="sub-video"]').forEach(el => {
         el.addEventListener('click', function() {
             const vid = this.dataset.vid;
+            const title = this.dataset.title || 'Video';
+            const plName = this.dataset.playlist || ch.name;
+            const thumb = this.dataset.thumb || 'https://img.youtube.com/vi/' + vid + '/mqdefault.jpg';
             const v = videos.find(v => v.videoId === vid);
             if (v) {
-                const pl = { name: ch.name, videoIds: [vid], group: 'Subscriptions' };
+                // Create a proper playlist for this video with the actual title
+                const pl = { name: plName, videoIds: [vid], group: 'Subscriptions' };
+                // Store metadata for this video
+                if (!state.metadata[plName]) state.metadata[plName] = {};
+                state.metadata[plName][vid] = {
+                    title: v.title || title,
+                    author: ch.name,
+                    thumbnail: v.thumbnail || thumb,
+                    published: v.published || Date.now()
+                };
                 state.isIPTV = false;
                 state.isYoutube = false;
                 state.playingPlaylist = pl;
                 state.playingIndex = 0;
                 state.viewingPlaylist = pl;
                 state.viewingIndex = 0;
+                // Navigate to playlist view
+                navigatePlaylist(pl);
+                // Play the video with proper title
                 playVideo(pl, 0);
             }
         });
@@ -1596,7 +1617,7 @@ function renderSubVideos(ch) {
 async function loadIPTV() {
     try {
         try {
-            const cached = localStorage.getItem('shafin_iptv_v6');
+            const cached = localStorage.getItem('shafin_iptv_v7');
             if (cached) {
                 const data = JSON.parse(cached);
                 if (data.channels && data.channels.length > 0) {
@@ -1628,7 +1649,7 @@ async function loadIPTV() {
         }
         state.iptvNames = Object.keys(state.iptvGroups).sort();
         try {
-            localStorage.setItem('shafin_iptv_v6', JSON.stringify({ channels: state.iptv, groups: state.iptvGroups, time: Date.now() }));
+            localStorage.setItem('shafin_iptv_v7', JSON.stringify({ channels: state.iptv, groups: state.iptvGroups, time: Date.now() }));
         } catch (e) {}
         DOM.status.textContent = '📡 ' + state.iptv.length + ' channels';
         if (state.category === 'iptv') renderIPTV();
@@ -1666,29 +1687,30 @@ function renderIPTV() {
 }
 
 // ============================================================
-// METADATA - NO INFINITE LOOP
+// METADATA - WITH PUBLISHED DATE
 // ============================================================
 async function fetchMeta(playlist) {
     if (!playlist || !playlist.videoIds || playlist.videoIds.length === 0) return;
     const key = playlist.name;
     if (!state.metadata[key]) state.metadata[key] = {};
     const cache = state.metadata[key];
-    const pending = playlist.videoIds.filter(id => !cache[id]);
+    const pending = playlist.videoIds.filter(id => !cache[id] || !cache[id].published);
     if (!pending.length) return;
     
     try {
-        const cached = localStorage.getItem('shafin_meta_v6');
+        const cached = localStorage.getItem('shafin_meta_v7');
         if (cached) {
             const data = JSON.parse(cached);
             if (data[key]) {
                 Object.assign(cache, data[key]);
                 if (state.viewingPlaylist === playlist) renderVideos(playlist);
-                return;
+                // Still fetch missing published dates
+                const stillPending = playlist.videoIds.filter(id => !cache[id] || !cache[id].published);
+                if (!stillPending.length) return;
             }
         }
     } catch (e) {}
     
-    // Process one by one with yield
     for (let i = 0; i < pending.length; i++) {
         const id = pending[i];
         try {
@@ -1698,20 +1720,20 @@ async function fetchMeta(playlist) {
                 cache[id] = {
                     title: data.title || 'Video ' + id,
                     author: data.author_name || 'Unknown',
-                    thumbnail: data.thumbnail_url || 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg'
+                    thumbnail: data.thumbnail_url || 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg',
+                    published: Date.now() // oembed doesn't provide date, use current time
                 };
             } else {
-                cache[id] = { title: 'Video ' + id, author: 'Unknown', thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg' };
+                cache[id] = { title: 'Video ' + id, author: 'Unknown', thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg', published: Date.now() };
             }
         } catch (e) {
-            cache[id] = { title: 'Video ' + id, author: 'Unknown', thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg' };
+            cache[id] = { title: 'Video ' + id, author: 'Unknown', thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg', published: Date.now() };
         }
-        // Yield every time to prevent infinite loop
         await new Promise(r => setTimeout(r, 5));
         if (state.viewingPlaylist === playlist) renderVideos(playlist);
     }
     try {
-        localStorage.setItem('shafin_meta_v6', JSON.stringify(state.metadata));
+        localStorage.setItem('shafin_meta_v7', JSON.stringify(state.metadata));
     } catch (e) {}
 }
 
@@ -1730,7 +1752,7 @@ async function translateText(text) {
         if (data && data[0] && data[0][0] && data[0][0][0]) {
             const t = data[0][0][0];
             state.translate[key] = t;
-            localStorage.setItem('shafin_translate_v6', JSON.stringify(state.translate));
+            localStorage.setItem('shafin_translate_v7', JSON.stringify(state.translate));
             return t;
         }
         return text;
@@ -1747,24 +1769,24 @@ function toggleTranslate() {
 }
 
 // ============================================================
-// HISTORY
+// HISTORY - FIXED
 // ============================================================
 function loadHistory() {
-    try { const r = localStorage.getItem('shafin_history_v6'); if (r) state.history = JSON.parse(r); } catch (e) { state.history = []; }
+    try { const r = localStorage.getItem('shafin_history_v7'); if (r) state.history = JSON.parse(r); } catch (e) { state.history = []; }
 }
 
 function saveHistory() {
-    try { const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000; state.history = state.history.filter(h => h.timestamp > cutoff); localStorage.setItem('shafin_history_v6', JSON.stringify(state.history)); } catch (e) {}
+    try { const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000; state.history = state.history.filter(h => h.timestamp > cutoff); localStorage.setItem('shafin_history_v7', JSON.stringify(state.history)); } catch (e) {}
 }
 
 function addToHistory(playlist, videoId, title, thumb, position) {
     if (state.isIPTV) return;
     state.history = state.history.filter(h => !(h.videoId === videoId && h.playlistName === playlist));
     state.history.unshift({
-        playlistName: playlist,
+        playlistName: playlist || 'Unknown',
         videoId: videoId,
-        title: title,
-        thumbnail: thumb,
+        title: title || 'Video',
+        thumbnail: thumb || 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg',
         timestamp: Date.now(),
         position: Math.round(position || 0)
     });
@@ -1799,7 +1821,7 @@ function renderHistory() {
         html += '<div class="history-date-group"><div class="date-label">' + date + '</div>';
         groups[date].forEach(h => {
             const pos = h.position && h.position > 0 ? formatTime(h.position) : '';
-            html += '<div class="history-item" data-vid="' + h.videoId + '" data-playlist="' + escapeHtml(h.playlistName) + '" data-position="' + (h.position || 0) + '">' +
+            html += '<div class="history-item" data-vid="' + h.videoId + '" data-playlist="' + escapeHtml(h.playlistName) + '" data-position="' + (h.position || 0) + '" data-title="' + escapeHtml(h.title) + '" data-thumb="' + h.thumbnail + '">' +
                 '<img class="thumb" src="' + h.thumbnail + '" alt="" loading="lazy">' +
                 '<div class="info"><div class="title">' + escapeHtml(h.title) + '</div><div class="sub">' + escapeHtml(h.playlistName) + '</div></div>' +
                 (pos ? '<span class="position-badge">⏱ ' + pos + '</span>' : '') +
@@ -1812,21 +1834,81 @@ function renderHistory() {
     DOM.historyList.querySelectorAll('.history-item').forEach(el => {
         el.addEventListener('click', function(e) {
             if (e.target.classList.contains('delete-btn')) return;
-            const vid = this.dataset.vid, plName = this.dataset.playlist, pos = parseInt(this.dataset.position) || 0;
-            const pl = state.playlists.find(p => p.name === plName);
-            if (pl) {
-                const idx = pl.videoIds.indexOf(vid);
-                if (idx >= 0) {
-                    closeHistory();
-                    state.isIPTV = false;
-                    state.isYoutube = false;
-                    state.playingPlaylist = pl;
-                    state.playingIndex = idx;
-                    state.viewingPlaylist = pl;
-                    state.viewingIndex = idx;
-                    navigatePlaylist(pl);
-                    playVideo(pl, idx, pos);
+            const vid = this.dataset.vid;
+            const plName = this.dataset.playlist;
+            const pos = parseInt(this.dataset.position) || 0;
+            const title = this.dataset.title || 'Video';
+            const thumb = this.dataset.thumb || 'https://img.youtube.com/vi/' + vid + '/mqdefault.jpg';
+            
+            // Find the playlist
+            let pl = state.playlists.find(p => p.name === plName);
+            if (!pl) {
+                // Create a temporary playlist for this history item
+                pl = { name: plName || 'History', videoIds: [vid], group: 'History' };
+                // Add to state if not exists
+                if (!state.groups['History']) state.groups['History'] = [];
+                if (!state.groups['History'].find(p => p.name === pl.name)) {
+                    state.groups['History'].push(pl);
+                    state.playlists.push(pl);
+                    if (!state.groupNames.includes('History')) state.groupNames.push('History');
                 }
+                // Store metadata
+                if (!state.metadata[pl.name]) state.metadata[pl.name] = {};
+                state.metadata[pl.name][vid] = {
+                    title: title,
+                    author: plName || 'History',
+                    thumbnail: thumb,
+                    published: Date.now()
+                };
+            } else {
+                // Ensure metadata exists
+                if (!state.metadata[pl.name]) state.metadata[pl.name] = {};
+                if (!state.metadata[pl.name][vid]) {
+                    state.metadata[pl.name][vid] = {
+                        title: title,
+                        author: plName || 'History',
+                        thumbnail: thumb,
+                        published: Date.now()
+                    };
+                }
+            }
+            
+            const idx = pl.videoIds.indexOf(vid);
+            if (idx >= 0) {
+                closeHistory();
+                state.isIPTV = false;
+                state.isYoutube = false;
+                state.playingPlaylist = pl;
+                state.playingIndex = idx;
+                state.viewingPlaylist = pl;
+                state.viewingIndex = idx;
+                navigatePlaylist(pl);
+                playVideo(pl, idx, pos);
+            } else {
+                // Fallback: create a new playlist with this video
+                const newPl = { name: plName || 'History', videoIds: [vid], group: 'History' };
+                if (!state.groups['History']) state.groups['History'] = [];
+                if (!state.groups['History'].find(p => p.name === newPl.name)) {
+                    state.groups['History'].push(newPl);
+                    state.playlists.push(newPl);
+                    if (!state.groupNames.includes('History')) state.groupNames.push('History');
+                }
+                if (!state.metadata[newPl.name]) state.metadata[newPl.name] = {};
+                state.metadata[newPl.name][vid] = {
+                    title: title,
+                    author: plName || 'History',
+                    thumbnail: thumb,
+                    published: Date.now()
+                };
+                closeHistory();
+                state.isIPTV = false;
+                state.isYoutube = false;
+                state.playingPlaylist = newPl;
+                state.playingIndex = 0;
+                state.viewingPlaylist = newPl;
+                state.viewingIndex = 0;
+                navigatePlaylist(newPl);
+                playVideo(newPl, 0, pos);
             }
         });
         el.querySelector('.delete-btn')?.addEventListener('click', function(e) {
@@ -1856,7 +1938,7 @@ function closeHistory() {
 async function loadPlaylists() {
     try {
         try {
-            const cached = localStorage.getItem('shafin_playlists_v6');
+            const cached = localStorage.getItem('shafin_playlists_v7');
             if (cached) {
                 const data = JSON.parse(cached);
                 if (data.groups && data.playlists) {
@@ -1890,7 +1972,7 @@ async function loadPlaylists() {
         }
         state.groupNames = Object.keys(state.groups).sort();
         try {
-            localStorage.setItem('shafin_playlists_v6', JSON.stringify({ groups: state.groups, playlists: state.playlists, time: Date.now() }));
+            localStorage.setItem('shafin_playlists_v7', JSON.stringify({ groups: state.groups, playlists: state.playlists, time: Date.now() }));
         } catch (e) {}
         DOM.status.textContent = '📋 ' + state.playlists.length + ' playlists';
         if (state.category === 'playlists') navigateGroups();
@@ -1905,7 +1987,7 @@ async function loadPlaylists() {
 // ============================================================
 function saveState() {
     try {
-        localStorage.setItem('shafin_state_v6', JSON.stringify({
+        localStorage.setItem('shafin_state_v7', JSON.stringify({
             playbackMode: state.playbackMode,
             currentMode: state.currentMode,
             translateEnabled: state.translateEnabled,
@@ -1916,7 +1998,7 @@ function saveState() {
 
 function restoreState() {
     try {
-        const raw = localStorage.getItem('shafin_state_v6');
+        const raw = localStorage.getItem('shafin_state_v7');
         if (raw) {
             const data = JSON.parse(raw);
             if (data.playbackMode !== undefined) state.playbackMode = data.playbackMode;
@@ -1964,10 +2046,10 @@ function playManual() {
 }
 
 // ============================================================
-// INIT - FAST STARTUP
+// INIT
 // ============================================================
 async function init() {
-    console.log('🔴 Shafin Tube v12 - Fixed Startup');
+    console.log('🔴 Shafin Tube v13 - Fixed Subs & History');
     
     loadHistory();
     restoreState();
@@ -1976,9 +2058,9 @@ async function init() {
     setupProgress();
     loadYT();
     
-    // Load playlists from cache first (instant)
+    // Load from cache first
     try {
-        const cached = localStorage.getItem('shafin_playlists_v6');
+        const cached = localStorage.getItem('shafin_playlists_v7');
         if (cached) {
             const data = JSON.parse(cached);
             if (data.groups && data.playlists) {
@@ -1991,7 +2073,7 @@ async function init() {
         }
     } catch (e) {}
     
-    // Then fetch fresh in background
+    // Then fetch fresh
     loadPlaylists();
     setTimeout(loadSubs, 500);
     setTimeout(loadIPTV, 800);
@@ -2002,7 +2084,7 @@ async function init() {
 }
 
 function setupEvents() {
-    DOM.sidebarBottom.querySelectorAll('.sb-btn').forEach(b => {
+    DOM.sidebarSegments.querySelectorAll('.ss-btn').forEach(b => {
         b.addEventListener('click', () => switchCategory(b.dataset.category));
     });
     
