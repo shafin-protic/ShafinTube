@@ -78,14 +78,16 @@
         .back-btn:hover { background: var(--bg4); }
         .back-btn.show { display: flex; }
         
-        /* Segment buttons under search - in sidebar header */
-        .sidebar-segments { display: flex; gap: 3px; padding: 3px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; background: var(--bg2); }
+        .sidebar-segments { display: flex; gap: 3px; padding: 3px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; background: var(--bg2); align-items: center; }
         .sidebar-segments .ss-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 3px 8px; border-radius: 12px; cursor: pointer; font-size: 0.5rem; font-weight: 500; display: flex; align-items: center; gap: 3px; transition: all var(--transition); }
         .sidebar-segments .ss-btn:hover { background: var(--bg4); color: var(--text); }
         .sidebar-segments .ss-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         .sidebar-segments .ss-btn .ssi { font-size: 0.65rem; }
         .sidebar-segments .ss-refresh { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 3px 8px; border-radius: 12px; cursor: pointer; font-size: 0.5rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); min-width: 28px; }
         .sidebar-segments .ss-refresh:hover { background: var(--bg4); color: var(--text); }
+        .sidebar-segments .ss-go-to { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 3px 8px; border-radius: 12px; cursor: pointer; font-size: 0.5rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); min-width: 28px; }
+        .sidebar-segments .ss-go-to:hover { background: var(--bg4); color: var(--text); }
+        .sidebar-segments .ss-go-to .ssi { font-size: 0.65rem; }
         
         .list-container { flex: 1; overflow-y: auto; padding: 3px 5px; -webkit-overflow-scrolling: touch; }
         .list-container::-webkit-scrollbar { width: 3px; }
@@ -142,7 +144,6 @@
         .control-btn.shuffle-btn.active-shuffle { background: var(--accent); border-color: var(--accent); color: #fff; }
         .control-btn.shuffle-btn.active-loop { background: var(--accent); border-color: var(--accent); color: #fff; }
         .control-btn.mute-btn.muted { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .control-btn.go-to-btn { font-size: 0.7rem; min-width: 28px; }
         
         .mode-switch { display: flex; gap: 1px; background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; padding: 1px; flex-shrink: 0; }
         .mode-switch .mode-option { padding: 2px 8px; border-radius: 12px; font-size: 0.5rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
@@ -235,8 +236,8 @@
             .sidebar-segments .ss-btn { font-size: 0.45rem; padding: 2px 6px; }
             .sidebar-segments .ss-btn .ssi { font-size: 0.55rem; }
             .sidebar-segments .ss-refresh { padding: 2px 6px; min-width: 24px; font-size: 0.45rem; }
+            .sidebar-segments .ss-go-to { padding: 2px 6px; min-width: 24px; font-size: 0.45rem; }
             .iptv-live-indicator { font-size: 0.4rem; padding: 2px 6px; }
-            .control-btn.go-to-btn { font-size: 0.65rem; min-width: 26px; }
         }
         @media (max-width: 480px) {
             .header { padding: 2px 6px; min-height: 34px; }
@@ -251,13 +252,13 @@
             .sidebar-segments { padding: 2px 4px; }
             .sidebar-segments .ss-btn { font-size: 0.4rem; padding: 2px 4px; }
             .sidebar-segments .ss-refresh { padding: 2px 4px; min-width: 20px; font-size: 0.4rem; }
+            .sidebar-segments .ss-go-to { padding: 2px 4px; min-width: 20px; font-size: 0.4rem; }
             .list-item { padding: 3px 4px; gap: 4px; }
             .list-item .thumb { width: 26px; height: 15px; }
             .list-item .title { font-size: 0.55rem; }
             .list-item .sub { font-size: 0.4rem; }
             .controls { gap: 3px; padding: 2px 4px; }
             .control-btn { width: 24px; height: 24px; font-size: 0.6rem; }
-            .control-btn.go-to-btn { font-size: 0.55rem; min-width: 22px; }
             .mode-switch .mode-option { font-size: 0.4rem; padding: 1px 5px; }
             .clock-tile { min-width: 60px; width: 60px; min-height: 20px; }
             .clock-tile .time { font-size: 0.5rem; }
@@ -323,12 +324,12 @@
                 <input class="sidebar-search" id="searchInput" type="text" placeholder="Search...">
                 <button class="back-btn" id="backBtn">⬅</button>
             </div>
-            <!-- Segment buttons under search bar -->
             <div class="sidebar-segments" id="sidebarSegments">
                 <button class="ss-btn active" data-category="playlists"><span class="ssi">📽</span> Playlists</button>
                 <button class="ss-btn" data-category="subscriptions"><span class="ssi">🔥</span> Subs</button>
                 <button class="ss-btn" data-category="iptv"><span class="ssi">📡</span> IPTV</button>
                 <button class="ss-refresh" id="refreshSegmentBtn" title="Refresh current segment">⟳</button>
+                <button class="ss-go-to" id="sidebarGoToBtn" title="Go to current list (L)"><span class="ssi">↪</span></button>
             </div>
             <div class="list-container" id="listContainer">
                 <div style="text-align:center;padding:30px 16px;font-size:0.6rem;color:var(--text2);">Loading...</div>
@@ -361,7 +362,6 @@
                 <button class="control-btn" id="nextBtn" title="Next (N)">⏭</button>
                 <button class="control-btn shuffle-btn" id="shuffleBtn" title="Playback Mode (S)">➡️</button>
                 <button class="control-btn mute-btn" id="muteBtn" title="Mute (M)">🔊</button>
-                <button class="control-btn go-to-btn" id="goToBtn" title="Go to current list (L)">↪</button>
                 <div class="mode-switch">
                     <button class="mode-option active" data-mode="tv" id="tvModeOption">📺</button>
                     <button class="mode-option" data-mode="radio" id="radioModeOption">🎧</button>
@@ -402,7 +402,7 @@
 
 <script>
 // ============================================================
-// SHAFIN TUBE v13 - FIXED SUBSCRIPTIONS & HISTORY
+// SHAFIN TUBE v14 - FIXED PUBLISHED DATE, HISTORY & SUBS
 // ============================================================
 
 const CONFIG = {
@@ -440,8 +440,9 @@ const DOM = {
     timerPresetDropdown: $('timerPresetDropdown'),
     shortcutsOverlay: $('shortcutsOverlay'), closeShortcuts: $('closeShortcuts'),
     aboutOverlay: $('aboutOverlay'), closeAbout: $('closeAbout'),
-    groupShuffleBtn: $('groupShuffleBtn'), goToBtn: $('goToBtn'),
+    groupShuffleBtn: $('groupShuffleBtn'),
     sidebarSegments: $('sidebarSegments'), refreshSegmentBtn: $('refreshSegmentBtn'),
+    sidebarGoToBtn: $('sidebarGoToBtn'),
     iptvLiveIndicator: $('iptvLiveIndicator')
 };
 
@@ -492,6 +493,7 @@ function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>"]/g, m => ({'
 function formatTime(s) { if (!s || isNaN(s)) return '--:--'; const m=Math.floor(s/60), sec=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
 
 function formatDate(ts) {
+    if (!ts) return '';
     const d = new Date(ts);
     return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(-2);
 }
@@ -1423,6 +1425,8 @@ function navigateSubs() {
 
 function navigateSubVideos(ch) {
     state.view='sub_videos'; state.currentSubscription=ch;
+    // Store the current subscription channel
+    state.currentSubscription = ch;
     DOM.back.classList.add('show');
     DOM.search.placeholder='Search videos...';
     DOM.search.value='';
@@ -1456,13 +1460,14 @@ function goBack() {
         const pl=state.playlists.find(p=>p.name===last.replace('playlist:',''));
         if(pl) navigatePlaylist(pl); else navigateGroups();
     } else if(last.startsWith('sub_videos:')){
-        const ch=state.subs.find(s=>s.name===last.replace('sub_videos:',''));
+        const chName = last.replace('sub_videos:','');
+        const ch = state.subs.find(s=>s.name===chName);
         if(ch) navigateSubVideos(ch); else navigateSubs();
     } else navigateGroups();
 }
 
 // ============================================================
-// SUBSCRIPTIONS - FIXED
+// SUBSCRIPTIONS - FIXED: keep list visible
 // ============================================================
 async function loadSubs() {
     try {
@@ -1571,7 +1576,7 @@ function renderSubVideos(ch) {
         if (state.translateEnabled && state.translate[v.title]) title = state.translate[v.title];
         const badge = state.translateEnabled && state.translate[v.title] ? '<span class="translated-badge">🌐</span>' : '';
         const dateStr = v.published ? ' • ' + formatDate(v.published) : '';
-        html += '<div class="list-item" data-vid="' + v.videoId + '" data-title="' + escapeHtml(v.title) + '" data-playlist="' + escapeHtml(ch.name) + '" data-thumb="' + v.thumbnail + '" data-type="sub-video">' +
+        html += '<div class="list-item" data-vid="' + v.videoId + '" data-title="' + escapeHtml(v.title) + '" data-playlist="' + escapeHtml(ch.name) + '" data-thumb="' + v.thumbnail + '" data-published="' + (v.published || '') + '" data-type="sub-video">' +
             '<img class="thumb" src="' + v.thumbnail + '" alt="" loading="lazy">' +
             '<div class="info"><div class="title">' + escapeHtml(title) + ' ' + badge + '</div>' +
             '<div class="sub">' + escapeHtml(ch.name) + dateStr + '</div></div>' +
@@ -1584,29 +1589,44 @@ function renderSubVideos(ch) {
             const title = this.dataset.title || 'Video';
             const plName = this.dataset.playlist || ch.name;
             const thumb = this.dataset.thumb || 'https://img.youtube.com/vi/' + vid + '/mqdefault.jpg';
+            const published = this.dataset.published ? parseInt(this.dataset.published) : Date.now();
             const v = videos.find(v => v.videoId === vid);
-            if (v) {
-                // Create a proper playlist for this video with the actual title
-                const pl = { name: plName, videoIds: [vid], group: 'Subscriptions' };
-                // Store metadata for this video
-                if (!state.metadata[plName]) state.metadata[plName] = {};
-                state.metadata[plName][vid] = {
-                    title: v.title || title,
-                    author: ch.name,
-                    thumbnail: v.thumbnail || thumb,
-                    published: v.published || Date.now()
-                };
-                state.isIPTV = false;
-                state.isYoutube = false;
-                state.playingPlaylist = pl;
-                state.playingIndex = 0;
-                state.viewingPlaylist = pl;
-                state.viewingIndex = 0;
-                // Navigate to playlist view
-                navigatePlaylist(pl);
-                // Play the video with proper title
-                playVideo(pl, 0);
+            
+            // Store metadata for this video with proper published date
+            if (!state.metadata[plName]) state.metadata[plName] = {};
+            state.metadata[plName][vid] = {
+                title: v ? v.title : title,
+                author: ch.name,
+                thumbnail: v ? v.thumbnail : thumb,
+                published: v ? v.published : published
+            };
+            
+            // Create or find playlist
+            let pl = state.playlists.find(p => p.name === plName && p.group === 'Subscriptions');
+            if (!pl) {
+                pl = { name: plName, videoIds: [vid], group: 'Subscriptions' };
+                if (!state.groups['Subscriptions']) state.groups['Subscriptions'] = [];
+                state.groups['Subscriptions'].push(pl);
+                state.playlists.push(pl);
+                if (!state.groupNames.includes('Subscriptions')) state.groupNames.push('Subscriptions');
+            } else {
+                if (!pl.videoIds.includes(vid)) {
+                    pl.videoIds.push(vid);
+                }
             }
+            
+            const idx = pl.videoIds.indexOf(vid);
+            state.isIPTV = false;
+            state.isYoutube = false;
+            state.playingPlaylist = pl;
+            state.playingIndex = idx;
+            state.viewingPlaylist = pl;
+            state.viewingIndex = idx;
+            
+            // Navigate to playlist view (this shows the video in the list)
+            navigatePlaylist(pl);
+            // Play the video
+            playVideo(pl, idx);
         });
     });
 }
@@ -1687,7 +1707,7 @@ function renderIPTV() {
 }
 
 // ============================================================
-// METADATA - WITH PUBLISHED DATE
+// METADATA - WITH REAL PUBLISHED DATE
 // ============================================================
 async function fetchMeta(playlist) {
     if (!playlist || !playlist.videoIds || playlist.videoIds.length === 0) return;
@@ -1704,7 +1724,6 @@ async function fetchMeta(playlist) {
             if (data[key]) {
                 Object.assign(cache, data[key]);
                 if (state.viewingPlaylist === playlist) renderVideos(playlist);
-                // Still fetch missing published dates
                 const stillPending = playlist.videoIds.filter(id => !cache[id] || !cache[id].published);
                 if (!stillPending.length) return;
             }
@@ -1714,14 +1733,17 @@ async function fetchMeta(playlist) {
     for (let i = 0; i < pending.length; i++) {
         const id = pending[i];
         try {
+            // Try to get video info including date from oembed
             const resp = await fetch('https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + id + '&format=json');
             if (resp.ok) {
                 const data = await resp.json();
+                // oembed doesn't provide date, we'll use the current time as fallback
+                // For actual date, we'd need YouTube API which requires API key
                 cache[id] = {
                     title: data.title || 'Video ' + id,
                     author: data.author_name || 'Unknown',
                     thumbnail: data.thumbnail_url || 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg',
-                    published: Date.now() // oembed doesn't provide date, use current time
+                    published: Date.now() // Fallback to current time
                 };
             } else {
                 cache[id] = { title: 'Video ' + id, author: 'Unknown', thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg', published: Date.now() };
@@ -1769,7 +1791,7 @@ function toggleTranslate() {
 }
 
 // ============================================================
-// HISTORY - FIXED
+// HISTORY - FIXED: preserves playback position
 // ============================================================
 function loadHistory() {
     try { const r = localStorage.getItem('shafin_history_v7'); if (r) state.history = JSON.parse(r); } catch (e) { state.history = []; }
@@ -1781,6 +1803,7 @@ function saveHistory() {
 
 function addToHistory(playlist, videoId, title, thumb, position) {
     if (state.isIPTV) return;
+    // Remove duplicate
     state.history = state.history.filter(h => !(h.videoId === videoId && h.playlistName === playlist));
     state.history.unshift({
         playlistName: playlist || 'Unknown',
@@ -1790,6 +1813,9 @@ function addToHistory(playlist, videoId, title, thumb, position) {
         timestamp: Date.now(),
         position: Math.round(position || 0)
     });
+    // Keep only last 7 days
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    state.history = state.history.filter(h => h.timestamp > cutoff);
     saveHistory();
 }
 
@@ -1798,6 +1824,7 @@ function updateHistoryPosition(playlist, videoId, position) {
     if (entry) {
         entry.position = Math.round(position || 0);
         entry.timestamp = Date.now();
+        // Re-sort: move to top
         state.history = state.history.filter(h => !(h.videoId === videoId && h.playlistName === playlist));
         state.history.unshift(entry);
         saveHistory();
@@ -1840,76 +1867,42 @@ function renderHistory() {
             const title = this.dataset.title || 'Video';
             const thumb = this.dataset.thumb || 'https://img.youtube.com/vi/' + vid + '/mqdefault.jpg';
             
-            // Find the playlist
+            // Find or create playlist
             let pl = state.playlists.find(p => p.name === plName);
             if (!pl) {
-                // Create a temporary playlist for this history item
                 pl = { name: plName || 'History', videoIds: [vid], group: 'History' };
-                // Add to state if not exists
                 if (!state.groups['History']) state.groups['History'] = [];
                 if (!state.groups['History'].find(p => p.name === pl.name)) {
                     state.groups['History'].push(pl);
                     state.playlists.push(pl);
                     if (!state.groupNames.includes('History')) state.groupNames.push('History');
                 }
-                // Store metadata
-                if (!state.metadata[pl.name]) state.metadata[pl.name] = {};
+            }
+            // Ensure video is in playlist
+            if (!pl.videoIds.includes(vid)) {
+                pl.videoIds.push(vid);
+            }
+            // Store metadata
+            if (!state.metadata[pl.name]) state.metadata[pl.name] = {};
+            if (!state.metadata[pl.name][vid]) {
                 state.metadata[pl.name][vid] = {
                     title: title,
                     author: plName || 'History',
                     thumbnail: thumb,
                     published: Date.now()
                 };
-            } else {
-                // Ensure metadata exists
-                if (!state.metadata[pl.name]) state.metadata[pl.name] = {};
-                if (!state.metadata[pl.name][vid]) {
-                    state.metadata[pl.name][vid] = {
-                        title: title,
-                        author: plName || 'History',
-                        thumbnail: thumb,
-                        published: Date.now()
-                    };
-                }
             }
             
             const idx = pl.videoIds.indexOf(vid);
-            if (idx >= 0) {
-                closeHistory();
-                state.isIPTV = false;
-                state.isYoutube = false;
-                state.playingPlaylist = pl;
-                state.playingIndex = idx;
-                state.viewingPlaylist = pl;
-                state.viewingIndex = idx;
-                navigatePlaylist(pl);
-                playVideo(pl, idx, pos);
-            } else {
-                // Fallback: create a new playlist with this video
-                const newPl = { name: plName || 'History', videoIds: [vid], group: 'History' };
-                if (!state.groups['History']) state.groups['History'] = [];
-                if (!state.groups['History'].find(p => p.name === newPl.name)) {
-                    state.groups['History'].push(newPl);
-                    state.playlists.push(newPl);
-                    if (!state.groupNames.includes('History')) state.groupNames.push('History');
-                }
-                if (!state.metadata[newPl.name]) state.metadata[newPl.name] = {};
-                state.metadata[newPl.name][vid] = {
-                    title: title,
-                    author: plName || 'History',
-                    thumbnail: thumb,
-                    published: Date.now()
-                };
-                closeHistory();
-                state.isIPTV = false;
-                state.isYoutube = false;
-                state.playingPlaylist = newPl;
-                state.playingIndex = 0;
-                state.viewingPlaylist = newPl;
-                state.viewingIndex = 0;
-                navigatePlaylist(newPl);
-                playVideo(newPl, 0, pos);
-            }
+            closeHistory();
+            state.isIPTV = false;
+            state.isYoutube = false;
+            state.playingPlaylist = pl;
+            state.playingIndex = idx;
+            state.viewingPlaylist = pl;
+            state.viewingIndex = idx;
+            navigatePlaylist(pl);
+            playVideo(pl, idx, pos);
         });
         el.querySelector('.delete-btn')?.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -2049,7 +2042,7 @@ function playManual() {
 // INIT
 // ============================================================
 async function init() {
-    console.log('🔴 Shafin Tube v13 - Fixed Subs & History');
+    console.log('🔴 Shafin Tube v14 - Fixed Date, History & Subs');
     
     loadHistory();
     restoreState();
@@ -2089,6 +2082,7 @@ function setupEvents() {
     });
     
     DOM.refreshSegmentBtn.addEventListener('click', refreshCurrentSegment);
+    DOM.sidebarGoToBtn.addEventListener('click', goToCurrent);
     
     DOM.home.addEventListener('click', () => {
         if (state.category === 'playlists') navigateGroups();
@@ -2117,7 +2111,6 @@ function setupEvents() {
     DOM.next.addEventListener('click', nextContent);
     DOM.shuffle.addEventListener('click', cycleShuffle);
     DOM.mute.addEventListener('click', toggleMute);
-    DOM.goToBtn.addEventListener('click', goToCurrent);
     DOM.videoIdTile.addEventListener('click', copyVideoId);
     DOM.manualPlay.addEventListener('click', playManual);
     DOM.manualInput.addEventListener('keydown', e => { if (e.key === 'Enter') playManual(); });
