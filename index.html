@@ -48,7 +48,6 @@
         .header-btn.more-btn { font-size: 0.75rem; }
         .header-btn.shuffle-group-btn { font-size: 0.75rem; }
         .header-btn.shuffle-group-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.theme-btn { font-size: 0.7rem; }
         
         .status-badge { font-size: 0.45rem; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 14px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
         .timer-display { font-size: 0.5rem; font-weight: 600; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 12px; border: 1px solid var(--border); min-width: 30px; text-align: center; font-variant-numeric: tabular-nums; flex-shrink: 0; }
@@ -157,7 +156,6 @@
         .video-id-tile { font-size: 0.4rem; color: var(--text2); background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 0 5px; min-width: 38px; text-align: center; font-family: monospace; flex-shrink: 0; display: none; cursor: pointer; }
         .video-id-tile.show { display: block; }
         
-        /* IPTV Live Indicator - inline with controls */
         .iptv-live-indicator { display: none; align-items: center; gap: 4px; background: #ff0000; padding: 2px 8px; border-radius: 12px; font-size: 0.45rem; font-weight: 600; color: #fff; animation: livePulse 1.5s infinite; flex-shrink: 0; }
         .iptv-live-indicator.active { display: flex; }
         .iptv-live-indicator .live-dot { width: 5px; height: 5px; background: #fff; border-radius: 50%; animation: liveBlink 1s infinite; }
@@ -405,7 +403,7 @@
 
 <script>
 // ============================================================
-// SHAFIN TUBE v11 - COMPACT CONTROLS
+// SHAFIN TUBE v12 - FIXED STARTUP & INFINITE LOOPS
 // ============================================================
 
 const CONFIG = {
@@ -484,7 +482,8 @@ const state = {
     isSeeking: false,
     videoEndedManually: false,
     _gen: 0,
-    groupShuffleEnabled: false
+    groupShuffleEnabled: false,
+    initialized: false
 };
 
 // ============================================================
@@ -1455,12 +1454,13 @@ function goBack() {
 }
 
 // ============================================================
-// SUBSCRIPTIONS
+// SUBSCRIPTIONS - NO INFINITE LOOP
 // ============================================================
 async function loadSubs() {
     try {
+        // Load from cache immediately
         try {
-            const cached = localStorage.getItem('shafin_subs_v5');
+            const cached = localStorage.getItem('shafin_subs_v6');
             if (cached) {
                 const data = JSON.parse(cached);
                 if (data.channels && data.channels.length > 0) {
@@ -1473,6 +1473,7 @@ async function loadSubs() {
             }
         } catch (e) {}
         
+        // Fetch fresh with controlled async
         const resp = await fetch(CONFIG.SUBSCRIPTIONS);
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const csv = await resp.text();
@@ -1487,13 +1488,15 @@ async function loadSubs() {
         
         if (newSubs.length > 0) {
             state.subs = newSubs;
+            // Use for loop with await and yield - properly controlled
             for (let i = 0; i < state.subs.length; i++) {
                 await fetchChannelVideos(state.subs[i]);
-                if (i % 2 === 0) await new Promise(r => setTimeout(r, 10));
+                // Yield every time to prevent infinite loop
+                await new Promise(r => setTimeout(r, 5));
             }
             state.subLoaded = true;
             try {
-                localStorage.setItem('shafin_subs_v5', JSON.stringify({ channels: state.subs, videos: state.subCache, time: Date.now() }));
+                localStorage.setItem('shafin_subs_v6', JSON.stringify({ channels: state.subs, videos: state.subCache, time: Date.now() }));
             } catch (e) {}
             DOM.status.textContent = '📺 ' + state.subs.length + ' subs';
             if (state.category === 'subscriptions') renderSubs();
@@ -1593,7 +1596,7 @@ function renderSubVideos(ch) {
 async function loadIPTV() {
     try {
         try {
-            const cached = localStorage.getItem('shafin_iptv_v5');
+            const cached = localStorage.getItem('shafin_iptv_v6');
             if (cached) {
                 const data = JSON.parse(cached);
                 if (data.channels && data.channels.length > 0) {
@@ -1625,7 +1628,7 @@ async function loadIPTV() {
         }
         state.iptvNames = Object.keys(state.iptvGroups).sort();
         try {
-            localStorage.setItem('shafin_iptv_v5', JSON.stringify({ channels: state.iptv, groups: state.iptvGroups, time: Date.now() }));
+            localStorage.setItem('shafin_iptv_v6', JSON.stringify({ channels: state.iptv, groups: state.iptvGroups, time: Date.now() }));
         } catch (e) {}
         DOM.status.textContent = '📡 ' + state.iptv.length + ' channels';
         if (state.category === 'iptv') renderIPTV();
@@ -1663,7 +1666,7 @@ function renderIPTV() {
 }
 
 // ============================================================
-// METADATA
+// METADATA - NO INFINITE LOOP
 // ============================================================
 async function fetchMeta(playlist) {
     if (!playlist || !playlist.videoIds || playlist.videoIds.length === 0) return;
@@ -1674,7 +1677,7 @@ async function fetchMeta(playlist) {
     if (!pending.length) return;
     
     try {
-        const cached = localStorage.getItem('shafin_meta_v5');
+        const cached = localStorage.getItem('shafin_meta_v6');
         if (cached) {
             const data = JSON.parse(cached);
             if (data[key]) {
@@ -1685,31 +1688,30 @@ async function fetchMeta(playlist) {
         }
     } catch (e) {}
     
-    const batchSize = 2;
-    for (let i = 0; i < pending.length; i += batchSize) {
-        const batch = pending.slice(i, i + batchSize);
-        await Promise.all(batch.map(async id => {
-            try {
-                const resp = await fetch('https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + id + '&format=json');
-                if (resp.ok) {
-                    const data = await resp.json();
-                    cache[id] = {
-                        title: data.title || 'Video ' + id,
-                        author: data.author_name || 'Unknown',
-                        thumbnail: data.thumbnail_url || 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg'
-                    };
-                } else {
-                    cache[id] = { title: 'Video ' + id, author: 'Unknown', thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg' };
-                }
-            } catch (e) {
+    // Process one by one with yield
+    for (let i = 0; i < pending.length; i++) {
+        const id = pending[i];
+        try {
+            const resp = await fetch('https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + id + '&format=json');
+            if (resp.ok) {
+                const data = await resp.json();
+                cache[id] = {
+                    title: data.title || 'Video ' + id,
+                    author: data.author_name || 'Unknown',
+                    thumbnail: data.thumbnail_url || 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg'
+                };
+            } else {
                 cache[id] = { title: 'Video ' + id, author: 'Unknown', thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg' };
             }
-        }));
+        } catch (e) {
+            cache[id] = { title: 'Video ' + id, author: 'Unknown', thumbnail: 'https://img.youtube.com/vi/' + id + '/mqdefault.jpg' };
+        }
+        // Yield every time to prevent infinite loop
+        await new Promise(r => setTimeout(r, 5));
         if (state.viewingPlaylist === playlist) renderVideos(playlist);
-        await new Promise(r => setTimeout(r, 15));
     }
     try {
-        localStorage.setItem('shafin_meta_v5', JSON.stringify(state.metadata));
+        localStorage.setItem('shafin_meta_v6', JSON.stringify(state.metadata));
     } catch (e) {}
 }
 
@@ -1728,7 +1730,7 @@ async function translateText(text) {
         if (data && data[0] && data[0][0] && data[0][0][0]) {
             const t = data[0][0][0];
             state.translate[key] = t;
-            localStorage.setItem('shafin_translate_v5', JSON.stringify(state.translate));
+            localStorage.setItem('shafin_translate_v6', JSON.stringify(state.translate));
             return t;
         }
         return text;
@@ -1748,11 +1750,11 @@ function toggleTranslate() {
 // HISTORY
 // ============================================================
 function loadHistory() {
-    try { const r = localStorage.getItem('shafin_history_v5'); if (r) state.history = JSON.parse(r); } catch (e) { state.history = []; }
+    try { const r = localStorage.getItem('shafin_history_v6'); if (r) state.history = JSON.parse(r); } catch (e) { state.history = []; }
 }
 
 function saveHistory() {
-    try { const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000; state.history = state.history.filter(h => h.timestamp > cutoff); localStorage.setItem('shafin_history_v5', JSON.stringify(state.history)); } catch (e) {}
+    try { const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000; state.history = state.history.filter(h => h.timestamp > cutoff); localStorage.setItem('shafin_history_v6', JSON.stringify(state.history)); } catch (e) {}
 }
 
 function addToHistory(playlist, videoId, title, thumb, position) {
@@ -1854,7 +1856,7 @@ function closeHistory() {
 async function loadPlaylists() {
     try {
         try {
-            const cached = localStorage.getItem('shafin_playlists_v5');
+            const cached = localStorage.getItem('shafin_playlists_v6');
             if (cached) {
                 const data = JSON.parse(cached);
                 if (data.groups && data.playlists) {
@@ -1888,7 +1890,7 @@ async function loadPlaylists() {
         }
         state.groupNames = Object.keys(state.groups).sort();
         try {
-            localStorage.setItem('shafin_playlists_v5', JSON.stringify({ groups: state.groups, playlists: state.playlists, time: Date.now() }));
+            localStorage.setItem('shafin_playlists_v6', JSON.stringify({ groups: state.groups, playlists: state.playlists, time: Date.now() }));
         } catch (e) {}
         DOM.status.textContent = '📋 ' + state.playlists.length + ' playlists';
         if (state.category === 'playlists') navigateGroups();
@@ -1903,7 +1905,7 @@ async function loadPlaylists() {
 // ============================================================
 function saveState() {
     try {
-        localStorage.setItem('shafin_state_v5', JSON.stringify({
+        localStorage.setItem('shafin_state_v6', JSON.stringify({
             playbackMode: state.playbackMode,
             currentMode: state.currentMode,
             translateEnabled: state.translateEnabled,
@@ -1914,7 +1916,7 @@ function saveState() {
 
 function restoreState() {
     try {
-        const raw = localStorage.getItem('shafin_state_v5');
+        const raw = localStorage.getItem('shafin_state_v6');
         if (raw) {
             const data = JSON.parse(raw);
             if (data.playbackMode !== undefined) state.playbackMode = data.playbackMode;
@@ -1962,10 +1964,11 @@ function playManual() {
 }
 
 // ============================================================
-// INIT
+// INIT - FAST STARTUP
 // ============================================================
 async function init() {
-    console.log('🔴 Shafin Tube v11 - Compact Controls');
+    console.log('🔴 Shafin Tube v12 - Fixed Startup');
+    
     loadHistory();
     restoreState();
     updateShuffle();
@@ -1973,9 +1976,25 @@ async function init() {
     setupProgress();
     loadYT();
     
-    await loadPlaylists();
-    setTimeout(loadSubs, 300);
-    setTimeout(loadIPTV, 600);
+    // Load playlists from cache first (instant)
+    try {
+        const cached = localStorage.getItem('shafin_playlists_v6');
+        if (cached) {
+            const data = JSON.parse(cached);
+            if (data.groups && data.playlists) {
+                state.groups = data.groups;
+                state.playlists = data.playlists;
+                state.groupNames = Object.keys(state.groups).sort();
+                if (state.category === 'playlists') navigateGroups();
+                DOM.status.textContent = '📋 ' + state.playlists.length + ' playlists';
+            }
+        }
+    } catch (e) {}
+    
+    // Then fetch fresh in background
+    loadPlaylists();
+    setTimeout(loadSubs, 500);
+    setTimeout(loadIPTV, 800);
     
     setupEvents();
     navigateGroups();
