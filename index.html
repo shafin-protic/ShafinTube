@@ -7,14 +7,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Shafin Tube</title>
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23000000'/><rect x='15' y='25' width='70' height='50' rx='8' fill='%231a1a1a' stroke='%232a2a2a' stroke-width='2'/><rect x='35' y='38' width='30' height='24' rx='4' fill='%23ff0000'/><circle cx='50' cy='50' r='6' fill='%23ffffff'/></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
             --bg: #0a0a0a; --bg2: #111111; --bg3: #1a1a1a; --bg4: #222222;
             --text: #f0f0f0; --text2: #999999; --border: #1a1a1a;
-            --accent: #ff0000; --accent2: #cc0000;
+            --accent: #ff0000; --accent2: #cc0000; --accent-glow: rgba(255,0,0,0.15);
             --radius: 8px; --transition: 0.15s ease;
-            --mobile-nav-h: 60px;
         }
         [data-theme="light"] {
             --bg: #f0f0f0; --bg2: #e8e8e8; --bg3: #dddddd; --bg4: #cccccc;
@@ -25,55 +25,77 @@
         body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; transition: background var(--transition), color var(--transition); }
         .app { display: flex; flex-direction: column; height: 100vh; max-width: 100vw; overflow: hidden; }
         
-        .header { background: var(--bg2); padding: 4px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 38px; gap: 4px; }
+        .header { background: var(--bg2); padding: 4px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; min-height: 40px; gap: 4px; flex-wrap: nowrap; }
         .logo-area { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-        .logo-img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
-        .logo-text { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+        .logo-img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; background: var(--bg3); flex-shrink: 0; }
+        .logo-text { font-size: 0.85rem; font-weight: 700; color: var(--text); }
         .logo-text span { color: var(--accent); }
         
-        .header-center { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; overflow: hidden; }
-        .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 1px 3px 1px 10px; max-width: 200px; min-width: 80px; }
-        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.5rem; outline: none; padding: 3px 0; width: 100%; min-width: 40px; }
+        .header-center { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; flex-wrap: nowrap; overflow: hidden; }
+        .manual-input-wrap { display: flex; align-items: center; gap: 3px; background: var(--bg3); border: 1px solid var(--border); border-radius: 18px; padding: 1px 3px 1px 10px; flex-shrink: 1; max-width: 240px; min-width: 100px; }
+        .manual-input-wrap input { background: transparent; border: none; color: var(--text); font-size: 0.55rem; outline: none; padding: 3px 0; width: 100%; min-width: 50px; }
         .manual-input-wrap input::placeholder { color: var(--text2); }
-        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 1px 8px; border-radius: 12px; cursor: pointer; font-size: 0.45rem; font-weight: 600; white-space: nowrap; }
+        .manual-input-wrap .play-btn { background: var(--accent); border: none; color: #fff; padding: 1px 10px; border-radius: 14px; cursor: pointer; font-size: 0.5rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        .manual-input-wrap .play-btn:hover { background: var(--accent2); }
         
-        .header-right { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
-        .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); flex-shrink: 0; }
+        .header-right { display: flex; align-items: center; gap: 3px; flex-shrink: 0; flex-wrap: nowrap; position: relative; }
+        .header-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); text-decoration: none; flex-shrink: 0; }
         .header-btn:hover { background: var(--bg4); transform: scale(1.05); }
-        .header-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-        .header-btn.category-btn { font-size: 0.5rem; padding: 0 8px; border-radius: 12px; width: auto; height: 22px; background: var(--bg3); border-color: var(--border); color: var(--text2); }
+        .header-btn.go-to-btn { font-size: 0.75rem; }
+        .header-btn.random-btn { font-size: 0.75rem; }
+        .header-btn.history-btn { font-size: 0.75rem; }
+        .header-btn.translate-btn { font-size: 0.65rem; }
+        .header-btn.translate-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .header-btn.more-btn { font-size: 0.75rem; }
+        .header-btn.category-btn { font-size: 0.55rem; padding: 0 8px; border-radius: 14px; width: auto; height: 24px; background: var(--bg3); border-color: var(--border); color: var(--text2); }
+        .header-btn.category-btn:hover { background: var(--bg4); color: var(--text); }
         .header-btn.category-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
         .header-btn.category-btn .seg-icon { margin-right: 2px; }
+        .header-btn.theme-btn { font-size: 0.7rem; }
         
-        .status-badge { font-size: 0.4rem; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 12px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
-        .clock-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 4px; min-width: 68px; width: 68px; min-height: 22px; flex-shrink: 0; line-height: 1.1; }
-        .clock-tile .time { font-size: 0.55rem; font-weight: 600; color: var(--text); letter-spacing: 0.2px; white-space: nowrap; }
-        .clock-tile .day { font-size: 0.3rem; color: var(--text2); text-transform: uppercase; }
+        .status-badge { font-size: 0.45rem; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 14px; border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; }
+        .timer-display { font-size: 0.5rem; font-weight: 600; color: var(--text2); background: var(--bg3); padding: 1px 6px; border-radius: 12px; border: 1px solid var(--border); min-width: 30px; text-align: center; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+        .timer-display.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .timer-preset-wrap { position: relative; display: inline-flex; align-items: center; flex-shrink: 0; }
+        .timer-preset-btn { padding: 1px 6px; height: 24px; border-radius: 12px; font-size: 0.45rem; font-weight: 500; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); display: inline-flex; align-items: center; justify-content: center; gap: 2px; cursor: pointer; transition: all var(--transition); white-space: nowrap; min-width: 26px; }
+        .timer-preset-btn:hover { background: var(--bg4); color: var(--text); }
+        .timer-preset-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .timer-preset-dropdown { position: absolute; top: 28px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 3px 0; min-width: 60px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 100; }
+        .timer-preset-dropdown.open { display: flex; }
+        .timer-preset-dropdown .preset-option { padding: 3px 10px; font-size: 0.5rem; color: var(--text2); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: center; }
+        .timer-preset-dropdown .preset-option:hover { background: var(--bg4); color: var(--text); }
+        .timer-preset-dropdown .preset-option.off { border-top: 1px solid var(--border); margin-top: 2px; padding-top: 4px; }
+        
+        .clock-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; min-width: 72px; width: 72px; min-height: 24px; flex-shrink: 0; line-height: 1.2; text-align: center; }
+        .clock-tile .time { font-size: 0.6rem; font-weight: 600; color: var(--text); letter-spacing: 0.3px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .clock-tile .day { font-size: 0.35rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.2px; }
         
         .main-content { display: flex; flex: 1; overflow: hidden; min-height: 0; }
-        .sidebar { width: 320px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
-        .sidebar-header { padding: 3px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 4px; align-items: center; }
-        .sidebar-header .home-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .sidebar-header .home-btn:hover { background: var(--bg4); }
-        .sidebar-search { flex: 1; min-width: 60px; padding: 2px 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; color: var(--text); font-size: 0.55rem; outline: none; }
-        .sidebar-search:focus { border-color: var(--accent); }
+        .sidebar { width: 340px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
+        .sidebar-header { padding: 4px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+        .sidebar-header .home-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); flex-shrink: 0; }
+        .sidebar-header .home-btn:hover { background: var(--bg4); transform: scale(1.05); }
+        .sidebar-search { flex: 1; min-width: 70px; padding: 3px 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; color: var(--text); font-size: 0.6rem; outline: none; }
+        .sidebar-search:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
         .sidebar-search::placeholder { color: var(--text2); }
-        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 2px 8px; border-radius: 14px; cursor: pointer; font-size: 0.5rem; display: none; align-items: center; gap: 2px; flex-shrink: 0; }
+        .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 2px 8px; border-radius: 14px; cursor: pointer; font-size: 0.55rem; display: none; align-items: center; gap: 3px; flex-shrink: 0; }
+        .back-btn:hover { background: var(--bg4); }
         .back-btn.show { display: flex; }
         
         .list-container { flex: 1; overflow-y: auto; padding: 3px 5px; -webkit-overflow-scrolling: touch; }
         .list-container::-webkit-scrollbar { width: 3px; }
         .list-container::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
         .list-item { display: flex; align-items: center; gap: 6px; padding: 4px 6px; margin: 1px 0; border-radius: var(--radius); cursor: pointer; transition: all 0.1s; border-left: 2px solid transparent; }
-        .list-item:hover { background: var(--hover); }
+        .list-item:hover { background: var(--bg3); }
         .list-item.active { background: var(--bg3); border-left-color: var(--accent); }
-        .list-item .thumb { width: 28px; height: 16px; border-radius: 3px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .list-item .thumb { width: 32px; height: 18px; border-radius: 3px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
         .list-item .info { flex: 1; min-width: 0; }
-        .list-item .title { font-size: 0.6rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); display: flex; align-items: center; gap: 3px; }
+        .list-item .title { font-size: 0.65rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); display: flex; align-items: center; gap: 3px; }
         .list-item .sub { font-size: 0.45rem; color: var(--text2); margin-top: 1px; }
         .list-item .badge { font-size: 0.4rem; background: var(--bg4); padding: 1px 5px; border-radius: 8px; color: var(--text2); flex-shrink: 0; margin-left: auto; }
         .list-item .group-icon { font-size: 0.9rem; flex-shrink: 0; width: 22px; text-align: center; }
         .list-item .translated-badge { font-size: 0.4rem; background: var(--accent); color: #fff; padding: 0 4px; border-radius: 8px; flex-shrink: 0; }
+        .list-item .status-icon { font-size: 0.5rem; flex-shrink: 0; }
         
         .player-area { flex: 1; display: flex; flex-direction: column; background: var(--bg); min-width: 0; overflow: hidden; }
         .video-container { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; overflow: hidden; }
@@ -81,8 +103,8 @@
         .video-container iframe.active { display: block; }
         .video-container video { width: 100%; height: 100%; object-fit: contain; background: #000; display: none; }
         .video-container video.active { display: block; }
-        .video-container .placeholder { color: var(--text2); font-size: 0.7rem; text-align: center; padding: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
-        .video-container .placeholder .big-icon { font-size: 1.8rem; display: block; margin-bottom: 4px; }
+        .video-container .placeholder { color: var(--text2); font-size: 0.75rem; text-align: center; padding: 20px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+        .video-container .placeholder .big-icon { font-size: 2rem; display: block; margin-bottom: 4px; }
         .video-container .blank { display: none; width: 100%; height: 100%; background: #000; }
         .video-container .blank.show { display: block; }
         
@@ -108,35 +130,81 @@
         .progress-container .progress-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.2s ease; }
         .progress-container:hover { height: 4px; }
         
-        .controls { background: var(--bg2); padding: 4px 8px; display: flex; align-items: center; justify-content: center; gap: 4px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
-        .control-btn { width: 26px; height: 26px; border-radius: 50%; font-size: 0.65rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
+        .controls { background: var(--bg2); padding: 4px 10px; display: flex; align-items: center; justify-content: center; gap: 5px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+        .control-btn { width: 28px; height: 28px; border-radius: 50%; font-size: 0.7rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
         .control-btn:hover { background: var(--bg4); transform: scale(1.05); }
         .control-btn:active { transform: scale(0.94); }
-        .control-btn.shuffle-btn { font-size: 0.6rem; min-width: 26px; }
+        .control-btn.shuffle-btn { font-size: 0.65rem; min-width: 28px; }
         .control-btn.shuffle-btn.active-shuffle { background: var(--accent); border-color: var(--accent); color: #fff; }
         .control-btn.shuffle-btn.active-loop { background: var(--accent); border-color: var(--accent); color: #fff; }
         .control-btn.mute-btn.muted { background: var(--accent); border-color: var(--accent); color: #fff; }
         
         .mode-switch { display: flex; gap: 1px; background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; padding: 1px; flex-shrink: 0; }
-        .mode-switch .mode-option { padding: 2px 8px; border-radius: 12px; font-size: 0.45rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
+        .mode-switch .mode-option { padding: 2px 8px; border-radius: 12px; font-size: 0.5rem; font-weight: 500; cursor: pointer; transition: all var(--transition); color: var(--text2); background: transparent; border: none; }
         .mode-switch .mode-option.active { background: var(--accent); color: #fff; }
         
-        .player-info-text { font-size: 0.45rem; color: var(--text2); flex: 1; min-width: 30px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-timer { font-size: 0.4rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 45px; text-align: right; flex-shrink: 0; }
-        .video-id-tile { font-size: 0.4rem; color: var(--text2); background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 0 4px; min-width: 35px; text-align: center; font-family: monospace; flex-shrink: 0; display: none; cursor: pointer; }
+        .player-info-text { font-size: 0.5rem; color: var(--text2); flex: 1; min-width: 35px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-timer { font-size: 0.45rem; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 50px; text-align: right; flex-shrink: 0; }
+        .video-id-tile { font-size: 0.4rem; color: var(--text2); background: var(--bg3); border: 1px solid var(--border); border-radius: 3px; padding: 0 5px; min-width: 38px; text-align: center; font-family: monospace; flex-shrink: 0; display: none; cursor: pointer; }
         .video-id-tile.show { display: block; }
         
-        .toast { position: fixed; bottom: 65px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 3px 10px; border-radius: 16px; font-size: 0.5rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; }
+        .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); padding: 4px 12px; border-radius: 16px; font-size: 0.55rem; border: 1px solid var(--border); z-index: 2000; animation: toastIn 0.3s ease; max-width: 90%; text-align: center; }
         @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
         .toast.hidden { display: none; }
         
-        .bottom-nav { display: flex; background: var(--bg2); border-top: 1px solid var(--border); padding: 2px 8px; gap: 2px; flex-shrink: 0; justify-content: space-around; }
-        .bottom-nav .nav-btn { background: transparent; border: none; color: var(--text2); padding: 4px 8px; border-radius: 8px; font-size: 0.55rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; transition: all var(--transition); }
-        .bottom-nav .nav-btn .nav-icon { font-size: 0.9rem; }
-        .bottom-nav .nav-btn:hover { background: var(--bg3); color: var(--text); }
-        .bottom-nav .nav-btn.active { color: var(--accent); background: var(--accent); color: #fff; }
-        .bottom-nav .nav-btn.bottom-go-to { color: var(--text2); }
-        .bottom-nav .nav-btn.bottom-go-to:hover { background: var(--bg3); }
+        .history-panel { position: fixed; top: 0; right: -380px; width: 380px; height: 100%; background: var(--bg2); border-left: 1px solid var(--border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; overflow: hidden; box-shadow: -8px 0 30px var(--shadow); }
+        .history-panel.open { right: 0; }
+        .history-header { padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .history-header h3 { font-size: 0.8rem; font-weight: 600; }
+        .history-header .close-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
+        .history-list { flex: 1; overflow-y: auto; padding: 5px; }
+        .history-list .empty { text-align: center; padding: 20px; color: var(--text2); font-size: 0.65rem; }
+        .history-date-group { margin-bottom: 8px; }
+        .history-date-group .date-label { font-size: 0.6rem; font-weight: 600; color: var(--text2); padding: 2px 6px; border-bottom: 1px solid var(--border); margin-bottom: 3px; }
+        .history-item { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+        .history-item:hover { background: var(--bg3); }
+        .history-item .thumb { width: 32px; height: 18px; border-radius: 3px; background: var(--bg3); flex-shrink: 0; object-fit: cover; }
+        .history-item .info { flex: 1; min-width: 0; }
+        .history-item .title { font-size: 0.62rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-item .sub { font-size: 0.45rem; color: var(--text2); }
+        .history-item .count-badge { font-size: 0.4rem; background: var(--bg4); padding: 1px 5px; border-radius: 8px; color: var(--text2); flex-shrink: 0; }
+        .history-item .position-badge { font-size: 0.4rem; background: var(--accent); color: #fff; padding: 1px 4px; border-radius: 8px; flex-shrink: 0; }
+        .history-item .delete-btn { background: transparent; border: none; color: var(--text2); font-size: 0.6rem; cursor: pointer; padding: 0 3px; border-radius: 50%; flex-shrink: 0; opacity: 0.5; }
+        .history-item .delete-btn:hover { color: var(--accent); opacity: 1; }
+        .history-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2999; display: none; }
+        .history-overlay.open { display: block; }
+        
+        .shortcuts-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 5000; display: none; align-items: center; justify-content: center; }
+        .shortcuts-overlay.open { display: flex; }
+        .shortcuts-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; max-width: 420px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .shortcuts-panel h2 { font-size: 1rem; margin-bottom: 10px; color: var(--accent); }
+        .shortcuts-panel .shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; }
+        .shortcuts-panel .shortcut-item { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid var(--border); font-size: 0.65rem; }
+        .shortcuts-panel .shortcut-item .key { background: var(--bg3); padding: 0 5px; border-radius: 4px; font-family: monospace; color: var(--accent); }
+        .shortcuts-panel .close-shortcuts { margin-top: 10px; padding: 5px 18px; background: var(--accent); color: #fff; border: none; border-radius: 18px; cursor: pointer; font-size: 0.7rem; width: 100%; }
+        
+        .more-dropdown { position: absolute; top: 30px; right: 0; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 3px 0; min-width: 160px; display: none; flex-direction: column; box-shadow: 0 8px 30px var(--shadow); z-index: 200; }
+        .more-dropdown.open { display: flex; }
+        .more-dropdown .more-item { padding: 5px 12px; font-size: 0.6rem; color: var(--text); cursor: pointer; transition: all var(--transition); border: none; background: transparent; text-align: left; display: flex; align-items: center; gap: 6px; }
+        .more-dropdown .more-item:hover { background: var(--bg4); }
+        .more-dropdown .more-item .more-icon { font-size: 0.8rem; }
+        .more-dropdown .more-divider { height: 1px; background: var(--border); margin: 2px 6px; }
+        
+        .about-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 6000; display: none; align-items: center; justify-content: center; }
+        .about-overlay.open { display: flex; }
+        .about-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; max-width: 360px; width: 90%; text-align: center; }
+        .about-panel .about-logo { width:64px; height:64px; margin:0 auto 8px; border-radius:50%; overflow:hidden; border:2px solid var(--border); }
+        .about-panel .about-logo img { width:100%; height:100%; object-fit:cover; display:block; }
+        .about-panel .about-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+        .about-panel .about-title span { color: var(--accent); }
+        .about-panel .about-desc { font-size: 0.65rem; color: var(--text2); margin: 4px 0 10px; line-height: 1.4; }
+        .about-panel .about-desc strong { color: var(--text); }
+        .about-panel .about-social { font-size: 0.6rem; color: var(--text2); margin: 4px 0; }
+        .about-panel .about-social a { color: var(--accent); text-decoration: none; }
+        .about-panel .close-about { margin-top: 10px; padding: 5px 18px; background: var(--accent); color: #fff; border: none; border-radius: 18px; cursor: pointer; font-size: 0.7rem; }
+        
+        .loading-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); padding: 4px 12px; border-radius: 14px; font-size: 0.5rem; z-index: 10; color: #888; border: 1px solid var(--border); display: none; }
+        .loading-overlay.show { display: block; }
         
         @media (max-width: 768px) {
             .sidebar { width: 100%; border-right: 0; border-top: 1px solid var(--border); }
@@ -146,34 +214,36 @@
             .video-container { aspect-ratio: 16/9; width: 100%; height: auto !important; }
             .header-center { display: none; }
             .header-right .status-badge,
+            .header-right .timer-display,
+            .header-right .timer-preset-wrap,
+            .header-right .random-btn,
+            .header-right .history-btn,
+            .header-right .translate-btn,
+            .header-right .more-btn,
             .header-right .clock-tile { display: none; }
             .header-right .category-btn { display: flex; }
-            .bottom-nav .nav-btn { font-size: 0.5rem; padding: 3px 6px; }
-            .bottom-nav .nav-btn .nav-icon { font-size: 0.8rem; }
         }
         @media (max-width: 480px) {
-            .header { padding: 2px 6px; min-height: 32px; }
+            .header { padding: 2px 6px; min-height: 34px; }
             .logo-text { font-size: 0.7rem; }
-            .logo-img { width: 18px; height: 18px; }
-            .header-btn { width: 20px; height: 20px; font-size: 0.5rem; }
-            .header-btn.category-btn { font-size: 0.45rem; padding: 0 6px; height: 18px; }
+            .logo-img { width: 20px; height: 20px; }
+            .header-btn { width: 22px; height: 22px; font-size: 0.55rem; }
+            .header-btn.category-btn { font-size: 0.45rem; padding: 0 6px; height: 20px; }
             .manual-input-wrap { max-width: 120px; min-width: 60px; }
-            .manual-input-wrap input { font-size: 0.4rem; }
+            .manual-input-wrap input { font-size: 0.45rem; }
             .manual-input-wrap .play-btn { font-size: 0.4rem; padding: 1px 6px; }
             .sidebar-header { padding: 2px 4px; }
             .sidebar-search { font-size: 0.5rem; padding: 2px 6px; min-width: 40px; }
             .list-item { padding: 3px 4px; gap: 4px; }
-            .list-item .thumb { width: 24px; height: 14px; }
+            .list-item .thumb { width: 26px; height: 15px; }
             .list-item .title { font-size: 0.55rem; }
             .list-item .sub { font-size: 0.4rem; }
             .controls { gap: 3px; padding: 2px 4px; }
-            .control-btn { width: 22px; height: 22px; font-size: 0.55rem; }
+            .control-btn { width: 24px; height: 24px; font-size: 0.6rem; }
             .mode-switch .mode-option { font-size: 0.4rem; padding: 1px 5px; }
-            .clock-tile { min-width: 55px; width: 55px; min-height: 18px; }
-            .clock-tile .time { font-size: 0.45rem; }
-            .clock-tile .day { font-size: 0.25rem; }
-            .bottom-nav .nav-btn { font-size: 0.4rem; padding: 2px 4px; }
-            .bottom-nav .nav-btn .nav-icon { font-size: 0.7rem; }
+            .clock-tile { min-width: 60px; width: 60px; min-height: 20px; }
+            .clock-tile .time { font-size: 0.5rem; }
+            .clock-tile .day { font-size: 0.3rem; }
         }
     </style>
 </head>
@@ -186,7 +256,7 @@
         </div>
         <div class="header-center">
             <div class="manual-input-wrap">
-                <input type="text" id="manualInput" placeholder="URL..." />
+                <input type="text" id="manualInput" placeholder="YouTube/IPTV URL..." />
                 <button class="play-btn" id="manualPlayBtn">▶</button>
             </div>
         </div>
@@ -194,8 +264,37 @@
             <button class="header-btn category-btn active" data-category="playlists"><span class="seg-icon">📋</span>Playlists</button>
             <button class="header-btn category-btn" data-category="subscriptions"><span class="seg-icon">📺</span>Subs</button>
             <button class="header-btn category-btn" data-category="iptv"><span class="seg-icon">📡</span>IPTV</button>
+            <button class="header-btn go-to-btn" id="goToBtn" title="Go to current list">↪</button>
             <span class="status-badge" id="statusBadge">Ready</span>
-            <button class="header-btn" id="themeToggle" title="Theme">🌙</button>
+            <span class="timer-display" id="timerDisplay">∞</span>
+            <div class="timer-preset-wrap">
+                <button class="timer-preset-btn" id="timerPresetBtn">⏱️ Inf</button>
+                <div class="timer-preset-dropdown" id="timerPresetDropdown">
+                    <button class="preset-option" data-minutes="2">2m</button>
+                    <button class="preset-option" data-minutes="5">5m</button>
+                    <button class="preset-option" data-minutes="10">10m</button>
+                    <button class="preset-option" data-minutes="15">15m</button>
+                    <button class="preset-option off" data-minutes="0">∞</button>
+                </div>
+            </div>
+            <button class="header-btn random-btn" id="randomBtn" title="Random">✨</button>
+            <button class="header-btn history-btn" id="historyBtn" title="History">📜</button>
+            <button class="header-btn translate-btn" id="translateBtn" title="Translate">🌐</button>
+            <div style="position:relative;display:inline-block;">
+                <button class="header-btn more-btn" id="moreBtn" title="More">⋮</button>
+                <div class="more-dropdown" id="moreDropdown">
+                    <button class="more-item" id="moreRefresh"><span class="more-icon">⟳</span> Refresh</button>
+                    <button class="more-item" id="moreShortcuts"><span class="more-icon">⌨️</span> Shortcuts</button>
+                    <button class="more-item" id="moreTheme"><span class="more-icon" id="moreThemeIcon">🌙</span> Theme</button>
+                    <button class="more-item" id="moreRefreshSubs"><span class="more-icon">🔄</span> Refresh Subs</button>
+                    <button class="more-item" id="moreRefreshIPTV"><span class="more-icon">📡</span> Refresh IPTV</button>
+                    <div class="more-divider"></div>
+                    <button class="more-item" id="moreAbout"><span class="more-icon">ℹ️</span> About</button>
+                    <a class="more-item" id="moreEdit" href="https://docs.google.com/spreadsheets/d/18-uFLokAHJVXJgRfd7nbL7GRUNHgzbdu1Nfs9fVaFqw/edit?usp=sharing" target="_blank" style="text-decoration:none;color:var(--text);">
+                        <span class="more-icon">✎</span> Edit Sheet
+                    </a>
+                </div>
+            </div>
             <div class="clock-tile" id="clockDisplay">
                 <span class="time" id="timeDisplay">--:--</span>
                 <span class="day" id="dayDisplay">---</span>
@@ -218,6 +317,7 @@
         <div class="player-area">
             <div class="video-container" id="videoContainer">
                 <div class="blank" id="blankScreen"></div>
+                <div class="loading-overlay" id="loadingOverlay">Loading...</div>
                 <div class="radio-visualizer" id="radioVisualizer">
                     <div class="radio-icon">🎧</div>
                     <div class="radio-title" id="radioTitle">Select content</div>
@@ -235,11 +335,11 @@
                 <div class="progress-bar" id="progressBar"></div>
             </div>
             <div class="controls">
-                <button class="control-btn" id="prevBtn" title="Previous">⏮</button>
-                <button class="control-btn" id="playBtn" title="Play/Pause">⏸</button>
-                <button class="control-btn" id="nextBtn" title="Next">⏭</button>
-                <button class="control-btn shuffle-btn" id="shuffleBtn" title="Mode">➡️</button>
-                <button class="control-btn mute-btn" id="muteBtn" title="Mute">🔊</button>
+                <button class="control-btn" id="prevBtn" title="Previous (B)">⏮</button>
+                <button class="control-btn" id="playBtn" title="Play/Pause (Space)">⏸</button>
+                <button class="control-btn" id="nextBtn" title="Next (N)">⏭</button>
+                <button class="control-btn shuffle-btn" id="shuffleBtn" title="Playback Mode (S)">➡️</button>
+                <button class="control-btn mute-btn" id="muteBtn" title="Mute (M)">🔊</button>
                 <div class="mode-switch">
                     <button class="mode-option active" data-mode="tv" id="tvModeOption">📺</button>
                     <button class="mode-option" data-mode="radio" id="radioModeOption">🎧</button>
@@ -250,22 +350,34 @@
             </div>
         </div>
     </div>
-
-    <div class="bottom-nav" id="bottomNav">
-        <button class="nav-btn active" id="navHome"><span class="nav-icon">🏠</span><span>Home</span></button>
-        <button class="nav-btn" id="navHistory"><span class="nav-icon">📜</span><span>History</span></button>
-        <button class="nav-btn bottom-go-to" id="navGoTo"><span class="nav-icon">↪</span><span>Go to</span></button>
-        <button class="nav-btn" id="navRandom"><span class="nav-icon">✨</span><span>Random</span></button>
-        <button class="nav-btn" id="navTranslate"><span class="nav-icon">🌐</span><span>Translate</span></button>
-    </div>
 </div>
+
+<!-- Overlays -->
+<div class="shortcuts-overlay" id="shortcutsOverlay"><div class="shortcuts-panel"><h2>⌨️ Shortcuts</h2><div class="shortcut-grid">
+<div class="shortcut-item"><span>Play/Pause</span><span class="key">Space</span></div>
+<div class="shortcut-item"><span>Next/Prev</span><span class="key">N / B</span></div>
+<div class="shortcut-item"><span>Seek ±10s</span><span class="key">→ / ←</span></div>
+<div class="shortcut-item"><span>Random</span><span class="key">R</span></div>
+<div class="shortcut-item"><span>Mute</span><span class="key">M</span></div>
+<div class="shortcut-item"><span>Mode</span><span class="key">S</span></div>
+<div class="shortcut-item"><span>Translate</span><span class="key">T</span></div>
+<div class="shortcut-item"><span>History</span><span class="key">H</span></div>
+<div class="shortcut-item"><span>Stop</span><span class="key">X</span></div>
+<div class="shortcut-item"><span>Copy ID</span><span class="key">C</span></div>
+<div class="shortcut-item"><span>Home</span><span class="key">Home</span></div>
+<div class="shortcut-item"><span>Go to List</span><span class="key">L</span></div>
+</div><button class="close-shortcuts" id="closeShortcuts">Close</button></div></div>
+
+<div class="about-overlay" id="aboutOverlay"><div class="about-panel"><div class="about-logo"><img src="https://i.postimg.cc/MpHwy4sp/Round-Photo-Aug212026-122330.png" alt="Shafin"></div><div class="about-title">Shafin<span>Tube</span></div><div class="about-desc"><strong>Developed by:</strong><br>Shafin Al Asad Protic<br>B.Sc. Engg. (EEE), RUET<br>Assistant Manager (Telecom), BTCL</div><div class="about-social">📘 <a href="https://www.facebook.com/shafin.protic" target="_blank">facebook.com/shafin.protic</a></div><button class="close-about" id="closeAbout">Close</button></div></div>
+
+<div class="history-overlay" id="historyOverlay"></div>
+<div class="history-panel" id="historyPanel"><div class="history-header"><h3>📜 History</h3><button class="close-btn" id="historyCloseBtn">✕</button></div><div class="history-list" id="historyList"><div class="empty">No history</div></div></div>
 
 <div class="toast hidden" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
 // ============================================================
-// SHAFIN TUBE v6 - MINIMAL & FAST
+// SHAFIN TUBE v7 - FULL FEATURES + FAST
 // ============================================================
 
 const CONFIG = {
@@ -275,6 +387,8 @@ const CONFIG = {
 };
 
 const $ = id => document.getElementById(id);
+
+// DOM
 const DOM = {
     list: $('listContainer'), search: $('searchInput'), status: $('statusBadge'),
     home: $('homeBtn'), back: $('backBtn'), iframe: $('playerIframe'),
@@ -289,22 +403,34 @@ const DOM = {
     progressBar: $('progressBar'), progressContainer: $('progressContainer'),
     radioVisualizer: $('radioVisualizer'), radioTitle: $('radioTitle'),
     radioSub: $('radioSub'), videoContainer: $('videoContainer'),
-    themeToggle: $('themeToggle'), navHome: $('navHome'),
-    navHistory: $('navHistory'), navGoTo: $('navGoTo'),
-    navRandom: $('navRandom'), navTranslate: $('navTranslate')
+    loadingOverlay: $('loadingOverlay'),
+    historyPanel: $('historyPanel'), historyList: $('historyList'),
+    historyOverlay: $('historyOverlay'), historyBtn: $('historyBtn'),
+    historyCloseBtn: $('historyCloseBtn'),
+    randomBtn: $('randomBtn'), translateBtn: $('translateBtn'),
+    goToBtn: $('goToBtn'), moreBtn: $('moreBtn'), moreDropdown: $('moreDropdown'),
+    moreRefresh: $('moreRefresh'), moreShortcuts: $('moreShortcuts'),
+    moreTheme: $('moreTheme'), moreThemeIcon: $('moreThemeIcon'),
+    moreRefreshSubs: $('moreRefreshSubs'), moreRefreshIPTV: $('moreRefreshIPTV'),
+    moreAbout: $('moreAbout'), moreEdit: $('moreEdit'),
+    timerPresetBtn: $('timerPresetBtn'), timerDisplay: $('timerDisplay'),
+    timerPresetDropdown: $('timerPresetDropdown'),
+    shortcutsOverlay: $('shortcutsOverlay'), closeShortcuts: $('closeShortcuts'),
+    aboutOverlay: $('aboutOverlay'), closeAbout: $('closeAbout')
 };
 
 // ============================================================
-// STATE - Minimal
+// STATE
 // ============================================================
 const state = {
     groups: {}, playlists: [], groupNames: [],
-    subs: [], subCache: {},
+    subs: [], subCache: {}, subLoaded: false,
     iptv: [], iptvGroups: {}, iptvNames: [],
     category: 'playlists',
     view: 'groups',
     currentGroup: null,
     currentPlaylist: null,
+    currentSubscription: null,
     playingPlaylist: null,
     playingIndex: -1,
     viewingPlaylist: null,
@@ -327,7 +453,8 @@ const state = {
     navStack: ['groups'],
     timerInterval: null,
     isSeeking: false,
-    videoEndedManually: false
+    videoEndedManually: false,
+    _gen: 0
 };
 
 // ============================================================
@@ -357,6 +484,8 @@ function showToast(msg, dur=2000, err=false) {
     window._toast = setTimeout(() => DOM.toast.style.display = 'none', dur);
 }
 
+function showLoading(show) { DOM.loadingOverlay.classList.toggle('show', show); }
+
 function updateClock() {
     const n=new Date();
     let h=n.getHours();
@@ -368,17 +497,18 @@ function updateClock() {
 setInterval(updateClock, 10000);
 updateClock();
 
+// Theme
 let dark=true;
 function toggleTheme() {
     dark=!dark;
     document.documentElement.setAttribute('data-theme', dark?'dark':'light');
-    DOM.themeToggle.textContent = dark?'🌙':'☀️';
+    DOM.moreThemeIcon.textContent = dark?'🌙':'☀️';
     localStorage.setItem('shafin-theme', dark?'dark':'light');
 }
 if (localStorage.getItem('shafin-theme')==='light') {
     dark=false;
     document.documentElement.setAttribute('data-theme','light');
-    DOM.themeToggle.textContent='☀️';
+    DOM.moreThemeIcon.textContent='☀️';
 }
 
 function isYoutube(url) { return url && (url.includes('youtube.com/watch')||url.includes('youtu.be/')||url.includes('youtube.com/live')); }
@@ -422,7 +552,7 @@ function loadYT() {
 
 function createYT(videoId, autoplay=true, start=0) {
     if(typeof YT==='undefined'||!YT.Player) { setTimeout(()=>createYT(videoId,autoplay,start),300); return; }
-    const gen=++state._gen||1; state._gen=gen;
+    const gen=++state._gen;
     if(state.ytPlayer&&typeof state.ytPlayer.destroy==='function') try{state.ytPlayer.destroy()}catch(e){}
     state.ytPlayer=null;
     destroyHls();
@@ -468,7 +598,7 @@ function createYT(videoId, autoplay=true, start=0) {
                 else if(s===YT.PlayerState.PAUSED){ state.isPlaying=false; DOM.play.textContent='▶'; if(DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused'); }
                 else if(s===YT.PlayerState.ENDED){ state.isPlaying=false; DOM.play.textContent='▶'; if(DOM.radioVisualizer) DOM.radioVisualizer.classList.add('paused'); if(!state.videoEndedManually&&!state.isStopped) setTimeout(()=>{ if(gen===state._gen&&state.playingPlaylist&&!state.isStopped) handleEnd(); },400); }
             },
-            onError:function(){ if(gen===state._gen) showToast('Error',2000,true); }
+            onError:function(){ if(gen===state._gen) showToast('Error playing',2000,true); }
         }
     });
 }
@@ -500,28 +630,32 @@ function playIPTV(url, name) {
     DOM.nativeVideo.pause();
     DOM.nativeVideo.removeAttribute('src');
     DOM.nativeVideo.load();
+    showLoading(true);
     
     if(url.includes('.m3u8')&&Hls&&Hls.isSupported()) {
         state.hls=new Hls({enableWorker:true,lowLatencyMode:true,maxBufferLength:10});
         state.hls.loadSource(url);
         state.hls.attachMedia(DOM.nativeVideo);
         state.hls.on(Hls.Events.MANIFEST_PARSED,()=>{
+            showLoading(false);
             DOM.nativeVideo.play().catch(()=>{});
             state.isPlaying=true; DOM.play.textContent='⏸';
             if(DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
             startTimer();
         });
-        state.hls.on(Hls.Events.ERROR,(e,d)=>{ if(d.fatal){ showToast('Stream error',2000,true); } });
+        state.hls.on(Hls.Events.ERROR,(e,d)=>{ if(d.fatal){ showLoading(false); showToast('Stream error',2000,true); } });
     } else {
         DOM.nativeVideo.src=url;
         DOM.nativeVideo.addEventListener('canplay',()=>{
+            showLoading(false);
             DOM.nativeVideo.play().catch(()=>{});
             state.isPlaying=true; DOM.play.textContent='⏸';
             if(DOM.radioVisualizer) DOM.radioVisualizer.classList.remove('paused');
             startTimer();
         },{once:true});
-        DOM.nativeVideo.onerror=()=>{ showToast('Cannot play',2000,true); };
+        DOM.nativeVideo.onerror=()=>{ showLoading(false); showToast('Cannot play',2000,true); };
     }
+    setTimeout(()=>showLoading(false),8000);
     DOM.playerInfo.textContent='📡 '+name;
     updateRadioUI();
 }
@@ -772,6 +906,13 @@ function stopPlayback() {
     showToast('⏹ Stopped');
 }
 
+function copyVideoId() {
+    if(!state.currentUrl){showToast('No content',1200,true);return;}
+    navigator.clipboard.writeText(state.currentUrl).then(()=>showToast('📋 Copied')).catch(()=>{
+        const ta=document.createElement('textarea'); ta.value=state.currentUrl; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('📋 Copied');
+    });
+}
+
 function goToCurrent() {
     if(state.isIPTV||state.isYoutube) {
         if(state.currentChannel) {
@@ -917,6 +1058,32 @@ function seekIPTVTouch(e) {
     if(d>0){ DOM.nativeVideo.currentTime=p*d; DOM.progressBar.style.width=(p*100)+'%'; }
 }
 
+let timerCountdown=null;
+function setTimerPreset(minutes) {
+    if(timerCountdown){clearInterval(timerCountdown); timerCountdown=null;}
+    if(minutes===0){ DOM.timerDisplay.textContent='∞'; DOM.timerDisplay.classList.remove('active'); DOM.timerPresetBtn.textContent='⏱️ Inf'; return; }
+    let seconds=minutes*60;
+    DOM.timerDisplay.classList.add('active');
+    DOM.timerDisplay.textContent=minutes+':00';
+    DOM.timerPresetBtn.textContent='⏱️ '+minutes+'m';
+    DOM.timerPresetBtn.classList.add('active');
+    timerCountdown=setInterval(()=>{
+        seconds--;
+        if(seconds<=0){
+            clearInterval(timerCountdown); timerCountdown=null;
+            DOM.timerDisplay.textContent='0:00';
+            if(!state.isStopped&&!state.isIPTV&&!state.isYoutube){
+                randomContent();
+                showToast('⏱️ Timer: Random');
+                setTimeout(()=>{ if(minutes>0) setTimerPreset(minutes); },1000);
+            }
+        } else {
+            const mins=Math.floor(seconds/60), secs=seconds%60;
+            DOM.timerDisplay.textContent=mins+':'+String(secs).padStart(2,'0');
+        }
+    },1000);
+}
+
 // ============================================================
 // PLAYLIST VIDEO PLAYER
 // ============================================================
@@ -935,7 +1102,6 @@ function playVideo(playlist, index, start=0) {
     const meta=cache[id];
     let title=meta?meta.title:'Video '+(index+1);
     if(state.translateEnabled&&meta&&meta.translatedTitle) title=meta.translatedTitle;
-    let thumb=meta?meta.thumbnail:'https://img.youtube.com/vi/'+id+'/mqdefault.jpg';
     if(DOM.placeholder) DOM.placeholder.style.display='none';
     
     if(state.currentMode==='radio') {
@@ -1014,7 +1180,7 @@ function renderGroupPlaylists(group) {
         html+='<div class="list-item '+(active?'active':'')+'" data-index="'+idx+'" data-type="playlist">'+
             '<span class="group-icon">📋</span>'+
             '<div class="info"><div class="title">'+escapeHtml(pl.name)+'</div><div class="sub">'+pl.videoIds.length+' videos</div></div>'+
-            '<span class="badge">'+pl.videoIds.length+'</span></div>';
+            '<span class="badge" style="background:var(--bg3);color:var(--text);font-weight:500;">'+pl.videoIds.length+'</span></div>';
     });
     DOM.list.innerHTML=html;
     DOM.list.querySelectorAll('.list-item[data-type="playlist"]').forEach(el=>{
@@ -1053,7 +1219,7 @@ function renderVideos(playlist) {
             '<img class="thumb" src="'+thumb+'" alt="" loading="lazy">'+
             '<div class="info"><div class="title" title="'+escapeHtml(title)+'">'+escapeHtml(title)+' '+badge+'</div>'+
             '<div class="sub">'+escapeHtml(m?m.author:'')+'</div></div>'+
-            '<span class="badge">'+(v.index+1)+'</span></div>';
+            '<span class="badge" style="background:var(--bg3);color:var(--text);font-weight:500;">'+(v.index+1)+'</span></div>';
     });
     DOM.list.innerHTML=html;
     DOM.list.querySelectorAll('.list-item[data-type="video"]').forEach(el=>{
@@ -1159,25 +1325,26 @@ function goBack() {
 }
 
 // ============================================================
-// SUBSCRIPTIONS - CACHED
+// SUBSCRIPTIONS - FIXED
 // ============================================================
 async function loadSubs() {
     try {
-        // Load from cache first
+        // Try cache first
         try {
-            const cached=localStorage.getItem('shafin_subs');
+            const cached=localStorage.getItem('shafin_subs_v2');
             if(cached){
                 const data=JSON.parse(cached);
-                if(data.channels&&data.channels.length>0){
+                if(data.channels && data.channels.length>0){
                     state.subs=data.channels;
                     state.subCache=data.videos||{};
-                    if(state.category==='subscriptions') renderSubs();
+                    state.subLoaded=true;
                     DOM.status.textContent='📺 '+state.subs.length+' subs';
+                    if(state.category==='subscriptions') renderSubs();
                 }
             }
         } catch(e){}
         
-        // Fetch fresh in background
+        // Fetch fresh
         const resp=await fetch(CONFIG.SUBSCRIPTIONS);
         if(!resp.ok) throw new Error('HTTP '+resp.status);
         const csv=await resp.text();
@@ -1189,13 +1356,44 @@ async function loadSubs() {
             const name=f[0]?.trim()||'', id=f[1]?.trim()||'', group=f[2]?.trim()||'Uncategorized';
             if(name&&id) state.subs.push({name,channelId:id,group});
         }
-        // Cache channels
+        
+        // Fetch videos for each channel (in background with small batches)
+        for(let i=0;i<state.subs.length;i++){
+            await fetchChannelVideos(state.subs[i]);
+            if(i%2===0) await new Promise(r=>setTimeout(r,10));
+        }
+        
+        state.subLoaded=true;
+        // Cache
         try {
-            localStorage.setItem('shafin_subs', JSON.stringify({channels:state.subs, videos:state.subCache, time:Date.now()}));
+            localStorage.setItem('shafin_subs_v2', JSON.stringify({channels:state.subs, videos:state.subCache, time:Date.now()}));
         } catch(e){}
         DOM.status.textContent='📺 '+state.subs.length+' subs';
         if(state.category==='subscriptions') renderSubs();
-    } catch(err){ console.warn('Subs error:',err); }
+    } catch(err){ 
+        console.warn('Subs error:',err);
+        DOM.status.textContent='⚠️ Subs error';
+    }
+}
+
+async function fetchChannelVideos(channel) {
+    try {
+        const proxyUrl='https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id='+channel.channelId);
+        const resp=await fetch(proxyUrl);
+        if(!resp.ok) return;
+        const data=await resp.json();
+        if(data.items && data.items.length>0){
+            const videos=data.items.map(item=>{
+                let id='';
+                const m=item.link.match(/v=([^&]+)/);
+                if(m) id=m[1];
+                return {videoId:id, title:item.title, link:item.link,
+                    thumbnail:item.thumbnail||'https://img.youtube.com/vi/'+id+'/mqdefault.jpg',
+                    published:item.pubDate};
+            }).filter(v=>v.videoId);
+            state.subCache[channel.channelId]={channelName:channel.name, videos:videos.slice(0,20)};
+        }
+    } catch(e){ /* ignore */ }
 }
 
 function renderSubs() {
@@ -1207,10 +1405,11 @@ function renderSubs() {
     chs.forEach(ch=>{
         const cache=state.subCache[ch.channelId];
         const count=cache&&cache.videos?cache.videos.length:0;
+        const thumb=cache&&cache.videos&&cache.videos[0]?cache.videos[0].thumbnail:'https://img.youtube.com/vi//mqdefault.jpg';
         html+='<div class="list-item" data-channel="'+ch.channelId+'" data-type="sub">'+
-            '<img class="thumb" style="border-radius:50%;width:24px;height:24px;" src="'+(cache&&cache.videos&&cache.videos[0]?cache.videos[0].thumbnail:'https://img.youtube.com/vi//mqdefault.jpg')+'" alt="" loading="lazy">'+
+            '<img class="thumb" style="border-radius:50%;width:26px;height:26px;" src="'+thumb+'" alt="" loading="lazy" onerror="this.src=\'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%231a1a1a%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%23666%22 font-size=%2230%22>📺</text></svg>\'">'+
             '<div class="info"><div class="title">'+escapeHtml(ch.name)+'</div><div class="sub">'+count+' recent</div></div>'+
-            '<span class="badge">'+count+'</span></div>';
+            '<span class="badge" style="background:var(--bg3);color:var(--text);font-weight:500;">'+count+'</span></div>';
     });
     DOM.list.innerHTML=html;
     DOM.list.querySelectorAll('.list-item[data-type="sub"]').forEach(el=>{
@@ -1235,7 +1434,7 @@ function renderSubVideos(ch) {
         html+='<div class="list-item" data-vid="'+v.videoId+'" data-type="sub-video">'+
             '<img class="thumb" src="'+v.thumbnail+'" alt="" loading="lazy">'+
             '<div class="info"><div class="title">'+escapeHtml(title)+' '+badge+'</div><div class="sub">'+escapeHtml(ch.name)+'</div></div>'+
-            '<span class="badge">'+(idx+1)+'</span></div>';
+            '<span class="badge" style="background:var(--bg3);color:var(--text);font-weight:500;">'+(idx+1)+'</span></div>';
     });
     DOM.list.innerHTML=html;
     DOM.list.querySelectorAll('.list-item[data-type="sub-video"]').forEach(el=>{
@@ -1258,12 +1457,12 @@ function renderSubVideos(ch) {
 // ============================================================
 async function loadIPTV() {
     try {
-        // Load from cache first
+        // Cache first
         try {
-            const cached=localStorage.getItem('shafin_iptv');
+            const cached=localStorage.getItem('shafin_iptv_v2');
             if(cached){
                 const data=JSON.parse(cached);
-                if(data.channels&&data.channels.length>0){
+                if(data.channels && data.channels.length>0){
                     state.iptv=data.channels;
                     state.iptvGroups=data.groups||{};
                     state.iptvNames=Object.keys(state.iptvGroups).sort();
@@ -1273,7 +1472,6 @@ async function loadIPTV() {
             }
         } catch(e){}
         
-        // Fetch fresh in background
         const resp=await fetch(CONFIG.IPTV);
         if(!resp.ok) throw new Error('HTTP '+resp.status);
         const csv=await resp.text();
@@ -1291,9 +1489,8 @@ async function loadIPTV() {
             }
         }
         state.iptvNames=Object.keys(state.iptvGroups).sort();
-        // Cache
         try {
-            localStorage.setItem('shafin_iptv', JSON.stringify({channels:state.iptv, groups:state.iptvGroups, time:Date.now()}));
+            localStorage.setItem('shafin_iptv_v2', JSON.stringify({channels:state.iptv, groups:state.iptvGroups, time:Date.now()}));
         } catch(e){}
         DOM.status.textContent='📡 '+state.iptv.length+' channels';
         if(state.category==='iptv') renderIPTV();
@@ -1308,12 +1505,12 @@ function renderIPTV() {
     if(search) chs=chs.filter(c=>c.name.toLowerCase().includes(search)||c.category.toLowerCase().includes(search));
     chs.forEach(ch=>{
         const active=state.currentUrl===ch.url;
-        const logo=ch.logo?'<img class="thumb" style="border-radius:50%;width:24px;height:24px;" src="'+ch.logo+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':
+        const logo=ch.logo?'<img class="thumb" style="border-radius:50%;width:26px;height:26px;" src="'+ch.logo+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':
             '<span style="font-size:1rem;">📡</span>';
         html+='<div class="list-item '+(active?'active':'')+'" data-url="'+escapeHtml(ch.url)+'" data-type="iptv">'+
             logo+
             '<div class="info"><div class="title">'+escapeHtml(ch.name)+'</div><div class="sub">'+escapeHtml(ch.category)+'</div></div>'+
-            '<span class="badge">▶</span></div>';
+            '<span class="badge" style="background:var(--bg3);color:var(--text);font-weight:500;">▶</span></div>';
     });
     DOM.list.innerHTML=html;
     DOM.list.querySelectorAll('.list-item[data-type="iptv"]').forEach(el=>{
@@ -1331,7 +1528,7 @@ function renderIPTV() {
 }
 
 // ============================================================
-// METADATA - CACHED & FAST
+// METADATA - FAST CACHED
 // ============================================================
 async function fetchMeta(playlist) {
     if(!playlist||!playlist.videoIds||playlist.videoIds.length===0) return;
@@ -1340,9 +1537,10 @@ async function fetchMeta(playlist) {
     const cache=state.metadata[key];
     const pending=playlist.videoIds.filter(id=>!cache[id]);
     if(!pending.length) return;
-    // Load from cache first
+    
+    // Check cache
     try {
-        const cached=localStorage.getItem('shafin_meta');
+        const cached=localStorage.getItem('shafin_meta_v2');
         if(cached){
             const data=JSON.parse(cached);
             if(data[key]){
@@ -1352,7 +1550,8 @@ async function fetchMeta(playlist) {
             }
         }
     } catch(e){}
-    // Fetch in small batches
+    
+    // Fetch small batches
     const batchSize=3;
     for(let i=0;i<pending.length;i+=batchSize){
         const batch=pending.slice(i,i+batchSize);
@@ -1374,7 +1573,7 @@ async function fetchMeta(playlist) {
         await new Promise(r=>setTimeout(r,10));
     }
     try {
-        localStorage.setItem('shafin_meta', JSON.stringify(state.metadata));
+        localStorage.setItem('shafin_meta_v2', JSON.stringify(state.metadata));
     } catch(e){}
 }
 
@@ -1393,7 +1592,7 @@ async function translateText(text){
         if(data&&data[0]&&data[0][0]&&data[0][0][0]){
             const t=data[0][0][0];
             state.translate[key]=t;
-            localStorage.setItem('shafin_translate', JSON.stringify(state.translate));
+            localStorage.setItem('shafin_translate_v2', JSON.stringify(state.translate));
             return t;
         }
         return text;
@@ -1402,7 +1601,7 @@ async function translateText(text){
 
 function toggleTranslate(){
     state.translateEnabled=!state.translateEnabled;
-    DOM.navTranslate.classList.toggle('active',state.translateEnabled);
+    DOM.translateBtn.classList.toggle('active',state.translateEnabled);
     showToast(state.translateEnabled?'🌐 ON':'🌐 OFF');
     if(state.view==='playlist'&&state.viewingPlaylist) renderVideos(state.viewingPlaylist);
     if(state.view==='sub_videos'&&state.currentSubscription) renderSubVideos(state.currentSubscription);
@@ -1413,31 +1612,89 @@ function toggleTranslate(){
 // HISTORY
 // ============================================================
 function loadHistory(){
-    try{const r=localStorage.getItem('shafin_history'); if(r) state.history=JSON.parse(r);}catch(e){state.history=[];}
+    try{const r=localStorage.getItem('shafin_history_v2'); if(r) state.history=JSON.parse(r);}catch(e){state.history=[];}
 }
 
 function saveHistory(){
-    try{const cutoff=Date.now()-7*24*60*60*1000; state.history=state.history.filter(h=>h.timestamp>cutoff); localStorage.setItem('shafin_history',JSON.stringify(state.history));}catch(e){}
+    try{const cutoff=Date.now()-7*24*60*60*1000; state.history=state.history.filter(h=>h.timestamp>cutoff); localStorage.setItem('shafin_history_v2',JSON.stringify(state.history));}catch(e){}
 }
 
 function renderHistory(){
     if(!state.history.length){ DOM.historyList.innerHTML='<div class="empty">No history</div>'; return; }
-    // We'll use a simple modal approach - show in a toast for simplicity
-    const items=state.history.slice(0,10).map(h=>h.title).join('\n');
-    showToast('📜 '+state.history.length+' items', 4000);
+    const groups={};
+    state.history.forEach(h=>{
+        const d=new Date(h.timestamp);
+        const key=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(-2);
+        if(!groups[key]) groups[key]=[];
+        groups[key].push(h);
+    });
+    let html='';
+    Object.keys(groups).sort((a,b)=>{
+        const da=a.split('/').reverse().join('/'), db=b.split('/').reverse().join('/');
+        return db.localeCompare(da);
+    }).forEach(date=>{
+        html+='<div class="history-date-group"><div class="date-label">'+date+'</div>';
+        groups[date].forEach(h=>{
+            const pos=h.position&&h.position>0?formatTime(h.position):'';
+            html+='<div class="history-item" data-vid="'+h.videoId+'" data-playlist="'+escapeHtml(h.playlistName)+'" data-position="'+(h.position||0)+'">'+
+                '<img class="thumb" src="'+h.thumbnail+'" alt="" loading="lazy">'+
+                '<div class="info"><div class="title">'+escapeHtml(h.title)+'</div><div class="sub">'+escapeHtml(h.playlistName)+'</div></div>'+
+                (pos?'<span class="position-badge">⏱ '+pos+'</span>':'')+
+                '<span class="count-badge">'+new Date(h.timestamp).toLocaleTimeString()+'</span>'+
+                '<button class="delete-btn" data-vid="'+h.videoId+'" data-playlist="'+escapeHtml(h.playlistName)+'">✕</button></div>';
+        });
+        html+='</div>';
+    });
+    DOM.historyList.innerHTML=html;
+    DOM.historyList.querySelectorAll('.history-item').forEach(el=>{
+        el.addEventListener('click',function(e){
+            if(e.target.classList.contains('delete-btn')) return;
+            const vid=this.dataset.vid, plName=this.dataset.playlist, pos=parseInt(this.dataset.position)||0;
+            const pl=state.playlists.find(p=>p.name===plName);
+            if(pl){
+                const idx=pl.videoIds.indexOf(vid);
+                if(idx>=0){
+                    closeHistory();
+                    state.isIPTV=false; state.isYoutube=false;
+                    state.playingPlaylist=pl; state.playingIndex=idx;
+                    state.viewingPlaylist=pl; state.viewingIndex=idx;
+                    navigatePlaylist(pl);
+                    playVideo(pl,idx,pos);
+                }
+            }
+        });
+        el.querySelector('.delete-btn')?.addEventListener('click',function(e){
+            e.stopPropagation();
+            const vid=this.dataset.vid, pl=this.dataset.playlist;
+            state.history=state.history.filter(h=>!(h.videoId===vid&&h.playlistName===pl));
+            saveHistory();
+            renderHistory();
+        });
+    });
+}
+
+function openHistory(){
+    DOM.historyPanel.classList.add('open');
+    DOM.historyOverlay.classList.add('open');
+    renderHistory();
+}
+
+function closeHistory(){
+    DOM.historyPanel.classList.remove('open');
+    DOM.historyOverlay.classList.remove('open');
 }
 
 // ============================================================
-// PLAYLIST LOADING - FAST
+// PLAYLIST LOADING
 // ============================================================
 async function loadPlaylists() {
     try {
-        // Load from cache first
+        // Cache first
         try {
-            const cached=localStorage.getItem('shafin_playlists');
+            const cached=localStorage.getItem('shafin_playlists_v2');
             if(cached){
                 const data=JSON.parse(cached);
-                if(data.groups&&data.playlists){
+                if(data.groups && data.playlists){
                     state.groups=data.groups;
                     state.playlists=data.playlists;
                     state.groupNames=Object.keys(state.groups).sort();
@@ -1465,9 +1722,8 @@ async function loadPlaylists() {
             state.groups[group].push(pl);
         }
         state.groupNames=Object.keys(state.groups).sort();
-        // Cache
         try {
-            localStorage.setItem('shafin_playlists', JSON.stringify({groups:state.groups, playlists:state.playlists, time:Date.now()}));
+            localStorage.setItem('shafin_playlists_v2', JSON.stringify({groups:state.groups, playlists:state.playlists, time:Date.now()}));
         } catch(e){}
         DOM.status.textContent='📋 '+state.playlists.length+' playlists';
         if(state.category==='playlists') navigateGroups();
@@ -1482,7 +1738,7 @@ async function loadPlaylists() {
 // ============================================================
 function saveState(){
     try {
-        localStorage.setItem('shafin_state', JSON.stringify({
+        localStorage.setItem('shafin_state_v2', JSON.stringify({
             playbackMode:state.playbackMode,
             currentMode:state.currentMode,
             translateEnabled:state.translateEnabled
@@ -1492,13 +1748,13 @@ function saveState(){
 
 function restoreState(){
     try {
-        const raw=localStorage.getItem('shafin_state');
+        const raw=localStorage.getItem('shafin_state_v2');
         if(raw){
             const data=JSON.parse(raw);
             if(data.playbackMode!==undefined) state.playbackMode=data.playbackMode;
             if(data.currentMode) state.currentMode=data.currentMode;
             if(data.translateEnabled!==undefined) state.translateEnabled=data.translateEnabled;
-            if(state.translateEnabled) DOM.navTranslate.classList.add('active');
+            if(state.translateEnabled) DOM.translateBtn.classList.add('active');
             updateShuffle();
             setMode(state.currentMode);
         }
@@ -1535,10 +1791,10 @@ function playManual() {
 }
 
 // ============================================================
-// INIT - FASTEST
+// INIT
 // ============================================================
 async function init() {
-    console.log('🔴 Shafin Tube v6 - Minimal & Fast');
+    console.log('🔴 Shafin Tube v7 - Full Features');
     loadHistory();
     restoreState();
     updateShuffle();
@@ -1546,17 +1802,14 @@ async function init() {
     setupProgress();
     loadYT();
     
-    // Load playlists first (fastest)
+    // Load playlists first
     await loadPlaylists();
     
     // Load subs and IPTV in background
     setTimeout(loadSubs, 300);
     setTimeout(loadIPTV, 600);
     
-    // Setup events
     setupEvents();
-    
-    // Show groups
     navigateGroups();
     console.log('✅ Ready');
 }
@@ -1595,48 +1848,77 @@ function setupEvents() {
     DOM.next.addEventListener('click', nextContent);
     DOM.shuffle.addEventListener('click', cycleShuffle);
     DOM.mute.addEventListener('click', toggleMute);
+    DOM.videoIdTile.addEventListener('click', copyVideoId);
     DOM.manualPlay.addEventListener('click', playManual);
     DOM.manualInput.addEventListener('keydown', e=>{if(e.key==='Enter') playManual();});
-    DOM.videoIdTile.addEventListener('click', ()=>{
-        if(state.currentUrl) {
-            navigator.clipboard.writeText(state.currentUrl).then(()=>showToast('📋 Copied')).catch(()=>{});
-        }
-    });
     
     // Mode
     DOM.tvMode.addEventListener('click', ()=>setMode('tv'));
     DOM.radioMode.addEventListener('click', ()=>setMode('radio'));
     
-    // Bottom nav
-    DOM.navHome.addEventListener('click', ()=>{
-        if(state.category==='playlists') navigateGroups();
-        else if(state.category==='subscriptions') navigateSubs();
-        else if(state.category==='iptv') navigateIPTV();
-        DOM.search.value='';
-        document.querySelectorAll('.bottom-nav .nav-btn').forEach(b=>b.classList.remove('active'));
-        DOM.navHome.classList.add('active');
+    // Top bar buttons
+    DOM.randomBtn.addEventListener('click', randomContent);
+    DOM.historyBtn.addEventListener('click', openHistory);
+    DOM.historyCloseBtn.addEventListener('click', closeHistory);
+    DOM.historyOverlay.addEventListener('click', closeHistory);
+    DOM.translateBtn.addEventListener('click', toggleTranslate);
+    DOM.goToBtn.addEventListener('click', goToCurrent);
+    
+    // Timer
+    DOM.timerPresetBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        DOM.timerPresetDropdown.classList.toggle('open');
     });
-    DOM.navHistory.addEventListener('click', ()=>{
-        renderHistory();
-        document.querySelectorAll('.bottom-nav .nav-btn').forEach(b=>b.classList.remove('active'));
-        DOM.navHistory.classList.add('active');
+    document.querySelectorAll('.preset-option').forEach(opt=>{
+        opt.addEventListener('click', (e)=>{
+            e.stopPropagation();
+            setTimerPreset(parseInt(opt.dataset.minutes));
+            DOM.timerPresetDropdown.classList.remove('open');
+        });
     });
-    DOM.navGoTo.addEventListener('click', ()=>{
-        goToCurrent();
-        document.querySelectorAll('.bottom-nav .nav-btn').forEach(b=>b.classList.remove('active'));
-        DOM.navGoTo.classList.add('active');
+    document.addEventListener('click', ()=>DOM.timerPresetDropdown.classList.remove('open'));
+    
+    // More dropdown
+    DOM.moreBtn.addEventListener('click', (e)=>{ e.stopPropagation(); DOM.moreDropdown.classList.toggle('open'); });
+    document.addEventListener('click', ()=>DOM.moreDropdown.classList.remove('open'));
+    
+    DOM.moreRefresh.addEventListener('click', ()=>{
+        if(state.viewingPlaylist && state.view==='playlist'){
+            const key=state.viewingPlaylist.name;
+            if(state.metadata[key]) delete state.metadata[key];
+            fetchMeta(state.viewingPlaylist);
+            showToast('Refreshing...');
+        } else showToast('Open a playlist first',1500,true);
+        DOM.moreDropdown.classList.remove('open');
     });
-    DOM.navRandom.addEventListener('click', ()=>{
-        randomContent();
-        document.querySelectorAll('.bottom-nav .nav-btn').forEach(b=>b.classList.remove('active'));
-        DOM.navRandom.classList.add('active');
+    DOM.moreRefreshSubs.addEventListener('click', ()=>{
+        state.subCache={}; state.subLoaded=false;
+        loadSubs();
+        showToast('Refreshing subscriptions...');
+        DOM.moreDropdown.classList.remove('open');
     });
-    DOM.navTranslate.addEventListener('click', ()=>{
-        toggleTranslate();
-        document.querySelectorAll('.bottom-nav .nav-btn').forEach(b=>b.classList.remove('active'));
-        DOM.navTranslate.classList.add('active');
+    DOM.moreRefreshIPTV.addEventListener('click', ()=>{
+        state.iptv=[]; state.iptvGroups={}; state.iptvNames=[];
+        loadIPTV();
+        showToast('Refreshing IPTV...');
+        DOM.moreDropdown.classList.remove('open');
     });
-    DOM.themeToggle.addEventListener('click', toggleTheme);
+    DOM.moreShortcuts.addEventListener('click', ()=>{
+        DOM.shortcutsOverlay.classList.toggle('open');
+        DOM.moreDropdown.classList.remove('open');
+    });
+    DOM.moreTheme.addEventListener('click', ()=>{
+        toggleTheme();
+        DOM.moreDropdown.classList.remove('open');
+    });
+    DOM.moreAbout.addEventListener('click', ()=>{
+        DOM.aboutOverlay.classList.add('open');
+        DOM.moreDropdown.classList.remove('open');
+    });
+    DOM.closeShortcuts.addEventListener('click', ()=>DOM.shortcutsOverlay.classList.remove('open'));
+    DOM.shortcutsOverlay.addEventListener('click', (e)=>{ if(e.target===DOM.shortcutsOverlay) DOM.shortcutsOverlay.classList.remove('open'); });
+    DOM.closeAbout.addEventListener('click', ()=>DOM.aboutOverlay.classList.remove('open'));
+    DOM.aboutOverlay.addEventListener('click', (e)=>{ if(e.target===DOM.aboutOverlay) DOM.aboutOverlay.classList.remove('open'); });
     
     // Keyboard shortcuts
     document.addEventListener('keydown', e=>{
@@ -1644,14 +1926,22 @@ function setupEvents() {
         if(e.key==='ArrowLeft'){e.preventDefault(); seekVideo(-10);}
         else if(e.key==='ArrowRight'){e.preventDefault(); seekVideo(10);}
         else if(e.key===' '||e.key==='Spacebar'){e.preventDefault(); togglePlay();}
-        else if(e.key==='Escape'){ if(state.view!=='groups'&&state.view!=='subscriptions'&&state.view!=='iptv') goBack(); }
-        else if(e.key==='n'||e.key==='N'){e.preventDefault(); nextContent();}
-        else if(e.key==='b'||e.key==='B'){e.preventDefault(); prevContent();}
+        else if(e.key==='Escape'){
+            if(DOM.historyPanel.classList.contains('open')) closeHistory();
+            else if(DOM.shortcutsOverlay.classList.contains('open')) DOM.shortcutsOverlay.classList.remove('open');
+            else if(DOM.aboutOverlay.classList.contains('open')) DOM.aboutOverlay.classList.remove('open');
+            else if(DOM.moreDropdown.classList.contains('open')) DOM.moreDropdown.classList.remove('open');
+            else if(state.view!=='groups'&&state.view!=='subscriptions'&&state.view!=='iptv') goBack();
+        }
+        else if(e.key==='s'||e.key==='S'){cycleShuffle();}
         else if(e.key==='r'||e.key==='R'){randomContent();}
         else if(e.key==='m'||e.key==='M'){toggleMute();}
-        else if(e.key==='s'||e.key==='S'){cycleShuffle();}
+        else if(e.key==='h'||e.key==='H'){openHistory();}
+        else if(e.key==='n'||e.key==='N'){e.preventDefault(); nextContent();}
+        else if(e.key==='b'||e.key==='B'){e.preventDefault(); prevContent();}
         else if(e.key==='t'||e.key==='T'){toggleTranslate();}
         else if(e.key==='x'||e.key==='X'){stopPlayback();}
+        else if(e.key==='c'||e.key==='C'){copyVideoId();}
         else if(e.key==='l'||e.key==='L'){goToCurrent();}
         else if(e.key==='Home'){e.preventDefault(); DOM.home.click();}
     });
